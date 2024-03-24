@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import HomeScreen from './component/Home/home';
-import MyTravelsScreen from './component/MyTravels/myTravels';
-import AddTravelsScreen from './component/AddTravels/addTravels';
+import HomeScreen from './src/views/Home/home';
+import MyTravelsScreen from './src/views/MyTravels/myTravels';
+import AddTravelsScreen from './src/views/AddTravels/addTravels';
 import { NavigationContainer } from '@react-navigation/native';
-import { store } from './redux/store';
-import { Provider } from 'react-redux';
+// import { store } from './src/redux/store';
+// import { Provider } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -19,11 +18,9 @@ export default function App() {
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             if (route.name === '首页') {
-              iconName = focused
-                ? 'information-circle'
-                : 'information-circle-outline';
+              iconName = focused ? 'information-circle' : 'information-circle-outline';
             } else if (route.name === '游记发布') {
-              iconName = focused ? 'list' : 'list-outline';
+              iconName = focused ? 'add' : 'add-outline';
             } else if (route.name === '我的游记') {
               iconName = focused ? 'person' : 'person-outline';
             }
@@ -31,7 +28,8 @@ export default function App() {
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: 'blue',
-          tabBarInactiveTintColor: 'gray',
+          tabBarInactiveTintColor: 'black',
+          tabBarHideOnKeyboard: 'ture'
         })}
       >
         <Tab.Screen name="首页" component={HomeScreen} />
