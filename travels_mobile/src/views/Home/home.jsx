@@ -3,6 +3,8 @@ import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, 
 import { PureComponent, Component, useState } from 'react'
 import Button from 'apsl-react-native-button'
 import imgList from './imgList'
+import { useNavigation } from '@react-navigation/native';
+
 
 const window = Dimensions.get('window')
 
@@ -82,7 +84,7 @@ export default class HomeScreen extends Component {
     return (
       <WaterfallFlow
         ref={ref => this.listRef = ref}
-        style={{ flex: 1 }}
+        style={{ flex: 1, marginTop: 40 }}
         contentContainerStyle={{ backgroundColor: '#f9f9f9' }}
         ListHeaderComponent={<Header />}
         ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} />}
@@ -112,12 +114,23 @@ export default class HomeScreen extends Component {
   }
 }
 
+//点击卡片跳转详情页并传递卡片的id 
+// const onPressCard = (id) => {
+//   navigation.navigate('Detail', { cardId: id });
+// };
+
 const Card = ({ item, index, columnIndex }) => {
+  const navigation = useNavigation();
+  const onPressCard = () => {
+    navigation.navigate('Detail');
+  };
+
   return (
     <View style={{ flex: 1, overflow: 'hidden', borderRadius: 10}}>
       <TouchableOpacity
         style={{ backgroundColor: '#fff', flex: 1 }}
         activeOpacity={0.5}  // 设置指定封装的视图在被触摸操作时的透明度（0-1）
+        onPress={() => onPressCard()}   // 跳转
       >
         <FadeImage
           source={{ uri: item.thumbURL, width: item.width, height: item.height }}

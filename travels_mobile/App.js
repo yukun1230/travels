@@ -1,5 +1,6 @@
 import * as React from 'react';
-import HomeScreen from './src/views/Home/home';
+import 'react-native-gesture-handler';
+import HomeStack from './src/views/HomeStack';
 import MyTravelsScreen from './src/views/MyTravels/myTravels';
 import AddTravelsScreen from './src/views/AddTravels/addTravels';
 import loginScreen from './src/views/Login/login'
@@ -35,9 +36,22 @@ export default function App() {
           tabBarHideOnKeyboard: 'ture'  //调出键盘tabBar就会隐藏
         })}
       >
-        <Tab.Screen name="首页" component={HomeScreen} />
-        <Tab.Screen name="游记发布" component={AddTravelsScreen} />
-        <Tab.Screen name="我的游记" component={MyTravelsScreen} />
+        <Tab.Screen name="首页" component={HomeStack} options={{ 
+          headerShown: false,
+          headerStyle: {
+            height: 100, 
+          },
+          }} />
+        <Tab.Screen name="游记发布" component={AddTravelsScreen} options={{
+          headerStyle: {
+            height: 100,
+          },
+        }} />
+        <Tab.Screen name="我的游记" component={MyTravelsScreen} options={{
+          headerStyle: {
+            height: 100,
+          },
+        }} />
       </Tab.Navigator>
     </NavigationContainer>
   );
