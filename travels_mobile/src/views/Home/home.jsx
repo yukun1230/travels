@@ -1,13 +1,16 @@
-// import { Text, View } from 'react-native';
 import WaterfallFlow from 'react-native-waterfall-flow'
-import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Button } from 'react-native'
+import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity } from 'react-native'
 import { PureComponent, Component, useState } from 'react'
+import Button from 'apsl-react-native-button'
 import imgList from './imgList'
 
 const window = Dimensions.get('window')
 
-export default class HomeScreen extends Component {
 
+
+export default class HomeScreen extends Component {
+  // constructor 会在你的类式组件 挂载（添加到屏幕上）之前运行。
+  // 一般来说，在 React 中 constructor 仅用于两个目的。它可以让你来声明 state 以及将你的类方法 绑定 到你的类实例上。
   constructor(props) {
     super(props)
 
@@ -22,7 +25,7 @@ export default class HomeScreen extends Component {
     this.loading = false
     this.listRef = null
   }
-
+  //首次渲染完成之后调用
   componentDidMount() {
 
     this.loadData(1)
@@ -34,6 +37,7 @@ export default class HomeScreen extends Component {
     }, 3000)
   }
 
+  // 加载数据
   loadData = (page = 1, refreshing) => {
     if (this.loading) {
       return
@@ -66,14 +70,15 @@ export default class HomeScreen extends Component {
     }, refreshing ? 1000 : 500)
   }
 
+  // 在最后触摸
   onEndReached = () => {
     if (!this.state.noMore) {
       this.loadData(this.page + 1)
     }
   }
-
+  // 渲染
   render() {
-    const { data, refreshing, noMore, inited } = this.state
+    const { data, refreshing, noMore, inited } = this.state 
     return (
       <WaterfallFlow
         ref={ref => this.listRef = ref}
@@ -109,14 +114,14 @@ export default class HomeScreen extends Component {
 
 const Card = ({ item, index, columnIndex }) => {
   return (
-    <View style={{ flex: 1, overflow: 'hidden' }}>
+    <View style={{ flex: 1, overflow: 'hidden', borderRadius: 10}}>
       <TouchableOpacity
         style={{ backgroundColor: '#fff', flex: 1 }}
-        activeOpacity={1}
+        activeOpacity={0.5}  // 设置指定封装的视图在被触摸操作时的透明度（0-1）
       >
         <FadeImage
           source={{ uri: item.thumbURL, width: item.width, height: item.height }}
-          resizeMode="cover"
+          resizeMode="cover"  // resizeMode用来设置图片的缩放模式
         />
       </TouchableOpacity>
     </View>
@@ -126,19 +131,25 @@ const Card = ({ item, index, columnIndex }) => {
 const Header = () => {
   const [searchText, setSearchText] = useState('');
   return (
-    <View style={{ padding: 12 }}>
-      <TextInput
-        style={{ height: 40, width: 300, borderColor: 'gray', borderWidth: 1, padding: 10, borderRadius: 20 }}
-        placeholder="请输入您要搜索的内容"
-        onChangeText={searchText => setSearchText(searchText)}
-        defaultValue={searchText}
-      />
-      <Button
-        // onPress={onPressLearnMore}
-        style={{ marginTop: 16 }}
-        title="搜索"
-        color="#2196F3"
-      />
+    <View style={{ flexDirection: "row", marginLeft:16,marginRight:16,marginTop:16 }}>
+      <View style={{ flex: 3 }}>
+        <TextInput
+          style={{ height: 35, width: 250, borderColor: 'gray', borderWidth: 1, padding: 10, borderRadius: 20,borderColor:"#2196F3" }}
+          placeholder="请输入您要搜索的内容"
+          onChangeText={searchText => setSearchText(searchText)}
+          defaultValue={searchText}
+        />
+      </View >
+      <View style={{ flex: 1, }}>
+        <Button
+          style={{ backgroundColor: '#2196F3', height: 35, borderRadius: 20,borderColor:"#2196F3" }}
+          textStyle={{ fontSize: 18, color: "white" }}
+        >搜索
+        </Button>
+      </View>
+      <View style={{ flex: 1 }}> 
+        {/* 这里用于放头像 */}
+      </View>
     </View>
   )
 }

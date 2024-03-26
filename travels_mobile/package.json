@@ -14,6 +14,8 @@
     "@react-navigation/native": "^6.1.14",
     "@react-navigation/native-stack": "^6.9.22",
     "@reduxjs/toolkit": "^2.2.1",
+    "@types/react": "~18.2.45",
+    "apsl-react-native-button": "^3.1.1",
     "expo": "~50.0.8",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
@@ -24,8 +26,7 @@
     "react-native-waterfall-flow": "^1.1.5",
     "react-native-web": "~0.19.6",
     "react-redux": "^9.1.0",
-    "typescript": "^5.3.0",
-    "@types/react": "~18.2.45"
+    "typescript": "^5.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
