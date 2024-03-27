@@ -13,7 +13,7 @@ function HomeStack() {
         headerTitle: '',
         // 控制导航条与顶部的距离
         headerStyle: {
-          height: 100, // 这里设置你希望的导航条高度
+          height: 120, // 这里设置你希望的导航条高度
         },
         
       }} />
