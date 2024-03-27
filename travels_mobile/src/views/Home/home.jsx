@@ -114,12 +114,13 @@ export default class HomeScreen extends Component {
   }
 }
 
-//点击卡片跳转详情页并传递卡片的id 
-// const onPressCard = (id) => {
-//   navigation.navigate('Detail', { cardId: id });
-// };
+
 
 const Card = ({ item, index, columnIndex }) => {
+  //点击卡片跳转详情页并传递卡片的id
+  // const onPressCard = (id) => {
+  //   navigation.navigate('Detail', { cardId: id });
+  // };
   const navigation = useNavigation();
   const onPressCard = () => {
     navigation.navigate('Detail');

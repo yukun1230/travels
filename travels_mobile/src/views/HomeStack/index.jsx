@@ -15,6 +15,7 @@ function HomeStack() {
         headerStyle: {
           height: 100, // 这里设置你希望的导航条高度
         },
+        
       }} />
     </Stack.Navigator>
   );
