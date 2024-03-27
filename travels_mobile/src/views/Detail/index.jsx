@@ -77,8 +77,10 @@ const DetailScreen = ({ navigation }) => {
   }
 
   return (
-    <ScrollView>
-      <View style={{ height: 400,backgroundColor:"white" }}>
+    <View style={{ flexDirection: 'column' }}>
+      
+      <ScrollView >
+        <View style={{ height: 400, backgroundColor: "white", flex: 1 }}>
         {/* 轮播图 */}
         <Swiper style={styles.wrapper}
           autoplay={true}
@@ -98,7 +100,7 @@ const DetailScreen = ({ navigation }) => {
           </View>
         </Swiper>
       </View>
-      <View style={{ backgroundColor: "white" }} >
+        <View style={{ backgroundColor: "white", flex: 1 }} >
         <View style={styles.locationContainer}>
           {/* 地址标签 */}
           <View style={styles.locationIcon}>
@@ -153,9 +155,29 @@ const DetailScreen = ({ navigation }) => {
         </View>
         
       </View>
+      </ScrollView>
       
-
-    </ScrollView>
+      {/* <View style={styles.footer}>
+        <TextInput style={styles.input} placeholder="写留言…" />
+        <TouchableOpacity style={styles.footerIcon}>
+          <AntDesign name="like2" size={24} color="black" />
+          <Text style={styles.footerText}>1228</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerIcon}>
+          <FontAwesome6 name="commenting" size={24} color="black" />
+          <Text style={styles.footerText}>76</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerIcon}>
+          <SimpleLineIcons name="share-alt" size={24} color="black" />
+          <Text style={styles.footerText}>分享</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerIcon}>
+          <MaterialCommunityIcons name="heart-plus-outline" size={24} color="black" />
+          <Text style={styles.footerText}>261</Text>
+        </TouchableOpacity>
+      </View> */}
+    </View>
+    
     
   );
 };
@@ -224,15 +246,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   footer: {
+    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position:  'sticky',
-    bottom: 0,
     backgroundColor: '#fff',
     padding: 10,
     borderTopWidth: 1,
     borderColor: '#e1e1e1',
+    height: 52,
     
   },
   input: {
