@@ -1,9 +1,11 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper'
 import { AntDesign } from '@expo/vector-icons';
-
+import { FontAwesome6 } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // const DetailScreen = ({ navigation, route }) => {
 //   // 使用传递过来的cardId
@@ -98,10 +100,17 @@ const DetailScreen = ({ navigation }) => {
       </View>
       <View style={{ backgroundColor: "white" }} >
         <View style={styles.locationContainer}>
+          {/* 地址标签 */}
           <View style={styles.locationIcon}>
             <AntDesign name="enviroment" size={18} color="white" />
           </View>
           <Text style={styles.locationText}>上海</Text>
+        </View>
+        <View>
+          <Text style={styles.detailTitle}>这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~</Text>
+        </View>
+        <View>
+          <Text style={styles.detailContent}>这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~</Text>
         </View>
         <Text>1</Text>
         <Text>1</Text>
@@ -123,6 +132,26 @@ const DetailScreen = ({ navigation }) => {
         <Text>1</Text>
         <Text>1</Text>
         <Text>1</Text>
+        <View style={styles.footer}>
+          <TextInput style={styles.input} placeholder="写留言…" />
+          <TouchableOpacity style={styles.footerIcon}>
+            <AntDesign name="like2" size={24} color="black" />
+            <Text style={styles.footerText}>1228</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerIcon}>
+            <FontAwesome6 name="commenting" size={24} color="black" />
+            <Text style={styles.footerText}>76</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerIcon}>
+            <SimpleLineIcons name="share-alt" size={24} color="black" />
+            <Text style={styles.footerText}>分享</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerIcon}>
+            <MaterialCommunityIcons name="heart-plus-outline" size={24} color="black" />
+            <Text style={styles.footerText}>261</Text>
+          </TouchableOpacity>
+        </View>
+        
       </View>
       
 
@@ -184,6 +213,41 @@ const styles = StyleSheet.create({
     marginRight: 15, // 文字和右箭头之间的距离
     fontSize: 12, // 文字大小
     fontWeight: 'bold'
+  },
+  detailTitle:{
+    marginTop: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  detailContent:{
+    marginTop: 12,
+    fontSize: 15,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position:  'sticky',
+    bottom: 0,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderTopWidth: 1,
+    borderColor: '#e1e1e1',
+    
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e1e1e1',
+    padding: 8,
+    borderRadius: 15,
+    flex: 1,
+    marginRight: 10,
+  },
+  footerIcon: {
+    marginHorizontal: 5,
+  },
+  footerText: {
+    fontSize: 14,
   },
 })
 
