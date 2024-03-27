@@ -1,0 +1,21 @@
+{
+  "userInfoList": [
+    {
+      "user_id": 1,
+      "username": "超级管理员",
+      "account": "admin",
+      "type": "超级管理员",
+      "type_id": "1",
+      "id": "e6c5",
+      "token": "yyy"
+    },
+    {
+      "user_id": 2,
+      "username": "管理员",
+      "account": "user",
+      "type": "管理员",
+      "type_id": 2,
+      "id": "b8dc"
+    }
+  ]
+}
