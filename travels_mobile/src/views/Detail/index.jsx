@@ -1,8 +1,8 @@
-import React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper'
-
+import { AntDesign } from '@expo/vector-icons';
 
 
 // const DetailScreen = ({ navigation, route }) => {
@@ -21,7 +21,47 @@ const DetailScreen = ({ navigation }) => {
       return () => parent.setOptions({ tabBarStyle: undefined });
     }, [navigation])
   );
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerLeft: () => (
+  //       <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
+  //         <TouchableOpacity onPress={() => navigation.goBack()}>
+  //           <Image
+  //             source={require('返回箭头的图片路径')}
+  //             style={{ width: 20, height: 20, marginRight: 10 }}
+  //           />
+  //         </TouchableOpacity>
+  //         {userInfo.avatar && (
+  //           <Image
+  //             source={{ uri: userInfo.avatar }}
+  //             style={{ width: 40, height: 40, borderRadius: 20 }}
+  //           />
+  //         )}
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, userInfo]);
 
+
+  useEffect(() => {
+    navigation.setOptions({
+      // 设置顶部导航栏左箭头 以及用户头像 昵称
+      headerLeft: () => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <AntDesign name="left" size={24} color="black" />
+          </TouchableOpacity>
+          <Image
+            source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+            style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
+          />
+          <Text style={{ fontSize: 18, marginLeft: 15 }}>用户昵称</Text>
+        </View>
+      ),
+    });
+  }, [navigation]); 
+
+  
 
   const renderPagination = (index, total, context) => {
     // 轮播图分页器
@@ -35,9 +75,8 @@ const DetailScreen = ({ navigation }) => {
   }
 
   return (
-    <View>
-      
-      <View style={{ height: 300,backgroundColor:"#fff" }}>
+    <ScrollView>
+      <View style={{ height: 400,backgroundColor:"white" }}>
         {/* 轮播图 */}
         <Swiper style={styles.wrapper}
           autoplay={true}
@@ -55,13 +94,40 @@ const DetailScreen = ({ navigation }) => {
           <View style={styles.slide}>
             <Image source={{ uri: "https://img0.baidu.com/it/u=2589580882,2038835390&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750" }} style={styles.image} />
           </View>
-          
         </Swiper>
       </View>
+      <View style={{ backgroundColor: "white" }} >
+        <View style={styles.locationContainer}>
+          <View style={styles.locationIcon}>
+            <AntDesign name="enviroment" size={18} color="white" />
+          </View>
+          <Text style={styles.locationText}>上海</Text>
+        </View>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+      </View>
       
-      <Text>这是详情页6</Text>
 
-    </View>
+    </ScrollView>
+    
   );
 };
 
@@ -93,7 +159,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // 黑色背景，50%透明度
     borderRadius: 15, // 圆角大小
-  }
+  },
+  locationContainer: {
+    flexDirection: 'row', // 子元素水平排列
+    alignItems: 'center', // 子元素垂直居中
+    alignSelf: 'flex-start',
+    marginTop: 15,
+    marginLeft: 10,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgb(239,243,246)',
+  },
+  locationIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'black',
+    justifyContent: 'center', // 图标垂直居中
+    alignItems: 'center', // 图标水平居中
+    marginRight: 6, // 图标和文本之间的距离
+  },
+  locationText: {
+    color: 'black', // 文字颜色
+    marginRight: 15, // 文字和右箭头之间的距离
+    fontSize: 12, // 文字大小
+    fontWeight: 'bold'
+  },
 })
 
 
