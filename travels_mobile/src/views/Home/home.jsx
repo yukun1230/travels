@@ -8,8 +8,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 const window = Dimensions.get('window')
 
-
-
 export default class HomeScreen extends Component {
   // constructor 会在你的类式组件 挂载（添加到屏幕上）之前运行。
   // 一般来说，在 React 中 constructor 仅用于两个目的。它可以让你来声明 state 以及将你的类方法 绑定 到你的类实例上。

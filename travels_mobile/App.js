@@ -3,20 +3,32 @@ import 'react-native-gesture-handler';
 import HomeStack from './src/views/HomeStack';
 import MyTravelsScreen from './src/views/MyTravels/myTravels';
 import AddTravelsScreen from './src/views/AddTravels/addTravels';
-import loginScreen from './src/views/Login/login'
+import LoginScreen from './src/views/Login/login';
 import { NavigationContainer } from '@react-navigation/native';
 // import { store } from './src/redux/store';
 // import { Provider } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import RegisterScreen from './src/views/Register/register'
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+let islogin = true
+
 export default function App() {
+  if (islogin === true) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="登录界面" component={LoginScreen} />
+          <Stack.Screen name="注册界面" component={RegisterScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
+  }
   return (
     <NavigationContainer>
-      
-
       <Tab.Navigator  // 底部导航栏，前面应该有登录和注册页面
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {  // focused当前状态
@@ -33,7 +45,7 @@ export default function App() {
           },
           tabBarActiveTintColor: '#2196F3',  // tabBar被激活后的颜色
           tabBarInactiveTintColor: 'black',  // tabBar没有被激活的颜色
-          tabBarHideOnKeyboard: 'ture'  //调出键盘tabBar就会隐藏
+          tabBarHideOnKeyboard: 'ture'  // 调出键盘tabBar就会隐藏
         })}
       >
         <Tab.Screen name="首页" component={HomeStack} options={{ 
@@ -56,3 +68,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+// { 
+//   "username": {
+//    "message": "",
+//     "ref": { "name": "username" }, 
+//     "type": "maxLength" 
+//   } 
+// }
