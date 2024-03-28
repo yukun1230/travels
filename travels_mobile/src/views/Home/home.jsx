@@ -183,7 +183,12 @@ const Header = () => {
         </Button>
       </View>
       <View style={{ flex: 1 }}> 
-        {/* 这里用于放头像 */}
+        <TouchableOpacity>
+          <Image
+          source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+          style={{ width: 36, height: 36, borderRadius: 18, marginLeft: 20}}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   )
