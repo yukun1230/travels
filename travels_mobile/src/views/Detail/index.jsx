@@ -80,7 +80,7 @@ const DetailScreen = ({ navigation }) => {
     <View style={{ flexDirection: 'column' }}>
       
       <ScrollView >
-        <View style={{ height: 400, backgroundColor: "white", flex: 1 }}>
+        <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
         {/* 轮播图 */}
         <Swiper style={styles.wrapper}
           autoplay={true}
@@ -109,9 +109,11 @@ const DetailScreen = ({ navigation }) => {
           <Text style={styles.locationText}>上海</Text>
         </View>
         <View>
+          {/* 标题 */}
           <Text style={styles.detailTitle}>这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~</Text>
         </View>
         <View>
+          {/* 内容 */}
           <Text style={styles.detailContent}>这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~</Text>
         </View>
         <Text>1</Text>
@@ -121,21 +123,16 @@ const DetailScreen = ({ navigation }) => {
         <Text>1</Text>
         <Text>1</Text>
         <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <View style={styles.footer}>
-          <TextInput style={styles.input} placeholder="写留言…" />
+        {/* 留白区域，避免最底部的内容被底部栏挡住 */}
+        <View style={{height:52}}></View> 
+        
+        
+      </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+          {/* 底部栏 */}
+          <TextInput style={styles.input} placeholder="评论一下吧~" />
           <TouchableOpacity style={styles.footerIcon}>
             <AntDesign name="like2" size={24} color="black" />
             <Text style={styles.footerText}>1228</Text>
@@ -153,29 +150,7 @@ const DetailScreen = ({ navigation }) => {
             <Text style={styles.footerText}>261</Text>
           </TouchableOpacity>
         </View>
-        
-      </View>
-      </ScrollView>
       
-      {/* <View style={styles.footer}>
-        <TextInput style={styles.input} placeholder="写留言…" />
-        <TouchableOpacity style={styles.footerIcon}>
-          <AntDesign name="like2" size={24} color="black" />
-          <Text style={styles.footerText}>1228</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
-          <FontAwesome6 name="commenting" size={24} color="black" />
-          <Text style={styles.footerText}>76</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
-          <SimpleLineIcons name="share-alt" size={24} color="black" />
-          <Text style={styles.footerText}>分享</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
-          <MaterialCommunityIcons name="heart-plus-outline" size={24} color="black" />
-          <Text style={styles.footerText}>261</Text>
-        </TouchableOpacity>
-      </View> */}
     </View>
     
     
@@ -219,7 +194,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgb(239,243,246)',
+    backgroundColor: 'rgb(243,243,243)',
   },
   locationIcon: {
     width: 24,
@@ -246,7 +221,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   footer: {
-    // flex: 1,
+    position: 'absolute', 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -264,12 +242,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     flex: 1,
     marginRight: 10,
+    backgroundColor: 'rgb(243,243,243)',
   },
   footerIcon: {
-    marginHorizontal: 5,
+    marginHorizontal: 10,
+    alignItems: 'center',
+    
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 12,
   },
 })
 
