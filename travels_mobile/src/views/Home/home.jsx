@@ -4,7 +4,7 @@ import { PureComponent, Component, useState } from 'react'
 import Button from 'apsl-react-native-button'
 import imgList from './imgList'
 import { useNavigation } from '@react-navigation/native';
-
+import { AntDesign } from '@expo/vector-icons';
 
 const window = Dimensions.get('window')
 
@@ -85,7 +85,7 @@ export default class HomeScreen extends Component {
       <WaterfallFlow
         ref={ref => this.listRef = ref}
         style={{ flex: 1, marginTop: 40 }}
-        contentContainerStyle={{ backgroundColor: '#f9f9f9' }}
+        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
         ListHeaderComponent={<Header />}
         ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} />}
         ListEmptyComponent={<Empty inited={inited} />}
@@ -137,6 +137,27 @@ const Card = ({ item, index, columnIndex }) => {
           source={{ uri: item.thumbURL, width: item.width, height: item.height }}
           resizeMode="cover"  // resizeMode用来设置图片的缩放模式
         />
+        <View style={{ padding: 10 }}>
+          {/* 标题 */}
+          <Text style={{ fontSize: 14, fontWeight: 'bold' }}>这是标题~~这是标题~~这是标题~~</Text>
+          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+            {/* 用户资料 */}
+            <Image
+              source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+              style={{ width: 20, height: 20, borderRadius: 10 }}
+            />
+            <Text style={{ fontSize: 12, marginLeft: 5 }}>用户昵称</Text>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                {/* 观看次数 */}
+                <AntDesign name="eyeo" size={14} color="black" />
+                <Text style={{ fontSize: 12 }}>10000</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        
+        
       </TouchableOpacity>
     </View>
   )
