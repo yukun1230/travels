@@ -21,8 +21,8 @@ export default function App() {
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="登录界面" component={LoginScreen} />
-          <Stack.Screen name="注册界面" component={RegisterScreen} />
+          <Stack.Screen name="登录界面" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="注册界面" component={RegisterScreen} options={{headerTitle: ''}} />
         </Stack.Navigator>
       </NavigationContainer>
     )
