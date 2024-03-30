@@ -63,6 +63,7 @@ export default function App() {
           },
         }} />
         <Tab.Screen name="我的游记" component={MyTravelsScreen} options={{
+          headerShown: false,
           headerStyle: {
             height: 100,
           },

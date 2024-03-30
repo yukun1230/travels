@@ -13,6 +13,7 @@ const window = Dimensions.get('window')
 export default class HomeScreen extends Component {
   // constructor 会在你的类式组件 挂载（添加到屏幕上）之前运行。
   // 一般来说，在 React 中 constructor 仅用于两个目的。它可以让你来声明 state 以及将你的类方法 绑定 到你的类实例上。
+  
   constructor(props) {
     super(props)
 
@@ -27,6 +28,7 @@ export default class HomeScreen extends Component {
     this.loading = false
     this.listRef = null
   }
+  
   //首次渲染完成之后调用
   componentDidMount() {
 
@@ -165,6 +167,7 @@ const Card = ({ item, index, columnIndex }) => {
 
 const Header = () => {
   // 头部组件
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   const [visible, setVisible] = useState(false);
 
@@ -197,15 +200,15 @@ const Header = () => {
           contentStyle={{ marginTop: 10 ,marginLeft:3,backgroundColor:'#fff',width:140}} 
           >
           <Menu.Item
-            title="游记发布"
+            title="写游记"
             leadingIcon="square-edit-outline"
-            onPress={() => console.log('Item 1 pressed')}
+            onPress={() => {navigation.navigate('游记发布'),closeMenu()}}
           />
           <Divider />
           <Menu.Item
             title="我的游记"
             leadingIcon="account"
-            onPress={() => console.log('Item 1 pressed')}
+            onPress={() => { navigation.navigate('我的游记'), closeMenu() }}
           />
           <Divider />
           <Menu.Item
