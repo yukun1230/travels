@@ -1,20 +1,24 @@
 import * as React from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
 import {  useState } from 'react'
 const FirstRoute = () => (
-  <View style={[styles.scene, { backgroundColor: '#ff4081' }]} >
+  <View style={[styles.scene]} >
     <ScrollView>
-      {/* ScrollView的内容 */}
+      <Text>1111</Text>
     </ScrollView>
   </View>
 );
 
 const SecondRoute = () => (
-  <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
+  <View style={[styles.scene]} >
+    <ScrollView>
+      <Text>2222</Text>
+    </ScrollView>
+  </View>
 );
 
 const initialLayout = { width: Dimensions.get('window').width };
@@ -28,9 +32,31 @@ export default function MyTravelsScreen() {
   const navigation = useNavigation();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: 'First' },
-    { key: 'second', title: 'Second' },
+    { key: 'first', title: '我的游记' },
+    { key: 'second', title: '我的收藏' },
   ]);
+  const renderTabBar = props => (
+    <TabBar
+      {...props}
+      activeColor="rgb(34,150,243)" // Active tab color
+      inactiveColor="gray" // Inactive tab color
+      indicatorStyle={{ backgroundColor: "rgb(34, 150, 243)" }} // Blue indicator line
+      style={{
+        backgroundColor: 'white', // White background
+        borderTopWidth: 2, // Top border
+        borderBottomWidth: 2, // Bottom border
+        borderColor: 'grey', // Black border color
+
+      }}
+      labelStyle={{
+        fontWeight: 'bold' // Bold text
+      }}
+    />
+  );
+
+  
+
+
   const [visible, setVisible] = useState(false);
 
   const openMenu = () => setVisible(true);
@@ -91,6 +117,7 @@ export default function MyTravelsScreen() {
         onIndexChange={setIndex}
         initialLayout={initialLayout}
         style={styles.tabView}
+        renderTabBar={renderTabBar}
       />
     </View>
   );
@@ -121,8 +148,10 @@ const styles = StyleSheet.create({
   },
   scene: {
     flex: 1,
+    backgroundColor: "white"
   },
   tabView: {
     flex: 1,
+    backgroundColor: "white"
   }
 });
