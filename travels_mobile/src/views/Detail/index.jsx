@@ -100,7 +100,7 @@ const DetailScreen = ({ navigation }) => {
           </View>
         </Swiper>
       </View>
-        <View style={{ backgroundColor: "white", flex: 1 }} >
+        <View style={{ backgroundColor: "white", flex: 1 ,padding:10}} >
         <View style={styles.locationContainer}>
           {/* 地址标签 */}
           <View style={styles.locationIcon}>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // 子元素垂直居中
     alignSelf: 'flex-start',
     marginTop: 15,
-    marginLeft: 10,
+    marginLeft: 2,
     height: 24,
     borderRadius: 12,
     backgroundColor: 'rgb(243,243,243)',

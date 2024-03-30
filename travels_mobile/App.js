@@ -5,6 +5,7 @@ import MyTravelsScreen from './src/views/MyTravels/myTravels';
 import AddTravelsScreen from './src/views/AddTravels/addTravels';
 import LoginScreen from './src/views/Login/login';
 import { NavigationContainer } from '@react-navigation/native';
+import { PaperProvider } from 'react-native-paper';
 // import { store } from './src/redux/store';
 // import { Provider } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -17,18 +18,20 @@ const Stack = createNativeStackNavigator();
 let islogin = true
 
 export default function App() {
-  if (islogin === true) {
+
+  if (islogin === false) {
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="登录界面" component={LoginScreen} />
-          <Stack.Screen name="注册界面" component={RegisterScreen} />
+          <Stack.Screen name="登录界面" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="注册界面" component={RegisterScreen} options={{headerTitle: ''}} />
         </Stack.Navigator>
       </NavigationContainer>
     )
   }
   return (
-    <NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
       <Tab.Navigator  // 底部导航栏，前面应该有登录和注册页面
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {  // focused当前状态
@@ -60,11 +63,27 @@ export default function App() {
           },
         }} />
         <Tab.Screen name="我的游记" component={MyTravelsScreen} options={{
+          headerShown: false,
           headerStyle: {
             height: 100,
           },
         }} />
       </Tab.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </PaperProvider>
+    
   );
+<<<<<<< HEAD
 }
+=======
+  
+}
+
+// { 
+//   "username": {
+//    "message": "",
+//     "ref": { "name": "username" }, 
+//     "type": "maxLength" 
+//   } 
+// }
+>>>>>>> 3b48b261b5a45b3727dcb3edb56351166a1ae6e4

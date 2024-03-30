@@ -1,16 +1,19 @@
 import WaterfallFlow from 'react-native-waterfall-flow'
-import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity } from 'react-native'
+import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Modal, StyleSheet } from 'react-native'
 import { PureComponent, Component, useState } from 'react'
 import Button from 'apsl-react-native-button'
 import imgList from './imgList'
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import {  Menu, Divider } from 'react-native-paper';
+
 
 const window = Dimensions.get('window')
 
 export default class HomeScreen extends Component {
   // constructor 会在你的类式组件 挂载（添加到屏幕上）之前运行。
   // 一般来说，在 React 中 constructor 仅用于两个目的。它可以让你来声明 state 以及将你的类方法 绑定 到你的类实例上。
+  
   constructor(props) {
     super(props)
 
@@ -25,6 +28,7 @@ export default class HomeScreen extends Component {
     this.loading = false
     this.listRef = null
   }
+  
   //首次渲染完成之后调用
   componentDidMount() {
 
@@ -162,12 +166,63 @@ const Card = ({ item, index, columnIndex }) => {
 }
 
 const Header = () => {
+  // 头部组件
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
+  const [visible, setVisible] = useState(false);
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
   return (
-    <View style={{ flexDirection: "row", marginLeft:16,marginRight:16,marginTop:16 }}>
+    <View style={{ flexDirection: "row",marginRight:16,marginTop:16 }}>
+      <View
+        style={{
+          flex: 1 ,
+          flexDirection: 'row',
+          justifyContent: 'center',
+        }}>
+          {/* 头像 */}
+        <Menu
+        // 下拉菜单
+          visible={visible}
+          onDismiss={closeMenu}
+          anchor={
+            <View >
+              <TouchableOpacity onPress={openMenu}>
+                <Image
+                  source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+                  style={{ width: 36, height: 36, borderRadius: 18 }}
+                />
+              </TouchableOpacity>
+            </View>}
+          anchorPosition={'bottom'}
+          contentStyle={{ marginTop: 10 ,marginLeft:3,backgroundColor:'#fff',width:140}} 
+          >
+          <Menu.Item
+            title="写游记"
+            leadingIcon="square-edit-outline"
+            onPress={() => {navigation.navigate('游记发布'),closeMenu()}}
+          />
+          <Divider />
+          <Menu.Item
+            title="我的游记"
+            leadingIcon="account"
+            onPress={() => { navigation.navigate('我的游记'), closeMenu() }}
+          />
+          <Divider />
+          <Menu.Item
+            title="退出登录"
+            leadingIcon="logout"
+            onPress={() => console.log('Item 1 pressed')}
+          />
+        </Menu>
+      </View>
+
       <View style={{ flex: 3 }}>
+        {/* 搜索框 */}
         <TextInput
-          style={{ height: 35, width: 250, borderColor: 'gray', borderWidth: 1, padding: 10, borderRadius: 20,borderColor:"#2196F3" }}
+          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, padding: 10, borderRadius: 20,borderColor:"#2196F3" }}
           placeholder="请输入您要搜索的内容"
           onChangeText={searchText => setSearchText(searchText)}
           defaultValue={searchText}
@@ -179,14 +234,6 @@ const Header = () => {
           textStyle={{ fontSize: 18, color: "white" }}
         >搜索
         </Button>
-      </View>
-      <View style={{ flex: 1 }}> 
-        <TouchableOpacity>
-          <Image
-          source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
-          style={{ width: 36, height: 36, borderRadius: 18, marginLeft: 20}}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   )
@@ -248,3 +295,4 @@ class FadeImage extends Component {
     )
   }
 }
+
