@@ -68,11 +68,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-// { 
-//   "username": {
-//    "message": "",
-//     "ref": { "name": "username" }, 
-//     "type": "maxLength" 
-//   } 
-// }
