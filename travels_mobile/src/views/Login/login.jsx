@@ -1,9 +1,9 @@
 import {
-  Text, 
-  View, 
-  TextInput, 
+  Text,
+  View,
+  TextInput,
   Alert,
-  StyleSheet, 
+  StyleSheet,
   TouchableWithoutFeedback,
   Image
 } from 'react-native';
@@ -12,9 +12,17 @@ import React, { useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import '../../util/axios.config'
+import {storeToken, getToken} from '../../util/tokenRelated'
+import { useSelector, useDispatch } from 'react-redux'
+import { changePage } from '../../../appSlice';
 
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)
+  const dispatch = useDispatch();
   const handlelogin = () => {
     // 跳转页面
     navigation.navigate("注册界面")
@@ -29,12 +37,24 @@ export default LoginScreen = ({ navigation }) => {
       password: ''
     },
   });
-  const onSubmit = (data) => {
-    Alert.alert('登录成功');
-    console.log(data);
+
+  const onSubmit = async (data) => {
+    // const message = await getToken()
+    axios.post(NGROK_URL + '/users/login', data).then(
+      res => {
+        Alert.alert(res.data.message);
+        console.log(res.data)
+        // console.log(message)
+        
+      }
+    )
   };
+  const handleVisit = () => {
+    dispatch(changePage())
+  }
   return (
     <View style={styles.loginSection}>
+      <Text style={styles.aboveTitle}>旅游日记平台</Text>
       <Text style={styles.loginTitle}>用户登录</Text>
       <FormItem
         required
@@ -98,6 +118,7 @@ export default LoginScreen = ({ navigation }) => {
       </View>
       <View style={styles.subButton}>
         <Text style={styles.subButtonText} onPress={handlelogin}>新用户注册</Text>
+        <Text style={styles.subButtonText} onPress={handleVisit}>以游客身份访问</Text>
       </View>
     </View>
   )
@@ -108,6 +129,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 15,
     paddingRight: 15,
+    marginTop: 150
+  },
+  aboveTitle: {
+    textAlign: 'center',
+    fontSize: 50,
+    color: THEME_LABEL
   },
   loginTitle: {
     fontSize: 28,
@@ -125,6 +152,13 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 10,
     borderColor: "#2196F3"
+  },
+  subButton: {
+    marginTop: 15,
+    marginRight: 15,
+    marginLeft: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   subButtonText: {
     color: "#1500EF",

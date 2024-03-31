@@ -36,15 +36,16 @@ UsersRouter.post('/login', async (req, res) => {
         if (!!isValid) {
           const token = jwt.sign({
             id: String(user._id),
-          }, SECRET, { expiresIn: "0.5d" }) // 设置token失效时间为30秒
-          return res.send({
+          }, SECRET, { expiresIn: "0.5d" }) // 设置token失效时间为半天
+            res.header("Authorization", token)  // token放在请求头中
+            res.send({
             message: "登录成功",
-            user,
-            token: token
+            user,  // 用户信息不一定要返回，里面包含密码的密文
+            // token: token
           })
         } else {
-          return res.send({
-            message: "密码无效"
+            res.send({
+            message: "密码错误"
           })
         }
       }
@@ -52,38 +53,9 @@ UsersRouter.post('/login', async (req, res) => {
   }
 })
 
-// 注册接口
-// UsersRouter.post('/register', upload.single('file'), async (req, res) => {
-//   try {
-//     console.log(req)
-//     const user = await User.create({
-//       username: req.body.username,
-//       nickname: req.body.nickname,
-//       password: req.body.password,
-//       avatar: req.file
-//     })
-//     console.log(user.avatar)
-//     await user.save();  // 更新文档
-//     res.send("注册成功");
-//   }
-//   catch (e) {
-//     console.log(e)
-//     res.send({ message: "用户名已存在" });
-//   }
-// })
 
-// UsersRouter.post('/uploadAvater', upload.single('file'), async (req, res) => {
-//   res.send({
-//     code: 200,
-//     data: {
-//       ...req.file,
-//       filename: 'upload/' + req.file.filename
-//     },
-//     message: '上传成功',
-//   })
-// })
 UsersRouter.post('/upload/avatar', userController.upload)
-
-// UsersRouter.post('/register', userController.register)
+// 注册接口
+UsersRouter.post('/register', userController.register)
 
 module.exports = UsersRouter

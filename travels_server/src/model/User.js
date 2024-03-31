@@ -5,17 +5,22 @@ const bcrypt = require('bcrypt')
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
+    required: true,
     unique: true
   },
   nickname: {
     type: String,
-    unique: true
+    required: true
   },
   password: {
     type: String,
-    // set(val) {
-    //   return bcrypt.hashSync(val, 10)  //加密, 密码在数据库中不应是明文存储
-    // },
+    set(val) {
+      return bcrypt.hashSync(val, 10)  //加密, 密码在数据库中不应是明文存储
+    },
+    select: false
+  },
+  avatar: {
+    type: String,
     select: false
   },
   createTime: {

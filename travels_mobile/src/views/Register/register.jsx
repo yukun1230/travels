@@ -42,8 +42,6 @@ export default function RegisterScreen() {
       nickname: '',
       password: '',
       passwordsure: '',
-      // avatar: '',  // 图片的地址
-      // file: null   // 图片内容本身
     },
   });
   const [passwordValue, setPasswordValue] = useState('');
@@ -52,23 +50,21 @@ export default function RegisterScreen() {
   const [image, setImage] = useState(null);
   const [file, setFile] = useState({ file: null })
 
-
-  // 选取图片，并且上传
+  // 选取图片
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    const formData = new FormData();
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,  // 所有多媒体文件
       allowsEditing: true,  // 是否允许编辑
       aspect: [1, 1],  // 编辑比例
-      quality: 1,  // 图片质量
+      quality: 0.3,  // 图片质量
     });
     // console.log(result);
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      let uriArr = uri.split('/')
+      let uriArr = uri.split('/');
       let name = uriArr[uriArr.length - 1]
-      setImage(uri); // 用于回显
+      setImage(uri); // 头像回显
       setFile({
         file: {
           uri,
@@ -76,20 +72,6 @@ export default function RegisterScreen() {
           type: 'image/jpeg',
         }
       })
-      formData.append('file',{
-        uri,
-        name,
-        type:'image/jpeg'
-      }
-      )
-      console.log(formData)
-      axios.post(NGROK_URL + '/users/upload/avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' // 告诉后端，这个是文件上传
-        }
-      }).then(
-        res => console.log(res)
-      )
     }
 
   };
@@ -104,7 +86,7 @@ export default function RegisterScreen() {
       params.append(i, data[i]);
     };
     console.log(params)
-    axios.post(NGROK_URL + '/users/register', data, {
+    axios.post(NGROK_URL + '/users/register', params, {
       headers: {
         'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
       }
@@ -117,11 +99,13 @@ export default function RegisterScreen() {
         }
         Alert.alert("注册成功")
       }
+    ).catch(
+      err=>console.log(err)
     )
   };
   return (
     <ScrollView style={styles.wrapper}>
-      <Text style={styles.title}>注册界面</Text>
+      <Text style={styles.title}>用户注册</Text>
       <FormItem
         required
         name="username"

@@ -1,4 +1,4 @@
-<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+{/* <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
   <Input
     style={{ flex: 1 }}
     value={value}
@@ -16,4 +16,26 @@
         <Image source={require('../../../assets/unshow.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} />
     }
   </TouchableWithoutFeedback>
-</View>
+</View> */}
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const storeData = async (value) => {
+  try {
+    await AsyncStorage.setItem('my-key', value);
+  } catch (e) {
+    // saving error
+  }
+};
+const getData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('my-key');
+    if (value !== null) {
+      // value previously stored
+    }
+  } catch (e) {
+    // error reading value
+  }
+};
+storeData('yukun')
+console.log(getData())
+// getData()
