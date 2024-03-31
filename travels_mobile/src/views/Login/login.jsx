@@ -44,8 +44,6 @@ export default LoginScreen = ({ navigation }) => {
       res => {
         Alert.alert(res.data.message);
         console.log(res.data)
-        // console.log(message)
-        
       }
     )
   };

@@ -23,7 +23,7 @@ export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        { !pageShow &&
+        {!pageShow &&
           <Stack.Navigator>
             <Stack.Screen name="登录界面" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="注册界面" component={RegisterScreen} options={{ headerTitle: '' }} />
