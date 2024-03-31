@@ -73,9 +73,6 @@ export default function App() {
     </PaperProvider>
     
   );
-<<<<<<< HEAD
-}
-=======
   
 }
 
@@ -86,4 +83,3 @@ export default function App() {
 //     "type": "maxLength" 
 //   } 
 // }
->>>>>>> 3b48b261b5a45b3727dcb3edb56351166a1ae6e4
