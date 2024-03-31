@@ -1,0 +1,24 @@
+{
+  "userInfoList": [
+    {
+      "user_id": 1,
+      "username": "管理员",
+      "account": "admin",
+      "password": "123",
+      "type": "管理员",
+      "type_id": "1",
+      "id": "e6c5",
+      "token": "yyy"
+    },
+    {
+      "user_id": 2,
+      "username": "审核人员",
+      "account": "user",
+      "password": "111",
+      "type": "审核人员",
+      "type_id": 2,
+      "id": "b8dc",
+      "token": "yyy"
+    }
+  ]
+}

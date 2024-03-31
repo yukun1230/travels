@@ -5,10 +5,6 @@ import { useDispatch } from "react-redux";
 import { fetchLogin } from "@/store/modules/user"; 
 import { useNavigate } from "react-router-dom";
 
-const initialValues = {
-  remember: true,
-  // ...getLocalUser(),
-}
 const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -25,7 +21,6 @@ const Login = () => {
         <Form
           name="normal_login"
           className="login-form"
-          initialValues={initialValues}
           onFinish={onFinish}
           validateTrigger="onBlur"
         >
@@ -48,11 +43,11 @@ const Login = () => {
               placeholder="Password"
             />
           </Form.Item>
-          <Form.Item>
+          {/* <Form.Item>
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>记住我</Checkbox>
             </Form.Item>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item className="login-btn">
             <Button
               type="primary"
