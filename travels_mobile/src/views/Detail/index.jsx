@@ -10,7 +10,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 // const DetailScreen = ({ navigation, route }) => {
 //   // 使用传递过来的cardId
 //   const { cardId } = route.params;
-const DetailScreen = ({ navigation }) => {
+const DetailScreen = () => {
+  const navigation = useNavigation();
   // useFocusEffect是React Navigation提供的一个Hook。它的作用是当屏幕获得或失去焦点时执行一些操作。
   useFocusEffect(
     // useCallback确保只有当navigation对象变化时，传递给useFocusEffect的函数才会改变。

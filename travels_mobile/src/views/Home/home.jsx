@@ -1,15 +1,12 @@
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Modal, StyleSheet } from 'react-native'
-import { PureComponent, Component } from 'react'
 import Button from 'apsl-react-native-button'
 import imgList from './imgList'
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
-import { changePage } from '../../../appSlice';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import React, { useState, useEffect, useRef } from 'react';
-import '../../../Index'
 
 const window = Dimensions.get('window')
 
@@ -57,7 +54,7 @@ const Card = ({ item, index, columnIndex }) => {
     </View>
   )
 }
-// const dispatch = useDispatch();
+
 const Header = () => {
   // 头部组件
   const navigation = useNavigation();
@@ -66,8 +63,10 @@ const Header = () => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
   const dispatch = useDispatch();
+  // 退出登录
   const onLogout = () => {
-    dispatch(changePage())
+    // dispatch(changePage())
+    navigation.navigate("登录界面")
   }
 
   return (

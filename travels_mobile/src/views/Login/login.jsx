@@ -16,7 +16,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import '../../util/axios.config'
-import {storeToken, getToken} from '../../util/tokenRelated'
+import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../../appSlice';
 
@@ -25,6 +25,8 @@ export default LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const handlelogin = () => {
     // 跳转页面
+    
+    // getToken
     navigation.navigate("注册界面")
   }
   const {
@@ -39,7 +41,8 @@ export default LoginScreen = ({ navigation }) => {
   });
 
   const onSubmit = async (data) => {
-    // const message = await getToken()
+    const message = await removeToken()
+    console.log(message)
     axios.post(NGROK_URL + '/users/login', data).then(
       res => {
         Alert.alert(res.data.message);
@@ -48,7 +51,8 @@ export default LoginScreen = ({ navigation }) => {
     )
   };
   const handleVisit = () => {
-    dispatch(changePage())
+    // dispatch(changePage())
+    navigation.navigate("主界面")
   }
   return (
     <View style={styles.loginSection}>
