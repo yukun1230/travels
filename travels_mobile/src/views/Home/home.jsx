@@ -86,7 +86,7 @@ const Header = () => {
             <View >
               <TouchableOpacity onPress={openMenu}>
                 <Image
-                  source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+                  source={{ uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
                   style={{ width: 36, height: 36, borderRadius: 18 }}
                 />
               </TouchableOpacity>
