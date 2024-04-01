@@ -5,8 +5,13 @@ import imgList from './imgList'
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
-import { useDispatch } from 'react-redux'
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector,useDispatch } from 'react-redux';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
+import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
+import { setUser, clearUser } from '../../redux/userSlice';
+
 
 const window = Dimensions.get('window')
 
@@ -55,20 +60,89 @@ const Card = ({ item, index, columnIndex }) => {
   )
 }
 
+
+const AvatarMenu = () => {
+  const navigation = useNavigation();
+  const [visible, setVisible] = useState(false);
+  const dispatch = useDispatch();
+  const userInfo = useSelector(state => state.user);
+  const [token, setToken] = useState(null);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = await getToken();
+      setToken(token); 
+      if (token) {
+        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
+          .then(res => {
+            const { avatar, nickname, _id } = res.data;
+            // const nickname = res.data.avatar;
+            // 使用 dispatch 将用户信息保存到 Redux
+            dispatch(setUser({
+              avatar: avatar,
+              nickname: nickname,
+              id: _id
+            }));
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+    };
+    fetchUserInfo();
+  }, [dispatch]); // 添加 dispatch 到依赖项列表，保证稳定性
+
+  const onLogout = () => {
+    removeToken();
+    dispatch(clearUser());
+    navigation.navigate("登录界面");
+  };
+
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <TouchableOpacity onPress={openMenu}>
+          <Image
+            source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
+            style={{ width: 36, height: 36, borderRadius: 18 }}
+          />
+        </TouchableOpacity>
+      }
+      anchorPosition={'bottom'}
+      contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+    >
+      {/* Menu items */}
+      {token ? (
+        <>
+          <Menu.Item title="写游记" leadingIcon="square-edit-outline" onPress={() => { navigation.navigate('游记发布'); closeMenu(); }} />
+          <Divider />
+          <Menu.Item title="我的游记" leadingIcon="account" onPress={() => { navigation.navigate('我的游记'); closeMenu(); }} />
+          <Divider />
+          <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
+        </>
+      ) : (
+          <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
+      )}
+    </Menu>
+  );
+};
+
+
+
+
 const Header = () => {
   // 头部组件
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-  const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-  const dispatch = useDispatch();
-  // 退出登录
-  const onLogout = () => {
-    // dispatch(changePage())
-    navigation.navigate("登录界面")
-  }
 
+
+  const dispatch = useDispatch();
+
+  
   return (
     <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16 }}>
       <View
@@ -78,40 +152,7 @@ const Header = () => {
           justifyContent: 'center',
         }}>
         {/* 头像 */}
-        <Menu
-          // 下拉菜单
-          visible={visible}
-          onDismiss={closeMenu}
-          anchor={
-            <View >
-              <TouchableOpacity onPress={openMenu}>
-                <Image
-                  source={{ uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
-                  style={{ width: 36, height: 36, borderRadius: 18 }}
-                />
-              </TouchableOpacity>
-            </View>}
-          anchorPosition={'bottom'}
-          contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
-        >
-          <Menu.Item
-            title="写游记"
-            leadingIcon="square-edit-outline"
-            onPress={() => { navigation.navigate('游记发布'), closeMenu() }}
-          />
-          <Divider />
-          <Menu.Item
-            title="我的游记"
-            leadingIcon="account"
-            onPress={() => { navigation.navigate('我的游记'), closeMenu() }}
-          />
-          <Divider />
-          <Menu.Item
-            title="退出登录"
-            leadingIcon="logout"
-            onPress={onLogout}
-          />
-        </Menu>
+        <AvatarMenu></AvatarMenu>
       </View>
 
       <View style={{ flex: 3 }}>

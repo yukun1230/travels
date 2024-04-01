@@ -7,6 +7,8 @@ import { PaperProvider } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
+import StorageScreen from './src/views/Storage'
+
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +27,7 @@ export default function App() {
               height: 120, // 这里设置你希望的导航条高度
             },
           }} />
+          <Stack.Screen name="本机仓库" component={StorageScreen}  />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -210,7 +210,7 @@ const SecondRoute = () => {
               <Text style={{ marginLeft: 10 }}>收藏用户昵称</Text>
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={() => { }}>
+              <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('本机仓库') }}>
                 <Text style={styles.buttonText}>删除</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, styles.editButton]} onPress={()=>{navigation.navigate('Detail')}}>
