@@ -11,7 +11,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
-
+import LoadingOverlay from '../../components/LoadingOverlay'; 
 
 const window = Dimensions.get('window')
 
@@ -108,12 +108,13 @@ const AvatarMenu = () => {
         <TouchableOpacity onPress={openMenu}>
           <Image
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
+            // source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
             style={{ width: 36, height: 36, borderRadius: 18 }}
           />
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: 32, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* Menu items */}
       {token ? (
@@ -138,13 +139,9 @@ const Header = () => {
   // 头部组件
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-
-
   const dispatch = useDispatch();
-
-  
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16 }}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 56,height:8 }}>
       <View
         style={{
           flex: 1,
@@ -185,7 +182,7 @@ export default HomeScreen = () => {
   const pageSize = 10;
   const loading = useRef(false);
   const listRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadData(1);
@@ -206,6 +203,7 @@ export default HomeScreen = () => {
     if (refreshing) {
       setRefreshing(true);
     }
+    setIsLoading(true);
     setTimeout(() => { // 模拟请求数据
       const newData = imgList.slice((page - 1) * pageSize, page * pageSize).map(img => {
         const { width, height } = img;
@@ -223,6 +221,7 @@ export default HomeScreen = () => {
       setRefreshing(false);
       setNoMore(noMore);
       setInited(true);
+      setIsLoading(false);
     }, refreshing ? 1000 : 500);
   };
 
@@ -233,11 +232,14 @@ export default HomeScreen = () => {
   };
 
   return (
-    <WaterfallFlow
+    <View style={{ flex: 1}}>
+      <LoadingOverlay isVisible={isLoading} />
+      <Header />
+      
+      <WaterfallFlow
       ref={listRef}
       style={{ flex: 1, marginTop: 40 }}
       contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-      ListHeaderComponent={<Header />}
       ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} />}
       ListEmptyComponent={<Empty inited={inited} />}
       data={data}
@@ -260,7 +262,9 @@ export default HomeScreen = () => {
           </View>
         );
       }}
-    />
+      />
+    </View>
+    
   );
 };
 

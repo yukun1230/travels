@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import FormItem from './components/formItem';
+import LoadingOverlay from '../../components/LoadingOverlay';
+import { useNavigation } from '@react-navigation/native'; 
 
 const Input = (props) => {
   return (
@@ -44,11 +46,14 @@ export default function RegisterScreen() {
       passwordsure: '',
     },
   });
+
   const [passwordValue, setPasswordValue] = useState('');
   const [showPassword, setShowPassword] = useState(0)
   const [showPasswordSure, setShowPasswordSure] = useState(0);
   const [image, setImage] = useState(null);
   const [file, setFile] = useState({ file: null })
+  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation()  
 
   // 选取图片
   const pickImage = async () => {
@@ -76,6 +81,7 @@ export default function RegisterScreen() {
   };
 
   const onSubmit = (data) => {
+    
     const params = new FormData();
     delete data.passwordsure   // 删除‘确认密码’
     console.log(NGROK_URL + '/users/register');
@@ -85,6 +91,7 @@ export default function RegisterScreen() {
       params.append(i, data[i]);
     };
     console.log(params)
+    setIsLoading(true);
     axios.post(NGROK_URL + '/users/register', params, {
       headers: {
         'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
@@ -92,18 +99,27 @@ export default function RegisterScreen() {
     }).then(
       res => {
         console.log(res.data);
+        
         if (res.data.message) {
           Alert.alert(res.data.message);
+          setIsLoading(false);
           return
         }
         Alert.alert("注册成功")
+        setIsLoading(false);
+        navigation.navigate('登录界面');
       }
     ).catch(
-      err=>console.log(err)
+      err=>{
+        console.log(err);
+        setIsLoading(false);
+      }
+      
     )
   };
   return (
     <ScrollView style={styles.wrapper}>
+      <LoadingOverlay isVisible={isLoading} />
       <Text style={styles.title}>用户注册</Text>
       <FormItem
         required
