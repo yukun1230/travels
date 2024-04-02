@@ -1,8 +1,7 @@
 import axios from "axios";
-import { getToken } from "./token";
 
 const request = axios.create({
-  baseURL: '',
+  baseURL: 'http://localhost:3004',
   timeout: 5000
 })
 

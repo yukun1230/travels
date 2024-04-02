@@ -1,9 +1,110 @@
-const Layout = () => {
+import React, { useEffect } from 'react';
+import { HomeOutlined,DiffOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Layout, Menu, theme, Popconfirm } from 'antd';
+import './index.scss'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserInfo, clearUserInfo} from '@/store/modules/user';
+
+const { Header, Content, Sider } = Layout;
+const items = [
+  {
+    label: '游记管理',
+    key: '/',
+    icon: <DiffOutlined />,
+  },
+  {
+    label: '数据面板',
+    key: 'home',
+    icon: <HomeOutlined />,
+  }
+]
+
+const TravelLayout = () => {
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  const navigate = useNavigate()
+  // 点击菜单跳转路由
+  const menuClick = (menu) => {
+    navigate(menu.key)
+  }
+  const location = useLocation()
+  const selectedKey = location.pathname
+  const dispatch = useDispatch()
+  // 获取个人信息
+  useEffect(()=>{
+    dispatch(fetchUserInfo())
+  },[dispatch])
+  const name = useSelector(state => {
+    return state.user.userInfo.account
+  })
+  // 退出登录
+  const loginOut = () => {
+    dispatch(clearUserInfo())
+    navigate('/login')
+  }
   return (
-    <div>
-      <h1>Travel Admin</h1>
-    </div>
+    <Layout>
+      <Header className='header'>
+        <div className="logo" />
+        <div className="user-info">
+          <span className="user-name">{name}</span>
+          <span className="user-logout">
+            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消" onConfirm={loginOut}>
+              <LogoutOutlined /> 退出
+            </Popconfirm>
+          </span>
+        </div>
+        {/* <Menu
+          theme="dark"
+          mode="horizontal"
+          defaultSelectedKeys={['2']}
+          items={items1}
+          style={{
+            flex: 1,
+            minWidth: 0,
+          }}
+        /> */}
+      </Header>
+      <Layout>
+        <Sider
+          width={200}
+          style={{
+            background: colorBgContainer,
+          }}
+        >
+          <Menu
+            mode="inline"
+            selectedKeys={selectedKey}
+            style={{
+              height: '100%',
+              borderRight: 0,
+            }}
+            items={items}
+            onClick={menuClick}
+          />
+        </Sider>
+        <Layout
+          style={{
+            padding: '0 24px 24px',
+          }}
+        >
+          <Content
+            style={{
+              padding: 24,
+              margin: 0,
+              minHeight: 280,
+              background: colorBgContainer,
+              borderRadius: borderRadiusLG,
+            }}
+          >
+            <Outlet></Outlet>
+          </Content>
+        </Layout>
+      </Layout>
+    </Layout>
   );
 }
 
-export default Layout;
+export default TravelLayout;

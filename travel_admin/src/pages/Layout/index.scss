@@ -1,0 +1,24 @@
+.ant-layout {
+  height: 100%;
+}
+.header{
+  padding: 0;
+  display: 'flex';
+  align-items: 'center';
+}
+.user-info{
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-right: 20px;
+  color: #fff;
+  
+  .user-name {
+    margin-right: 20px;
+  }
+  
+  .user-logout {
+    display: inline-block;
+    cursor: pointer;
+  }
+}

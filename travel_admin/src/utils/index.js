@@ -1,12 +1,10 @@
 import { request } from "./request";
-import { setKey,getKey,saveToken,getToken,removeKey } from "./token";
+import { saveToken,getToken,removeToken } from "./token";
 
 
 export {
   request,
-  setKey,
-  getKey,
   saveToken,
   getToken,
-  removeKey
+  removeToken
 }
