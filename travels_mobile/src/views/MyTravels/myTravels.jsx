@@ -5,10 +5,57 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider, Card, Title, Paragraph } from 'react-native-paper';
 import {  useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, clearUser } from '../../redux/userSlice';
+import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 
+const AvatarMenu = () => {
+  const navigation = useNavigation();
+  const [visible, setVisible] = useState(false);
+  const dispatch = useDispatch();
+  const userInfo = useSelector(state => state.user);
+  const [token, setToken] = useState(null);
+  const onLogout = () => {
+    removeToken();
+    dispatch(clearUser());
+    navigation.navigate("登录界面");
+  };
 
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
 
-
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <TouchableOpacity onPress={openMenu}>
+          <Image
+            source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
+            // source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+            style={{ width: 36, height: 36, borderRadius: 18 }}
+          />
+        </TouchableOpacity>
+      }
+      anchorPosition={'bottom'}
+      contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+    >
+      {/* Menu items */}
+      {userInfo.id ? (
+        <>
+          <Menu.Item title="逛一逛" leadingIcon="home-outline" onPress={() => { navigation.navigate('首页'); closeMenu(); }} />
+          <Divider />
+          <Menu.Item title="写游记" leadingIcon="square-edit-outline" onPress={() => { navigation.navigate('游记发布'); closeMenu(); }} />
+          <Divider />
+          <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
+        </>
+      ) : (
+        <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
+      )}
+      
+    </Menu>
+  );
+};
 
 
 
@@ -126,43 +173,7 @@ const FirstRoute = () => (
           </View>
         </Card.Actions>
       </Card>
-      <Card style={styles.card}>
-        <View style={styles.topContainer}>
-          <Image
-            source={{ uri: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" }}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Title
-              numberOfLines={1}
-              ellipsizeMode='tail'
-              style={styles.title}
-            >
-              标题可能非常非常长标题标题标题标题标题标题标题标题标题
-            </Title>
-            <Paragraph
-              numberOfLines={3}
-              ellipsizeMode='tail'
-              style={styles.paragraph}
-            >
-              详细信息和描述可能也会很长很长描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述
-            </Paragraph>
-          </View>
-        </View>
-        <Card.Actions style={styles.bottomContainer}>
-          <View style={styles.statusContainer}>
-            <Text style={styles.status}>已通过</Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => { }}>
-              <Text style={styles.buttonText}>删除</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => { }}>
-              <Text style={{ color: '#007BFF' }}>编辑</Text>
-            </TouchableOpacity>
-          </View>
-        </Card.Actions>
-      </Card>
+      
     </ScrollView>
   </View>
 );
@@ -273,40 +284,8 @@ export default function MyTravelsScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <Menu
-          // 下拉菜单
-            visible={visible}
-            onDismiss={closeMenu}
-            anchor={
-              <View >
-                <TouchableOpacity onPress={openMenu}>
-                  <Image
-                    source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
-                    style={styles.avatar}
-                  />
-                </TouchableOpacity>
-              </View>}
-            anchorPosition={'bottom'}
-            contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
-          >
-            <Menu.Item
-              title="逛一逛"
-              leadingIcon="home-outline"
-              onPress={() => { navigation.navigate('首页'), closeMenu() }}
-            />
-            <Divider />
-            <Menu.Item
-              title="写游记"
-              leadingIcon="square-edit-outline"
-              onPress={() => { navigation.navigate('游记发布'), closeMenu() }}
-            />
-            <Divider />
-            <Menu.Item
-              title="退出登录"
-              leadingIcon="logout"
-              onPress={() => console.log('Item 1 pressed')}
-            />
-          </Menu>
+
+          <AvatarMenu></AvatarMenu>
           
           <Text style={styles.nickname}>用户昵称</Text>
         </View>

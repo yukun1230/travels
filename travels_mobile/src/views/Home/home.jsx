@@ -11,7 +11,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
-
+import LoadingOverlay from '../../components/LoadingOverlay'; 
 
 const window = Dimensions.get('window')
 
@@ -114,7 +114,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: 32, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* Menu items */}
       {token ? (
@@ -182,7 +182,7 @@ export default HomeScreen = () => {
   const pageSize = 10;
   const loading = useRef(false);
   const listRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadData(1);
@@ -203,6 +203,7 @@ export default HomeScreen = () => {
     if (refreshing) {
       setRefreshing(true);
     }
+    setIsLoading(true);
     setTimeout(() => { // 模拟请求数据
       const newData = imgList.slice((page - 1) * pageSize, page * pageSize).map(img => {
         const { width, height } = img;
@@ -220,6 +221,7 @@ export default HomeScreen = () => {
       setRefreshing(false);
       setNoMore(noMore);
       setInited(true);
+      setIsLoading(false);
     }, refreshing ? 1000 : 500);
   };
 
@@ -231,7 +233,9 @@ export default HomeScreen = () => {
 
   return (
     <View style={{ flex: 1}}>
+      <LoadingOverlay isVisible={isLoading} />
       <Header />
+      
       <WaterfallFlow
       ref={listRef}
       style={{ flex: 1, marginTop: 40 }}
