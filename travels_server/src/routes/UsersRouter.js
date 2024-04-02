@@ -15,7 +15,6 @@ const userController = require('../controllers/UserController')
 // 获取用户信息
 UsersRouter.get('/', (req, res) => {
   console.log('req对象')
-  // res.send('爱你哟，倩颖!')
 })
 
 // 登录接口

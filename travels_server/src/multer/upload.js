@@ -2,7 +2,7 @@
 const multerConfig = require('./multerConfig')
 const fs = require('fs')
 // 上传到服务器地址
-const BaseURL = 'http://8ihcrq5oru32.ngrok.xiaomiqiu123.top'
+const BaseURL = 'http://5fvskc9y2ble.xiaomiqiu.com'
 // 上传到服务器的目录，小米球
 const imgPath = '/public/avatarUploads/'
 const path = require('path')
