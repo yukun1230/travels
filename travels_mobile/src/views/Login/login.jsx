@@ -41,8 +41,8 @@ export default LoginScreen = ({ navigation }) => {
   });
 
   const onSubmit = async (data) => {
-    const message = await removeToken()
-    console.log(message)
+    // const message = await removeToken()
+    // console.log(message)
     axios.post(NGROK_URL + '/users/login', data).then(
       res => {
         Alert.alert(res.data.message);
