@@ -1,7 +1,7 @@
 // 主页面
 import * as React from 'react';
 import 'react-native-gesture-handler';
-import HomeStack from './HomeStack/index';
+import HomeScreen from './Home/home';
 import MyTravelsScreen from './MyTravels/myTravels';
 import AddTravelsScreen from './AddTravels/addTravels';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -29,7 +29,7 @@ export default function MainScreen() {
         tabBarHideOnKeyboard: 'ture' // 调出键盘tabBar就会隐藏
       })}
     >
-      <Tab.Screen name="首页" component={HomeStack} options={{
+      <Tab.Screen name="首页" component={HomeScreen} options={{
         headerShown: false,
         headerStyle: {
           height: 100,

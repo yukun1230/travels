@@ -19,6 +19,7 @@ import '../../util/axios.config'
 import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../../appSlice';
+import { setUser } from '../../redux/userSlice';
 
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)
@@ -46,7 +47,15 @@ export default LoginScreen = ({ navigation }) => {
     axios.post(NGROK_URL + '/users/login', data).then(
       res => {
         Alert.alert(res.data.message);
-        console.log(res.data)
+        console.log(res.data);
+        const { _id, avatar, nickname } = res.data.user;
+        // 使用 dispatch 将用户信息保存到 Redux
+        dispatch(setUser({
+          id: _id,
+          avatar: avatar,
+          nickname: nickname,
+        }));
+        handleVisit()
       }
     )
   };

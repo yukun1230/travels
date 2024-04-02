@@ -5,6 +5,13 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider, Card, Title, Paragraph } from 'react-native-paper';
 import {  useState } from 'react'
+
+
+
+
+
+
+
 const FirstRoute = () => (
   <View style={[styles.scene]} >
     <ScrollView>
@@ -160,52 +167,64 @@ const FirstRoute = () => (
   </View>
 );
 
-const SecondRoute = () => (
-  <View style={[styles.scene]} >
-    <ScrollView>
-      <Card style={styles.card}>
-        <View style={styles.topContainer}>
-          <Image
-            source={{ uri: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" }}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Title
-              numberOfLines={1}
-              ellipsizeMode='tail'
-              style={styles.title}
-            >
-              标题可能非常非常长标题标题标题标题标题标题标题标题标题
-            </Title>
-            <Paragraph
-              numberOfLines={3}
-              ellipsizeMode='tail'
-              style={styles.paragraph}
-            >
-              详细信息和描述可能也会很长很长描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述
-            </Paragraph>
-          </View>
-        </View>
-        <Card.Actions style={styles.bottomContainer}>
-          <View style={styles.likeUser}>
+
+
+
+const SecondRoute = () => {
+  const navigation = useNavigation();
+  return (
+    <View style={[styles.scene]} >
+      <ScrollView>
+        <Card style={styles.card}>
+          <View style={styles.topContainer}>
             <Image
-              source={{ uri: "https://img0.baidu.com/it/u=1303418658,2016567117&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=889" }}
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 15,}}/>
-            <Text style={{marginLeft:10}}>收藏用户昵称</Text>
+              source={{ uri: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" }}
+              style={styles.image}
+            />
+            <View style={styles.textContainer}>
+              <Title
+                numberOfLines={1}
+                ellipsizeMode='tail'
+                style={styles.title}
+              >
+                标题可能非常非常长标题标题标题标题标题标题标题标题标题
+              </Title>
+              <Paragraph
+                numberOfLines={3}
+                ellipsizeMode='tail'
+                style={styles.paragraph}
+              >
+                详细信息和描述可能也会很长很长描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述
+              </Paragraph>
+            </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => { }}>
-              <Text style={{ color: '#007BFF' }}>详情</Text>
-            </TouchableOpacity>
-          </View>
-        </Card.Actions>
-      </Card>
-    </ScrollView>
-  </View>
-);
+          <Card.Actions style={styles.bottomContainer}>
+            <View style={styles.likeUser}>
+              <Image
+                source={{ uri: "https://img0.baidu.com/it/u=1303418658,2016567117&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=889" }}
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 15,
+                }} />
+              <Text style={{ marginLeft: 10 }}>收藏用户昵称</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('本机仓库') }}>
+                <Text style={styles.buttonText}>删除</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.editButton]} onPress={()=>{navigation.navigate('Detail')}}>
+                <Text style={{ color: '#007BFF' }}>详情</Text>
+              </TouchableOpacity>
+            </View>
+          </Card.Actions>
+        </Card>
+      </ScrollView>
+    </View>
+  )
+}
+  
+ 
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -221,6 +240,7 @@ export default function MyTravelsScreen() {
     { key: 'first', title: '我的游记' },
     { key: 'second', title: '我的收藏' },
   ]);
+  
   const renderTabBar = props => (
     <TabBar
       {...props}
