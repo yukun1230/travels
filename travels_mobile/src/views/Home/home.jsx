@@ -108,6 +108,7 @@ const AvatarMenu = () => {
         <TouchableOpacity onPress={openMenu}>
           <Image
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
+            // source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
             style={{ width: 36, height: 36, borderRadius: 18 }}
           />
         </TouchableOpacity>
@@ -138,13 +139,9 @@ const Header = () => {
   // 头部组件
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-
-
   const dispatch = useDispatch();
-
-  
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16 }}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 56,height:8 }}>
       <View
         style={{
           flex: 1,
@@ -233,11 +230,12 @@ export default HomeScreen = () => {
   };
 
   return (
-    <WaterfallFlow
+    <View style={{ flex: 1}}>
+      <Header />
+      <WaterfallFlow
       ref={listRef}
       style={{ flex: 1, marginTop: 40 }}
       contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-      ListHeaderComponent={<Header />}
       ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} />}
       ListEmptyComponent={<Empty inited={inited} />}
       data={data}
@@ -260,7 +258,9 @@ export default HomeScreen = () => {
           </View>
         );
       }}
-    />
+      />
+    </View>
+    
   );
 };
 
