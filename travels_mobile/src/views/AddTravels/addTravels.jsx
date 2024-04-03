@@ -15,8 +15,10 @@ import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { NGROK_URL } from '../../config/ngrok'
+import { NGROK_URL } from '../../config/ngrok';
 import '../../util/axios.config';
+import { useSelector,useDispatch } from 'react-redux';
+import { setUser, clearUser } from '../../redux/userSlice';
 import LoadingOverlay from '../../components/LoadingOverlay';
 
 
@@ -24,28 +26,46 @@ export default addTravelsScreen = () => {
   // 数组来保存图片uri
   const [image, setImage] = useState([]);
   // 数组用于传到后端
-  const [file, setFile] = useState({ file: null });
+  const [file, setFile] = useState([]); 
+  // 数组用于存储图片的长度和宽度
+  const [dimension, setDimension] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const userInfo = useSelector(state => state.user); // 获取保存的用户信息
   // 选取图片，异步操作
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,  // 所有多媒体文件
-      // allowsEditing: true,  // 是否允许编辑
+      // allowsEditing: true,  // 是否允许编辑，和图片多选是矛盾的
       allowsMultipleSelection: true,
       // aspect: [1, 1],  // 编辑比例
-      quality: 0.3,  // 图片质量
+      quality: 0.5,  // 图片质量
     });
     if (!result.canceled) {
-      let uri = [];
+      let uri_image = []; // 图像uri，用于回显
+      let myform = [];   // 用于存数据库，图片信息uri、name、type
+      let mydimension = [];
       for (let i = 0; i < result.assets.length; i++) {
-        uri.push(result.assets[i].uri);
+        let uri = result.assets[i].uri;
+        let uriArr = uri.split('/');
+        let name = uriArr[uriArr.length - 1];
+        let width = result.assets[i].width;
+        let height = result.assets[i].height;
+        uri_image.push(result.assets[i].uri);
+        myform.push({ 
+          uri,
+          name,
+          type: 'image/jpeg',
+        });
+        mydimension.push({
+          name,
+          width,
+          height
+        })
       }
-      setImage([...image, ...uri]); // 用于头像回显
-      // console.log(result.assets)
-      setFile({ file: result.assets })  // 用于发送到后端
+      setImage([...image, ...uri_image]); // 头像回显
+      setFile(myform)  // 用于发送到后端,图片信息uri、name、type
+      setDimension(mydimension)  // 用于发送到后端，图片的宽度和高度信息
     }
-    // console.log("文件：", file)
   };
 
   const {
@@ -58,65 +78,67 @@ export default addTravelsScreen = () => {
       content: ''
     },
   });
+  // 删除照片操作
   const deletePhoto = async (uri) => {
     let index = image.indexOf(uri);
     let myArray = [...image]
-    let fileArray = [...file.file]
+    let fileArray = [...file]
+    let dimensionArray = [...dimension]
     if (index !== -1) {
       myArray.splice(index, 1);
-      fileArray.splice(index, 1)
-    }
-    setImage(myArray)
-    setFile({file: fileArray})
+      fileArray.splice(index, 1);
+      dimensionArray.splice(index, 1);
+    };
+    setImage(myArray);
+    setFile(fileArray);
+    setDimension(dimensionArray);
   }
 
   const onSubmit = async (data) => {
-    const params = new FormData();
-    data = { ...file, ...data }
-    console.log(data)
+    let params = new FormData();
+    // 添加游记的图片
+    for (let item of file) {
+      params.append('file', item);
+    };
+    // 添加游记的标题和内容
     for (let i in data) {
       params.append(i, data[i]);
     };
+    // 添加图片信息
+    for (let i = 0; i < dimension.length; i++) {
+      params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`)
+    };
+    // 添加用户信息
+    for (let i in userInfo) {
+      params.append(i, userInfo[i])
+    }
+    console.log("params", params);
     setIsLoading(true);
-    console.log(params);
     axios.post(NGROK_URL + '/travels/upload', params, {
       headers: {
         'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
       }
     }).then(
       res => {
-        console.log(res.data);
-        if (res.data.message) {
-          Alert.alert(res.data.message);
-          setIsLoading(false);
-          return
-        }
-        Alert.alert("注册成功")
+        // console.log(res.data);
+        Alert.alert(res.data.message);
         setIsLoading(false);
       }
     ).catch(
-      err=>{
+      err => {
         console.log(err);
         setIsLoading(false);
       }
     )
-    // axios.post(NGROK_URL + '/users/login', data).then(
-    //   res => {
-    //     Alert.alert(res.data.message);
-    //     console.log(res.data)
-    //   }
-    // )
-    // console.log("文件：", file)
-    
   };
   return (
     <View style={styles.aboveAll}>
       <LoadingOverlay isVisible={isLoading} />
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {image.map(item => (
-          <View style={styles.photo_Container} key={item.id} >
+          <View style={styles.photo_Container} key={item} >
             <TouchableOpacity style={styles.delPhoto} onPress={() => deletePhoto(item)}>
-              <Text style={{ color: "white", fontSize: 20 }}>×</Text>
+              <Text style={{ color: "white", fontSize: 20, height: 20, marginBottom: 9 }}>×</Text>
             </TouchableOpacity>
             <Image
               source={{ uri: item }}
@@ -124,7 +146,6 @@ export default addTravelsScreen = () => {
             />
           </View>
         ))}
-
         <TouchableOpacity  //添加游记的图标
           style={styles.icon}
           onPress={pickImage}
@@ -248,7 +269,7 @@ const styles = StyleSheet.create({
   photo_Container: {
     width: 98,
     height: 98,
-    borderRadius: 10,
+    borderRadius: 9,
     borderWidth: 1,
     position: "relative",
     // justifyContent: 'center',
@@ -261,9 +282,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
     position: 'absolute',
     zIndex: 1,
-    width: 25,
-    height: 25,
-    borderRadius: 8,
+    width: 22,
+    height: 22,
+    borderBottomLeftRadius: 10,
+    borderTopRightRadius: 9,
     justifyContent: 'center',
     alignItems: 'center'
   },
