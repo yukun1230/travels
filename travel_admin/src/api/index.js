@@ -1,5 +1,6 @@
 import userData from '@/mock/data.json'
 import { message } from "antd";
+import {getToken} from "@/utils"
 
 const userList = userData.userInfoList
 
@@ -17,5 +18,14 @@ function loginAPI(userForm) {
     }, 100);
   })
 }
-
-export {loginAPI}
+// 获取个人信息
+function getProfileAPI(){
+  const token = getToken()
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      const info = userList.find((u) => u.token === token);
+      return res(info);
+    }, 100);
+  })
+}
+export {loginAPI, getProfileAPI}
