@@ -16,13 +16,17 @@ import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-import '../../util/axios.config'
+import '../../util/axios.config';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 
 export default addTravelsScreen = () => {
-  // 数组来保存图片
+  // 数组来保存图片uri
   const [image, setImage] = useState([]);
-  // 选取图片
+  // 数组用于传到后端
+  const [file, setFile] = useState({ file: null });
+  const [isLoading, setIsLoading] = useState(false);
+  // 选取图片，异步操作
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -35,21 +39,15 @@ export default addTravelsScreen = () => {
     if (!result.canceled) {
       let uri = [];
       for (let i = 0; i < result.assets.length; i++) {
-        // console.log(result.assets[i])
         uri.push(result.assets[i].uri);
       }
-      // let uriArr = uri.split('/');
-      // let name = uriArr[uriArr.length - 1];
       setImage([...image, ...uri]); // 用于头像回显
-      // setFile({
-      //   file: {
-      //     uri,
-      //     name,
-      //     type: 'image/jpeg',
-      //   }
-      // })
+      // console.log(result.assets)
+      setFile({ file: result.assets })  // 用于发送到后端
     }
+    // console.log("文件：", file)
   };
+
   const {
     control,
     handleSubmit,
@@ -61,34 +59,59 @@ export default addTravelsScreen = () => {
     },
   });
   const deletePhoto = async (uri) => {
-    // console.log(uri)
     let index = image.indexOf(uri);
-    let myArray = image
+    let myArray = [...image]
+    let fileArray = [...file.file]
     if (index !== -1) {
       myArray.splice(index, 1);
+      fileArray.splice(index, 1)
     }
-    // console.log(myArray)
     setImage(myArray)
-    console.log(image)
+    setFile({file: fileArray})
   }
 
-  useEffect(() => {
-    // 在状态变化后手动触发重新渲染
-    // 这将确保渲染结果能够及时更新
-    console.log('Image state has changed:', image);
-  }, [image]);
-
   const onSubmit = async (data) => {
+    const params = new FormData();
+    data = { ...file, ...data }
+    console.log(data)
+    for (let i in data) {
+      params.append(i, data[i]);
+    };
+    setIsLoading(true);
+    console.log(params);
+    axios.post(NGROK_URL + '/travels/upload', params, {
+      headers: {
+        'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
+      }
+    }).then(
+      res => {
+        console.log(res.data);
+        if (res.data.message) {
+          Alert.alert(res.data.message);
+          setIsLoading(false);
+          return
+        }
+        Alert.alert("注册成功")
+        setIsLoading(false);
+      }
+    ).catch(
+      err=>{
+        console.log(err);
+        setIsLoading(false);
+      }
+    )
     // axios.post(NGROK_URL + '/users/login', data).then(
     //   res => {
     //     Alert.alert(res.data.message);
     //     console.log(res.data)
     //   }
     // )
-    console.log(data)
+    // console.log("文件：", file)
+    
   };
   return (
     <View style={styles.aboveAll}>
+      <LoadingOverlay isVisible={isLoading} />
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {image.map(item => (
           <View style={styles.photo_Container} key={item.id} >

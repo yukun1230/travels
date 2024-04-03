@@ -81,12 +81,11 @@ export default function RegisterScreen() {
   };
 
   const onSubmit = (data) => {
-    
     const params = new FormData();
     delete data.passwordsure   // 删除‘确认密码’
     console.log(NGROK_URL + '/users/register');
     data = { ...file, ...data }
-    // console.log(data);
+    console.log(data);
     for (let i in data) {
       params.append(i, data[i]);
     };

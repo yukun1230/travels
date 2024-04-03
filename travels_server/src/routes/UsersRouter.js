@@ -72,7 +72,7 @@ UsersRouter.get('/getUserInfo', auth, async (req,res) => {
   }
 })
 
-
+//测试接口，用于上传头像
 UsersRouter.post('/upload/avatar', userController.upload)
 // 注册接口
 UsersRouter.post('/register', userController.register)

@@ -1,4 +1,4 @@
-const uploadAvatar = require('../multer/upload')
+const {uploadAvatar} = require('../multer/upload')
 const { User } = require('../model/User');
 // 用户的逻辑控制器
 class UserController {
@@ -15,7 +15,7 @@ class UserController {
     }
   }
   async register(req, res) {     
-    // console.log(req.body)
+    console.log(req.body)
     try {
       // 报错了，但是无法catch到
       const uploadRes = await uploadAvatar(req, res);

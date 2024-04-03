@@ -19,14 +19,13 @@ const hanldeImgDelAndRename = (id, filename, dirPath) => {
       const currentImgName = path.basename(files[i])
       // 图片的名称数组：[时间戳, id, 后缀]
       const imgNameArr = currentImgName.split('.')
-
-      // TODO 先查询该id命名的文件是否存在，有则删除
+      // 先查询该id命名的文件是否存在，有则删除
       if (imgNameArr[1] === id) {
         const currentImgPath = dirPath + '/' + currentImgName
         fs.unlink(currentImgPath, (err) => { })
       }
 
-      // TODO 根据新存入的文件名(时间戳.jpg)，找到对应文件，然后重命名为: 时间戳.id.jpg
+      // 根据新存入的文件名(时间戳.jpg)，找到对应文件，然后重命名为: 时间戳.id.jpg
       if (currentImgName === filename) {
         const old_path = dirPath + '/' + currentImgName
         const new_path = dirPath + '/' + imgNameArr[0] + '.' + id + path.extname(files[i])
@@ -37,7 +36,28 @@ const hanldeImgDelAndRename = (id, filename, dirPath) => {
   })
 }
 
-// 封装上传图片的接口
+// 对图片进行重命名
+// const hanldeImgRename = (filename, dirPath) => {
+//   // TODO 查找该路径下的所有图片文件
+//   fs.readdir(dirPath, (err, files) => {
+//     for (let i in files) {
+//       // 当前图片的名称
+//       const currentImgName = path.basename(files[i])
+//       // 图片的名称数组：[时间戳, 后缀]
+//       const imgNameArr = currentImgName.split('.')
+
+//       // 根据新存入的文件名(时间戳.jpg)，找到对应文件，然后重命名为: 时间戳.id.jpg
+//       if (currentImgName === filename) {
+//         const old_path = dirPath + '/' + currentImgName
+//         const new_path = dirPath + '/' + imgNameArr[0] + '.' + path.extname(files[i])
+//         // 重命名该文件
+//         fs.rename(old_path, new_path, (err) => { })
+//       }
+//     }
+//   })
+// }
+
+// 封装上传单图片的接口
 function uploadAvatar(req, res) {
   return new Promise((resolve, reject) => {
     multerConfig.single('file')(req, res, function (err) {  // 单文件
@@ -59,4 +79,28 @@ function uploadAvatar(req, res) {
   })
 }
 
-module.exports = uploadAvatar
+// 封装上传多文件的接口
+function uploadMultiPhoto(req, res) {
+  console.log(req.file);
+  let returnData = [];
+  return new Promise((resolve, reject) => {
+    multerConfig.array('file')(req, res, function (err) {  // 多文件
+      if (err) {
+        reject(err)
+      } else {
+        for (let i = 0; i < req.file.filename.length; i++) {
+          let img = req.file[i].filename.split('.')
+          returnData.push({
+            uri: BaseURL + imgPath + img[0] + '.' + img[1],
+            height: req.file[i].height,
+            width: req.file[i].width
+          })
+        }
+        // 拼接成完整的服务器静态资源图片路径
+        resolve(returnData)
+      }
+    })
+  })
+}
+
+module.exports = { uploadAvatar, uploadMultiPhoto }
