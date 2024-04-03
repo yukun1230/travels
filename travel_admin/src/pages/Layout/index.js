@@ -85,22 +85,8 @@ const TravelLayout = () => {
             onClick={menuClick}
           />
         </Sider>
-        <Layout
-          style={{
-            padding: '0 24px 24px',
-          }}
-        >
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Outlet></Outlet>
-          </Content>
+        <Layout className='content'>
+          <Outlet></Outlet>
         </Layout>
       </Layout>
     </Layout>
