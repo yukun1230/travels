@@ -77,6 +77,7 @@ const AvatarMenu = () => {
             const { avatar, nickname, _id } = res.data;
             // const nickname = res.data.avatar;
             // 使用 dispatch 将用户信息保存到 Redux
+            // console.log(res.data);
             dispatch(setUser({
               avatar: avatar,
               nickname: nickname,
