@@ -115,6 +115,8 @@ export default addTravelsScreen = () => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {image.map(item => (
           <View style={styles.photo_Container} key={item.id} >
+            {/* {image.map((item,index) => (
+          <View style={styles.photo_Container} key={index} > */}
             <TouchableOpacity style={styles.delPhoto} onPress={() => deletePhoto(item)}>
               <Text style={{ color: "white", fontSize: 20 }}>×</Text>
             </TouchableOpacity>

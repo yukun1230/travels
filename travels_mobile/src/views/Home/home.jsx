@@ -13,6 +13,7 @@ import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
 import LoadingOverlay from '../../components/LoadingOverlay'; 
 
+
 const window = Dimensions.get('window')
 
 const Card = ({ item, index, columnIndex }) => {
@@ -185,6 +186,21 @@ export default HomeScreen = () => {
   const listRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // 控制返回顶部按钮
+  const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    if (scrollY > 800) { // 假设滚动超过100单位距离显示按钮
+      setShowScrollToTopButton(true);
+    } else {
+      setShowScrollToTopButton(false);
+    }
+  };
+  const scrollToTop = () => {
+    listRef.current.scrollToOffset({ animated: true, offset: 0 });
+  };
+
+
   useEffect(() => {
     loadData(1);
 
@@ -246,6 +262,8 @@ export default HomeScreen = () => {
       data={data}
       numColumns={2}
       initialNumToRender={10}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       onEndReached={onEndReached}
       refreshing={refreshing}
       onRefresh={() => loadData(1, true)}
@@ -264,6 +282,18 @@ export default HomeScreen = () => {
         );
       }}
       />
+
+      {
+        // 返回顶部按钮
+        showScrollToTopButton &&
+        <TouchableOpacity
+          onPress={scrollToTop}
+          style={styles.scrollToTopButton}
+        >
+          <AntDesign name="arrowup" size={20} color="white" />
+          <Text style={styles.buttonText}>顶部</Text>
+        </TouchableOpacity>
+      }
     </View>
     
   );
@@ -315,3 +345,20 @@ const FadeImage = (props) => {
   );
 };
 
+
+
+const styles = StyleSheet.create({
+  scrollToTopButton: {
+    alignItems: 'center',
+    position: 'absolute',
+    left: 0,
+    bottom: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+});

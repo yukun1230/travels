@@ -71,7 +71,7 @@ const DetailScreen = () => {
     return (
       <View style={styles.paginationStyle}>
         <Text style={{ color: 'white' }}>
-          <Text style={styles.paginationText}>{index + 1}</Text>/{total}
+          <Text>{index + 1}</Text>/{total}
         </Text>
       </View>
     )
