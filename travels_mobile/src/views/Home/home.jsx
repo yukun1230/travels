@@ -1,7 +1,7 @@
-import WaterfallFlow from 'react-native-waterfall-flow'
-import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Modal, StyleSheet } from 'react-native'
-import Button from 'apsl-react-native-button'
-import imgList from './imgList'
+import WaterfallFlow from 'react-native-waterfall-flow';
+import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import Button from 'apsl-react-native-button';
+import imgList from './imgList';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
@@ -11,7 +11,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
-import LoadingOverlay from '../../components/LoadingOverlay'; 
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 
 const window = Dimensions.get('window')
