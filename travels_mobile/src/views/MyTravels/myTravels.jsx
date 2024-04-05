@@ -238,11 +238,14 @@ export default function MyTravelsScreen() {
       {...props}
       activeColor="rgb(34,150,243)" 
       inactiveColor="gray" 
-      indicatorStyle={{ backgroundColor: "rgb(34, 150, 243)" }} 
+      indicatorStyle={{ backgroundColor: "rgb(34,150,243)",
+        width: '5%',  // 设置指示器宽度为 tab 宽度的 80%
+        marginLeft: '16.5%', // 将指示器向右移动，使得它在 tab 中居中
+     }} 
       style={{
         backgroundColor: 'white', 
-        borderTopWidth: 2, 
-        borderBottomWidth: 2, 
+        // borderTopWidth: 1.5, 
+        borderBottomWidth: 0.1, 
         borderColor: 'grey', 
 
       }}
@@ -293,6 +296,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
+    paddingBottom:0,
     marginTop: 36
   },
   avatar: {
