@@ -6,63 +6,54 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
+import LoadingOverlay from '../../components/LoadingOverlay'; 
 
-// const DetailScreen = ({ navigation, route }) => {
-//   // 使用传递过来的cardId
-//   const { cardId } = route.params;
-const DetailScreen = () => {
-  const navigation = useNavigation();
-  // useFocusEffect是React Navigation提供的一个Hook。它的作用是当屏幕获得或失去焦点时执行一些操作。
-  // useFocusEffect(
-  //   // useCallback确保只有当navigation对象变化时，传递给useFocusEffect的函数才会改变。
-  //   React.useCallback(() => {
-  //     // 当进入详情页时隐藏底部导航
-  //     const parent = navigation.getParent(); //父导航器tabBar
-  //     parent.setOptions({ tabBarStyle: { display: 'none' } });
 
-  //     // 当离开详情页时恢复底部导航
-  //     return () => parent.setOptions({ tabBarStyle: undefined });
-  //   }, [navigation])
-  // );
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
-  //         <TouchableOpacity onPress={() => navigation.goBack()}>
-  //           <Image
-  //             source={require('返回箭头的图片路径')}
-  //             style={{ width: 20, height: 20, marginRight: 10 }}
-  //           />
-  //         </TouchableOpacity>
-  //         {userInfo.avatar && (
-  //           <Image
-  //             source={{ uri: userInfo.avatar }}
-  //             style={{ width: 40, height: 40, borderRadius: 20 }}
-  //           />
-  //         )}
-  //       </View>
-  //     ),
-  //   });
-  // }, [navigation, userInfo]);
+const DetailScreen = ({ navigation, route }) => {
+  // 使用传递过来的cardId
+
+  const [travelDetail, setTravelDetail] = useState(null);
+  const { cardId } = route.params;
+  const [isLoading, setIsLoading] = useState(false);
+
+
 
 
   useEffect(() => {
-    navigation.setOptions({
-      // 设置顶部导航栏左箭头 以及用户头像 昵称
-      headerLeft: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign name="left" size={24} color="black" />
-          </TouchableOpacity>
-          <Image
-            source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
-            style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
-          />
-          <Text style={{ fontSize: 18, marginLeft: 15 }}>用户昵称</Text>
-        </View>
-      ),
-    });
-  }, [navigation]); 
+    setIsLoading(true);
+    axios.get(`${NGROK_URL}/travels/getDetails`, {
+      params: { id: cardId },
+    })
+      .then(res => {
+        setTravelDetail(res.data.travelDetail);
+        // 更新导航栏信息
+        navigation.setOptions({
+          headerLeft: () => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10,marginTop:-16 }}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <AntDesign name="left" size={24} color="black" />
+              </TouchableOpacity>
+              <Image
+                source={{ uri: res.data.travelDetail.userInfo.avatar }}
+                style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
+              />
+              <Text style={{ fontSize: 18, marginLeft: 15 }}>{res.data.travelDetail.userInfo.nickname}</Text>
+            </View>
+          ),
+          // headerStyle: {
+          //   backgroundColor:'blue', // 设置顶部间距
+          //   height:10,
+          // },
+        });
+        setIsLoading(false);
+        console.log(res.data.travelDetail);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }, [cardId, navigation]); 
 
   
 
@@ -79,53 +70,66 @@ const DetailScreen = () => {
 
   return (
     <View style={{ flexDirection: 'column' }}>
-      <ScrollView >
-        <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
-        {/* 轮播图 */}
-        <Swiper style={styles.wrapper}
-          autoplay={true}
-          renderPagination={renderPagination}
-        >
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img1.baidu.com/it/u=1294283076,2285234382&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img0.baidu.com/it/u=2589580882,2038835390&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750" }} style={styles.image} />
-          </View>
-        </Swiper>
-      </View>
-        <View style={{ backgroundColor: "white", flex: 1 ,padding:10}} >
-        <View style={styles.locationContainer}>
-          {/* 地址标签 */}
-          <View style={styles.locationIcon}>
-            <AntDesign name="enviroment" size={18} color="white" />
-          </View>
-          <Text style={styles.locationText}>上海</Text>
-        </View>
-        <View>
-          {/* 标题 */}
-          <Text style={styles.detailTitle}>这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~</Text>
-        </View>
-        <View>
-          {/* 内容 */}
-          <Text style={styles.detailContent}>这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~</Text>
-        </View>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        {/* 留白区域，避免最底部的内容被底部栏挡住 */}
-        <View style={{height:52}}></View> 
-      </View>
+      <LoadingOverlay isVisible={isLoading} />
+      
+      
+      <ScrollView>
+        {travelDetail ? (
+          <>
+            <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
+             <Swiper
+              style={styles.wrapper}
+              autoplay={true}
+              renderPagination={renderPagination}
+            >
+              {travelDetail.photo.map((photo, index) => (
+                <View key={index} style={styles.slide}>
+                  <Image source={{ uri: photo.uri }} style={styles.image} />
+                </View>
+              ))}
+             </Swiper>
+            </View>
+            
+            <View style={{ backgroundColor: "white", flex: 1, padding: 10 }} >
+              
+              {travelDetail.location && <View style={{ flexDirection: 'row' }}>
+                {/* 地址标签 */}
+                {travelDetail.location.country && travelDetail.location.country!=='中国'&& <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.country}</Text>
+                </View>}
+                {travelDetail.location.province && <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.province}</Text>
+                </View>}
+                {travelDetail.location.city && <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.city}</Text>
+                </View>}
+                
+              </View>}
+
+              <View>
+                {/* 标题 */}
+                <Text style={styles.detailTitle}>{travelDetail.title}</Text>
+              </View>
+              <View>
+                {/* 内容 */}
+                <Text style={styles.detailContent}>{travelDetail.content}</Text>
+              </View>
+              {/* 留白区域，避免最底部的内容被底部栏挡住 */}
+              <View style={{ height: 52 }}></View>
+            </View>
+          </>
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </ScrollView>
       <View style={styles.footer}>
           {/* 底部栏 */}
@@ -187,16 +191,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 子元素水平排列
     alignItems: 'center', // 子元素垂直居中
     alignSelf: 'flex-start',
-    marginTop: 15,
+    // marginTop: 0,
     marginLeft: 2,
-    height: 24,
-    borderRadius: 12,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: 'rgb(243,243,243)',
+    marginRight:8,
   },
   locationIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: 'black',
     justifyContent: 'center', // 图标垂直居中
     alignItems: 'center', // 图标水平居中
@@ -204,17 +209,18 @@ const styles = StyleSheet.create({
   },
   locationText: {
     color: 'black', // 文字颜色
-    marginRight: 15, // 文字和右箭头之间的距离
+    marginRight: 10, // 文字和右箭头之间的距离
     fontSize: 12, // 文字大小
     fontWeight: 'bold'
   },
   detailTitle:{
-    marginTop: 15,
+    marginTop: 8,
     fontSize: 20,
     fontWeight: 'bold',
   },
   detailContent:{
     marginTop: 12,
+    minHeight: 160,
     fontSize: 15,
   },
   footer: {

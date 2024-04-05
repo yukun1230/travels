@@ -16,7 +16,7 @@ const UnLoginScreen = () => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => { navigation.navigate('注册界面') }}>
-          <Text style={styles.underButton} >还未注册？</Text>
+          <Text style={styles.underButton}>还未注册?</Text>
         </TouchableOpacity>
       </Card>
     </View>

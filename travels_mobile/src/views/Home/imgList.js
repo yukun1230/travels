@@ -3,7 +3,7 @@ export default [
     "thumbURL": "https://img1.baidu.com/it/u=2226443709,1655735334&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=1226",
     "title": "尾页,好看的风景锁屏壁纸,唯美天空手机壁纸",
     "width": 690,
-    "height": 1226
+    "height": 1226,
   },
   {
     "thumbURL": "https://img1.baidu.com/it/u=1864407977,4278108853&fm=253&fmt=auto&app=138&f=JPEG?w=333&h=499",
