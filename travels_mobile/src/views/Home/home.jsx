@@ -23,7 +23,7 @@ const Card = ({ item, index, columnIndex }) => {
   // };
   const navigation = useNavigation();
   const onPressCard = () => {
-    console.log(item._id);
+    // console.log(item._id);
     navigation.navigate('Detail', { cardId: item._id });
   };
 
@@ -340,7 +340,7 @@ export default HomeScreen = () => {
   // };
   const loadData = async (isRefreshing = false) => {
     // 刷新操作时重置页码到1，否则加载下一页
-    console.log('当前页',page);
+    // console.log('当前页',page);
     const nextPage = isRefreshing ? 1 : page.current + 1;
 
     if (loading.current && !isRefreshing) {
@@ -360,8 +360,8 @@ export default HomeScreen = () => {
       })
       
       const travels = response.data.travels;
-      console.log(nextPage, pageSize);
-      console.log(travels);
+      // console.log(nextPage, pageSize);
+      // console.log(travels);
       const formattedData = travels.map(travel => {
         const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
         return {

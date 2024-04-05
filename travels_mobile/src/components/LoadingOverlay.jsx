@@ -1,15 +1,8 @@
 import React from 'react';
-import { View, Modal, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Modal, ActivityIndicator, StyleSheet, Text } from 'react-native';
 
 const LoadingOverlay = ({ isVisible }) => {
   return (
-    // <Modal transparent={true} visible={isVisible} animationType="none">
-    //   <View style={styles.centeredView}>
-    //     <View style={styles.overlay}>
-    //       <ActivityIndicator size={60} color="#007BFF" />
-    //     </View>
-    //   </View>
-    // </Modal>
     <Modal
       transparent={true}
       visible={isVisible}
@@ -19,33 +12,14 @@ const LoadingOverlay = ({ isVisible }) => {
       {/* 全屏透明蒙层，阻止与下层视图的交互 */}
       <View style={styles.fullScreenOverlay}>
         <View style={styles.overlay}>
-          <ActivityIndicator size={60} color="#007BFF" />
+          <ActivityIndicator size={60} color="white" />
+          <Text style={{fontSize:16,color:'white'}}>加载中...</Text>
         </View>
       </View>
     </Modal>
   );
 };
 
-// const styles = StyleSheet.create({
-//   centeredView: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-  // overlay: {
-  //   width: 150, // 控制白色背景区域的大小
-  //   height: 150,
-  //   backgroundColor: 'white',
-  //   borderRadius: 10,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   elevation: 5, 
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 3.84,
-  // },
-// });
 const styles = StyleSheet.create({
   fullScreenOverlay: {
     flex: 1,
@@ -54,17 +28,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0)', // 透明
   },
   overlay: {
+    flexDirection:'column',
     width: 150, // 控制白色背景区域的大小
     height: 150,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });
 

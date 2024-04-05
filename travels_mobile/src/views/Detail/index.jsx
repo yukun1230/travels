@@ -6,33 +6,49 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
+import LoadingOverlay from '../../components/LoadingOverlay'; 
+
 
 const DetailScreen = ({ navigation, route }) => {
   // 使用传递过来的cardId
+
+  const [travelDetail, setTravelDetail] = useState(null);
   const { cardId } = route.params;
+  const [isLoading, setIsLoading] = useState(false);
 
 
-  
 
 
   useEffect(() => {
-    console.log(cardId);
-    navigation.setOptions({
-      // 设置顶部导航栏左箭头 以及用户头像 昵称
-      headerLeft: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign name="left" size={24} color="black" />
-          </TouchableOpacity>
-          <Image
-            source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
-            style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
-          />
-          <Text style={{ fontSize: 18, marginLeft: 15 }}>用户昵称</Text>
-        </View>
-      ),
-    });
-  }, [navigation]); 
+    setIsLoading(true);
+    axios.get(`${NGROK_URL}/travels/getDetails`, {
+      params: { id: cardId },
+    })
+      .then(res => {
+        setTravelDetail(res.data.travelDetail);
+        // 更新导航栏信息
+        navigation.setOptions({
+          headerLeft: () => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <AntDesign name="left" size={24} color="black" />
+              </TouchableOpacity>
+              <Image
+                source={{ uri: res.data.travelDetail.userInfo.avatar }}
+                style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
+              />
+              <Text style={{ fontSize: 18, marginLeft: 15 }}>{res.data.travelDetail.userInfo.nickname}</Text>
+            </View>
+          ),
+        });
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }, [cardId, navigation]); 
 
   
 
@@ -49,56 +65,49 @@ const DetailScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ flexDirection: 'column' }}>
+      <LoadingOverlay isVisible={isLoading} />
       
-      <ScrollView >
-        <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
-        {/* 轮播图 */}
-        <Swiper style={styles.wrapper}
-          autoplay={true}
-          renderPagination={renderPagination}
-        >
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img1.baidu.com/it/u=1294283076,2285234382&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" }} style={styles.image} />
-          </View>
-          <View style={styles.slide}>
-            <Image source={{ uri: "https://img0.baidu.com/it/u=2589580882,2038835390&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750" }} style={styles.image} />
-          </View>
-        </Swiper>
-      </View>
-        <View style={{ backgroundColor: "white", flex: 1 ,padding:10}} >
-        <View style={styles.locationContainer}>
-          {/* 地址标签 */}
-          <View style={styles.locationIcon}>
-            <AntDesign name="enviroment" size={18} color="white" />
-          </View>
-          <Text style={styles.locationText}>上海</Text>
-        </View>
-        <View>
-          {/* 标题 */}
-          <Text style={styles.detailTitle}>这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~这是一个标题~~</Text>
-        </View>
-        <View>
-          {/* 内容 */}
-          <Text style={styles.detailContent}>这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~这是内容区域~~</Text>
-        </View>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        <Text>1</Text>
-        {/* 留白区域，避免最底部的内容被底部栏挡住 */}
-        <View style={{height:52}}></View> 
-        
-        
-      </View>
+      
+      <ScrollView>
+        {travelDetail ? (
+          <>
+            <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
+             <Swiper
+              style={styles.wrapper}
+              autoplay={true}
+              renderPagination={renderPagination}
+            >
+              {travelDetail.photo.map((photo, index) => (
+                <View key={index} style={styles.slide}>
+                  <Image source={{ uri: photo.uri }} style={styles.image} />
+                </View>
+              ))}
+             </Swiper>
+            </View>
+            
+            <View style={{ backgroundColor: "white", flex: 1, padding: 10 }} >
+              <View style={styles.locationContainer}>
+                {/* 地址标签 */}
+                <View style={styles.locationIcon}>
+                  <AntDesign name="enviroment" size={18} color="white" />
+                </View>
+                <Text style={styles.locationText}>上海</Text>
+              </View>
+              <View>
+                {/* 标题 */}
+                <Text style={styles.detailTitle}>{travelDetail.title}</Text>
+              </View>
+              <View>
+                {/* 内容 */}
+                <Text style={styles.detailContent}>{travelDetail.content}</Text>
+              </View>
+              {/* 留白区域，避免最底部的内容被底部栏挡住 */}
+              <View style={{ height: 52 }}></View>
+            </View>
+          </>
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -189,6 +198,7 @@ const styles = StyleSheet.create({
   },
   detailContent:{
     marginTop: 12,
+    minHeight: 98,
     fontSize: 15,
   },
   footer: {
