@@ -1,7 +1,7 @@
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, Modal, StyleSheet } from 'react-native'
 import Button from 'apsl-react-native-button'
-import imgList from './imgList'
+// import imgList from './imgList'
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
@@ -12,7 +12,7 @@ import { NGROK_URL } from '../../config/ngrok'
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
 import LoadingOverlay from '../../components/LoadingOverlay'; 
-
+import { Entypo } from '@expo/vector-icons';
 
 const window = Dimensions.get('window')
 
@@ -24,6 +24,15 @@ const Card = ({ item, index, columnIndex }) => {
   const navigation = useNavigation();
   const onPressCard = () => {
     navigation.navigate('Detail');
+    axios.get(NGROK_URL + '/travels/getTravels')
+      .then(res => {
+        // const { avatar, nickname, _id } = res.data;
+        console.log(res.data.travels[0]);
+
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   return (
@@ -34,19 +43,19 @@ const Card = ({ item, index, columnIndex }) => {
         onPress={() => onPressCard()}   // 跳转
       >
         <FadeImage
-          source={{ uri: item.thumbURL, width: item.width, height: item.height }}
+          source={{ uri: item.uri, width: item.width, height: item.height }}
           resizeMode="cover"  // resizeMode用来设置图片的缩放模式
         />
         <View style={{ padding: 10 }}>
           {/* 标题 */}
-          <Text style={{ fontSize: 14, fontWeight: 'bold' }}>这是标题~~这是标题~~这是标题~~</Text>
+          <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
           <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
             {/* 用户资料 */}
             <Image
-              source={{ uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
+              source={{ uri: item.avatar }}
               style={{ width: 20, height: 20, borderRadius: 10 }}
             />
-            <Text style={{ fontSize: 12, marginLeft: 5 }}>用户昵称</Text>
+            <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                 {/* 观看次数 */}
@@ -110,7 +119,6 @@ const AvatarMenu = () => {
         <TouchableOpacity onPress={openMenu}>
           <Image
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
-            // source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://i0.hdslb.com/bfs/article/39e49451cb2e97b3e80a5c290c65b916a6a9db67.jpg" }}
             style={{ width: 36, height: 36, borderRadius: 18 }}
           />
         </TouchableOpacity>
@@ -181,11 +189,68 @@ export default HomeScreen = () => {
   const [inited, setInited] = useState(false);
 
   const page = useRef(1);
-  const pageSize = 10;
+  const pageSize = 4;
   const loading = useRef(false);
   const listRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
+
+  // useEffect(() => {
+  //   axios.get(`${NGROK_URL}/travels/getTravels`, {
+  //     params: { page: 1, pageSize: 3 },
+  //   }) .then(res => {
+  //           console.log(res.data);
+  //         })
+  //         .catch(err => {
+  //           console.error(err);
+  //         });
+  //     }
+  // , []); 
+
+
+  // const CardList = [
+  //   {
+  //     "_id": "660d5b4977d1fe0ef4ab3e27",
+  //     "uri": "https://img1.baidu.com/it/u=2226443709,1655735334&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=1226",
+  //     "title": "尾页,好看的风景锁屏壁纸,唯美天空手机壁纸",
+  //     "width": 690,
+  //     "height": 1226,
+  //     "avatar": "https://img1.baidu.com/it/u=2226443709,1655735334&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=1226",
+  //     "nickname": "套娃定律"
+  //   },]
+  // const [cardList, setCardList] = useState([]);
+  // useEffect(() => {
+  //   const fetchCardList = async () => {
+  //     setIsLoading(true); // 开始加载数据
+  //     try {
+  //       const response = await axios.get(NGROK_URL + '/travels/getTravels');
+  //       const travels = response.data.travels;
+  //       const formattedData = travels.map(travel => {
+  //         // 取第一个照片作为展示，确保photo数组不为空
+  //         const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+  //         return {
+  //           _id: travel._id,
+  //           uri: firstPhoto.uri,
+  //           title: travel.title,
+  //           width: firstPhoto.width,
+  //           height: firstPhoto.height,
+  //           avatar: travel.userInfo.avatar,
+  //           nickname: travel.userInfo.nickname,
+  //         };
+  //       });
+  //       setCardList(formattedData); // 更新卡片列表数据
+  //       // console.log(formattedData);
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setIsLoading(false); // 完成加载，无论请求成功还是失败
+  //     }
+  //   };
+  //   fetchCardList();
+  // }, []);
+  // useEffect(() => {
+  //   console.log(cardList,'abc');
+  // }, [cardList]);
   // 控制返回顶部按钮
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);
   const handleScroll = (event) => {
@@ -198,59 +263,146 @@ export default HomeScreen = () => {
   };
   const scrollToTop = () => {
     listRef.current.scrollToOffset({ animated: true, offset: 0 });
+    
   };
 
 
-  useEffect(() => {
-    loadData(1);
+  
 
-    setTimeout(() => {
-      // 测试 WaterfallFlow 的方法
-      // listRef.current.scrollToIndex({ index: 6 });
-      // listRef.current.scrollToEnd();
-      // listRef.current.scrollToOffset({ offset: 200 });
-    }, 3000);
-  }, []);
+  // const loadData = (page = 1, refreshing) => {
+    
+  //   if (loading.current) {
+  //     return;
+  //   }
+  //   loading.current = true;
+  //   if (refreshing) {
+  //     setRefreshing(true);
+  //   }
+  //   setIsLoading(true);
+  //     const newData = cardList.slice((page - 1) * pageSize, page * pageSize).map(img => {
+  //       const { width, height } = img;
+  //       const cardWidth = Math.floor(window.width / 2);
+  //       return {
+  //         ...img,
+  //         width: cardWidth,
+  //         height: Math.floor(height / width * cardWidth)
+  //       };
+  //     });
+  //     const noMore = newData.length < pageSize;
+  //     loading.current = false;
+  //     page.current = refreshing ? 1 : page;
+  //     setData(prevData => refreshing ? newData : [...prevData, ...newData]);
+  //     setRefreshing(false);
+  //     setNoMore(noMore);
+  //     setInited(true);
+  //     setIsLoading(false);
+  // };
 
-  const loadData = (page = 1, refreshing) => {
-    if (loading.current) {
+  // const loadData = async (isRefreshing = false) => {
+  //   const cardWidth = Math.floor(window.width / 2);
+  //   if (loading.current && !isRefreshing) {
+  //     // 如果当前正在加载数据，且不是刷新操作，则直接返回
+  //     return;
+  //   }
+
+  //   loading.current = true;
+  //   setIsLoading(true);
+  //   if (isRefreshing) {
+  //     setRefreshing(true);
+  //   }
+
+  //   try {
+  //     // 直接请求所有数据，无需分页参数
+  //     const response = await axios.get(`${NGROK_URL}/travels/getTravels`);
+  //     const travels = response.data.travels;
+
+  //     // 处理获取到的数据
+  //     const formattedData = travels.map(travel => {
+  //       const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+  //       return {
+  //         _id: travel._id,
+  //         uri: firstPhoto.uri,
+  //         title: travel.title,
+  //         width: cardWidth,
+  //         height: Math.floor(firstPhoto.height / firstPhoto.width * cardWidth),
+  //         avatar: travel.userInfo.avatar,
+  //         nickname: travel.userInfo.nickname,
+  //       };
+  //     });
+
+  //     // 使用新数据替换旧数据
+  //     setData(formattedData);
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setIsLoading(false);
+  //     setRefreshing(false);
+  //     setInited(true);
+  //     loading.current = false;
+  //   }
+  // };
+  const loadData = async (isRefreshing = false) => {
+    // 刷新操作时重置页码到1，否则加载下一页
+    console.log('当前页',page);
+    const nextPage = isRefreshing ? 1 : page.current + 1;
+
+    if (loading.current && !isRefreshing) {
+      // 如果当前正在加载数据，且不是刷新操作，则直接返回
       return;
     }
+
     loading.current = true;
-    if (refreshing) {
+    // setIsLoading(true);
+    if (isRefreshing) {
       setRefreshing(true);
     }
-    setIsLoading(true);
-    setTimeout(() => { // 模拟请求数据
-      const newData = imgList.slice((page - 1) * pageSize, page * pageSize).map(img => {
-        const { width, height } = img;
-        const cardWidth = Math.floor(window.width / 2);
+
+    try {
+      const response = await axios.get(`${NGROK_URL}/travels/getTravels`, {
+        params: { page: page.current, pageSize: pageSize },
+      })
+      
+      const travels = response.data.travels;
+      console.log(nextPage, pageSize);
+      console.log(travels);
+      const formattedData = travels.map(travel => {
+        const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
         return {
-          ...img,
-          width: cardWidth,
-          height: Math.floor(height / width * cardWidth)
+          _id: travel._id,
+          uri: firstPhoto.uri,
+          title: travel.title,
+          width: Math.floor(window.width / 2),
+          height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+          avatar: travel.userInfo.avatar,
+          nickname: travel.userInfo.nickname,
         };
       });
-      const noMore = newData.length < pageSize;
-      loading.current = false;
-      page.current = refreshing ? 1 : page;
-      setData(prevData => refreshing ? newData : [...prevData, ...newData]);
-      setRefreshing(false);
-      setNoMore(noMore);
-      setInited(true);
-      setIsLoading(false);
-    }, refreshing ? 1000 : 500);
-  };
 
-  const onEndReached = () => {
-    if (!noMore) {
-      loadData(page.current + 1);
+      // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
+      setData(prevData => isRefreshing ? formattedData : [ ...prevData,...formattedData]);
+      if (!isRefreshing) {
+        setNoMore(formattedData.length < pageSize);
+      }
+      page.current = nextPage; // 更新当前页码
+    } catch (err) {
+      console.error(err);
+    } finally {
+      // setIsLoading(false);
+      setRefreshing(false);
+      setInited(true);
+      loading.current = false;
     }
   };
+
+  // const onEndReached = () => {
+  //   if (!noMore) {
+  //     loadData(page.current + 1);
+  //   }
+  // };
 
   return (
     <View style={{ flex: 1}}>
-      <LoadingOverlay isVisible={isLoading} />
+      {/* <LoadingOverlay isVisible={isLoading} /> */}
       <Header />
       
       <WaterfallFlow
@@ -262,11 +414,12 @@ export default HomeScreen = () => {
       data={data}
       numColumns={2}
       initialNumToRender={10}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      onEndReached={onEndReached}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+      onEndReached={() => loadData(false)}
       refreshing={refreshing}
-      onRefresh={() => loadData(1, true)}
+      onRefresh={() => loadData(true)}
+      onEndReachedThreshold={1} 
       renderItem={({ item, index, columnIndex }) => {
         return (
           <View
@@ -290,7 +443,7 @@ export default HomeScreen = () => {
           onPress={scrollToTop}
           style={styles.scrollToTopButton}
         >
-          <AntDesign name="arrowup" size={20} color="white" />
+            <Entypo name="chevron-thin-up" size={14} color="white" />
           <Text style={styles.buttonText}>顶部</Text>
         </TouchableOpacity>
       }
@@ -351,14 +504,14 @@ const styles = StyleSheet.create({
   scrollToTopButton: {
     alignItems: 'center',
     position: 'absolute',
-    left: 0,
+    left: 12,
     bottom: 20,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 10,
+    padding: 4,
     borderRadius: 6,
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
   },
 });
