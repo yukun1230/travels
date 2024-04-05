@@ -13,12 +13,17 @@ class TravelController {
         title: req.body.title,
         content: req.body.content,
         travelState: req.body.travelState,
-        photo: uploadRes
+        photo: uploadRes,
+        location: {
+          country: req.body.country,
+          province: req.body.province,
+          city: req.body.city
+        }
       })
       await travel.save();  // 更新文档
       res.send({ message: "上传成功" });
     } catch (error) {
-      res.send(error)
+      res.send("上传失败")
     }
   }
 }

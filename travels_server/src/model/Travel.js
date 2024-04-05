@@ -16,7 +16,11 @@ const TravelScheme = new mongoose.Schema({
     type: String,
     required: true
   }, 
-  location: String,
+  location: {
+    country: String,
+    province: String,
+    city: String
+  },
   travelState: Number,
   userId: String,
   userInfo: {

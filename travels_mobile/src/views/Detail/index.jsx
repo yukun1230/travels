@@ -79,7 +79,6 @@ const DetailScreen = () => {
 
   return (
     <View style={{ flexDirection: 'column' }}>
-      
       <ScrollView >
         <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
         {/* 轮播图 */}
@@ -126,11 +125,8 @@ const DetailScreen = () => {
         <Text>1</Text>
         {/* 留白区域，避免最底部的内容被底部栏挡住 */}
         <View style={{height:52}}></View> 
-        
-        
       </View>
       </ScrollView>
-
       <View style={styles.footer}>
           {/* 底部栏 */}
           <TextInput style={styles.input} placeholder="评论一下吧~" />

@@ -5,9 +5,6 @@ const { User } = require('../model/User');
 const bcypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const app = express();
-// 图片上传
-// const multer = require('multer');
-// const upload = multer({ dest: 'public/avatarUploads/' })
 const SECRET = 'yukun';
 app.use(express.json());
 const userController = require('../controllers/UserController')

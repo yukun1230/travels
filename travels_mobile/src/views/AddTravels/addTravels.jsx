@@ -6,13 +6,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Image,
-  KeyboardAvoidingView,
-  Platform
+  Image
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import UnLoginScreen from '../../components/unLogin';
@@ -21,23 +19,64 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok';
 import '../../util/axios.config';
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser, clearUser } from '../../redux/userSlice';
 import LoadingOverlay from '../../components/LoadingOverlay';
-
+import { Picker } from '@react-native-picker/picker';
+import placeList from './placeList';
+import { AntDesign } from '@expo/vector-icons';
+import { Card } from 'react-native-paper';
 
 export default addTravelsScreen = () => {
-  // 数组来保存图片uri
-  const [image, setImage] = useState([]);
-  // 数组用于传到后端
-  const [file, setFile] = useState([]);
-  // 数组用于存储图片的长度和宽度
-  const [dimension, setDimension] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [height, setHeight] = useState(0);
+  const [image, setImage] = useState([]); // 数组来保存图片uri
+  const [file, setFile] = useState([]); // 数组用于传到后端
+  const [dimension, setDimension] = useState([]); // 数组用于存储图片的长度和宽度
+  const [isLoading, setIsLoading] = useState(false);  // 用于设置加载moadl是否展示
+  const [height, setHeight] = useState(0);  // 关于输入文本框高度的选项
+  const [fold, setFold] = useState(true)  // 地点选择卡片是否折叠，默认折叠
+  const [selectedValues, setSelectedValues] = useState([]);  // 选择的数组
+  const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
+  const [filteredCities, setFilteredCities] = useState([]);  // 城市
   const userInfo = useSelector(state => state.user); // 获取保存的用户信息
-  // 选取图片，异步操作
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      title: '',
+      content: ''
+    },
+  });
 
-  const pickImage = async () => {
+  const handleCountryChange = (countryName, index) => {
+    setSelectedValues((prevValues) => {
+      const newValues = [...prevValues];
+      newValues[index] = countryName;
+      return newValues;
+    });
+    const selectedCountry = placeList.find(country => country.name === countryName);
+    if (selectedCountry) {
+      setFilteredProvinces(selectedCountry.provinces);
+      setFilteredCities([]);
+    }
+  };
+
+  const handleProvinceChange = (provinceName, index) => {
+    setSelectedValues((prevValues) => {
+      const newValues = [...prevValues];
+      newValues[index] = provinceName;
+      return newValues;
+    });
+
+    const selectedCountry = placeList.find(country => country.name === selectedValues[0]);
+    if (selectedCountry) {
+      const selectedProvince = selectedCountry.provinces.find(province => province.name === provinceName);
+      if (selectedProvince) {
+        setFilteredCities(selectedProvince.cities);
+      }
+    }
+  };
+
+  const pickImage = async () => {  // 选取图片，异步操作
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,  // 所有多媒体文件
       // allowsEditing: true,  // 是否允许编辑，和图片多选是矛盾的
@@ -73,16 +112,6 @@ export default addTravelsScreen = () => {
     }
   };
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      title: '',
-      content: ''
-    },
-  });
   // 删除照片操作
   const deletePhoto = async (uri) => {
     let index = image.indexOf(uri);
@@ -97,46 +126,41 @@ export default addTravelsScreen = () => {
     setDimension(dimensionArray);
   }
 
+  // 提交表单
   const onSubmit = async (data) => {
-    let params = new FormData();
-    console.log(file);
-    // 添加游记的图片
-    for (let item of file) {
-      params.append('file', item);
-    };
-    // 添加游记的标题和内容
-    for (let i in data) {
-      params.append(i, data[i]);
-    };
-    // 添加图片信息
-    for (let i = 0; i < dimension.length; i++) {
-      params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`);
-    };
-    // 添加用户信息
-    for (let i in userInfo) {
-      params.append(i, userInfo[i]);
-    };
-    // 添加游记的审核状态
-    params.append("travelState", 2); // 0审核未通过，1审核通过，2未审核，3被删除
-    console.log("params", params);
-    setIsLoading(true);
-    axios.post(NGROK_URL + '/travels/upload', params, {
-      headers: {
-        'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
-      }
-    }).then(
-      res => {
-        // console.log(res.data);
-        Alert.alert(res.data.message);
-        setIsLoading(false);
-      }
-    ).catch(
-      err => {
-        console.log(err);
-        setIsLoading(false);
-      }
-    )
+    console.log(selectedValues)
+    if (file.length > 0) {  // 如果文件存在
+      let params = new FormData();
+      for (let item of file) params.append('file', item);// 添加游记的图片
+      for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
+      for (let i = 0; i < dimension.length; i++)  // 添加图片信息
+        params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`);
+      for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
+      params.append("country", selectedValues[0]); // 添加位置信息(国家)
+      params.append("province", selectedValues[1]); // 添加位置信息(省份)
+      params.append("city", selectedValues[2]); // 添加位置信息(城市)
+      params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
+      setIsLoading(true); // 取消加载图标
+      axios.post(NGROK_URL + '/travels/upload', params, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
+        }
+      }).then(
+        res => {
+          Alert.alert(res.data.message);
+          setIsLoading(false);
+        }
+      ).catch(
+        err => {
+          console.log(err);
+          setIsLoading(false);
+        }
+      )
+    } else {
+      Alert.alert("您还没有上传图片，请上传图片后再发布");
+    }
   };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       {!userInfo.id && <UnLoginScreen />}
@@ -145,8 +169,7 @@ export default addTravelsScreen = () => {
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          scrollEnabled={image.length < 3 ? false : true}//是否允许滚动
-          // scrollEnabled={false}
+          scrollEnabled={image.length < 3 ? false : true} //是否允许滚动，当图片数量少于3个的时候，设置滚动不可用，为什么要这么设置呢？因为这里有bug，当没有图片时，也可以滚动，这就导致了‘添加图片’的图标左右横跳非常不美观
         >
           {image.map(item => (
             <View style={styles.photo_Container} key={item} >
@@ -174,10 +197,6 @@ export default addTravelsScreen = () => {
           errors={errors.title}
           rules={{
             required: '不能为空',
-            // pattern: {
-            //   value: /^[a-zA-Z0-9_-]{4,16}$/,
-            //   message: '用户名格式校验错误,应为4到16位(字母,数字,下划线,减号)',
-            // },
           }}
           render={({ field: { onChange, value } }) => (
             <TextInput
@@ -185,7 +204,7 @@ export default addTravelsScreen = () => {
               onChangeText={onChange}
               placeholderTextColor="#ccc"
               style={styles.titleInput}
-              placeholder='填写标题更容易上精选'
+              placeholder='填写标题'
             />
           )}
           style={{ height: 40, marginBottom: 20 }}
@@ -197,10 +216,6 @@ export default addTravelsScreen = () => {
             name="content"
             rules={{
               required: '不能为空',
-              // pattern: {
-              //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/,
-              //   message: '密码格式校验错误,应为8到16位(大小写字母和数字)',
-              // },
             }}
             errors={errors.content}
             render={({ field: { onChange, value } }) => (
@@ -222,6 +237,57 @@ export default addTravelsScreen = () => {
               </View>
             )}
           />
+          <TouchableOpacity onPress={()=>setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <View style={styles.locationIcon}>
+              <AntDesign name="enviroment" size={18} color="white" />
+            </View>
+            {!selectedValues[0] && <Text style={styles.locationText}>添加地点</Text>}
+            {selectedValues[0] && <Text style={{ fontSize: 18, marginRight:15, marginLeft:8 }}>地点：{selectedValues.filter(item=>item != '').join('•')}</Text>}
+            {fold &&<Text style={{fontSize: 16}}>{'>'}</Text>}
+            {!fold &&<Text style={{fontSize: 16, transform: [{ rotate: '90deg' }]}}>{'>'}</Text>}
+          </TouchableOpacity>
+          {!fold&&<Card style={{flexDirection: 'column', alignItems: 'center', marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 18 }}>选择国家</Text>
+              <Picker
+                style={styles.picker}
+                selectedValue={selectedValues[0]}
+                onValueChange={(value) => handleCountryChange(value, 0)}>
+                <Picker.Item label='未选' value='' />
+                {placeList.map((country, index) => (
+                  <Picker.Item label={country.name} value={country.name} key={index} />
+                ))}
+              </Picker>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 18 }}>选择省份</Text>
+              <Picker
+                style={styles.picker}
+                selectedValue={selectedValues[1]}
+                onValueChange={(value) => handleProvinceChange(value, 1)}>
+                <Picker.Item label='未选' value='' />
+                {filteredProvinces.map((province, index) => (
+                  <Picker.Item label={province.name} value={province.name} key={index} />
+                ))}
+              </Picker>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 18 }}>选择城市</Text>
+              <Picker
+                style={styles.picker}
+                selectedValue={selectedValues[2]}
+                onValueChange={(value) => setSelectedValues((prevValues) => {
+                  const newValues = [...prevValues];
+                  newValues[2] = value;
+                  return newValues;
+                })}>
+                <Picker.Item label='未选' value='' />
+                {filteredCities.map((city, index) => (
+                  <Picker.Item label={city} value={city} key={index} />
+                ))}
+              </Picker>
+            </View>
+          </Card>}
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>发布</Button>
           </View>
@@ -281,18 +347,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc"
   },
-  abovePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
   photo_Container: {
     width: 98,
     height: 98,
     borderRadius: 9,
     borderWidth: 1,
     position: "relative",
-    // justifyContent: 'center',
     alignItems: 'flex-end',
     borderColor: '#B3BAC1',
     marginTop: 10,
@@ -332,5 +392,25 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 8
-  }
+  },
+  locationIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'black',
+    justifyContent: 'center', // 图标垂直居中
+    alignItems: 'center', // 图标水平居中
+    marginRight: 6, // 图标和文本之间的距离
+  },
+  locationText: {
+    marginLeft: 8,
+    color: 'black', // 文字颜色
+    marginRight: 15, // 文字和右箭头之间的距离
+    fontSize: 18, // 文字大小
+    fontWeight: 'bold'
+  },
+  picker: {
+    height: 40,
+    width: 180
+  },
 });
