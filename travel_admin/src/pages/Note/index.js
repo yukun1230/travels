@@ -1,13 +1,14 @@
 import { Form, Button, Radio, DatePicker} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
-import { Table, Tag, Space } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Table, Tag, Space, Input } from 'antd'
+import { EditOutlined, DeleteOutlined, AudioOutlined} from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useEffect, useState } from 'react'
 import './index.scss'
 import axios from 'axios'
 
 const { RangePicker } = DatePicker
+const { Search } = Input;
 
 const Note = () => {
   // 列数据
@@ -76,6 +77,7 @@ const Note = () => {
   ]
   // 获取列表
   const [reqData, setReqData] = useState({
+    title: '',
     status: '',
     begin_date: '',
     end_date: '',
@@ -88,7 +90,7 @@ const Note = () => {
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
-      pageSize: 10,
+      pageSize: 3,
     },
   });
   useEffect(() => {
@@ -100,43 +102,74 @@ const Note = () => {
     }
     fetchNoteList()
   },[reqData])
+  // 筛选功能
   const onFinish = (formValues) => {
     console.log(formValues);
+    const { title, date, status } = formValues
     setReqData({
       ...reqData,
-      status: formValues.status,
-      begin_date: formValues.date[0].format('YYYY-MM-DD'),
-      end_date: formValues.date[1].format('YYYY-MM-DD'),
+      status: status,
+      begin_date: date ? date[0].format('YYYY-MM-DD') : '',
+      end_date: date ? date[1].format('YYYY-MM-DD') : '',
+      title: title
+     })
+  }
+// 通过游记标题搜索
+  const onSearch = (value) => {
+    setReqData({
+      ...reqData,
+      title: value
+     })
+  }
+  // 触发分页
+  const handleTableChange = (page) => {
+    console.log(page);
+    setReqData({
+      ...reqData,
+      page
      })
   }
   return (
     <div>
-        <Form initialValues={{ status: '' }} className='formStyle' onFinish={onFinish}>
-          <Form.Item label="状态" name="status">
-            <Radio.Group>
-              <Radio value={''}>全部</Radio>
-              <Radio value={0}>待审核</Radio>
-              <Radio value={1}>已通过</Radio>
-              <Radio value={2}>未通过</Radio>
-            </Radio.Group>
-          </Form.Item>
+      <Form
+        initialValues={{ status: "" }}
+        className="formStyle"
+        onFinish={onFinish}
+      >
+        <Form.Item label="状态" name="status">
+          <Radio.Group>
+            <Radio value={""}>全部</Radio>
+            <Radio value={0}>待审核</Radio>
+            <Radio value={1}>已通过</Radio>
+            <Radio value={2}>未通过</Radio>
+          </Radio.Group>
+        </Form.Item>
 
-          <Form.Item label="日期" name="date">
-            {/* 传入locale属性 控制中文显示*/}
-            <RangePicker locale={locale}></RangePicker>
-          </Form.Item>
-          
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 40 }}>
-              筛选
-            </Button>
-          </Form.Item>
-        </Form>
-        <Table rowKey="id" columns={columns} dataSource={noteList} />
+        <Form.Item label="日期" name="date">
+          {/* 传入locale属性 控制中文显示*/}
+          <RangePicker locale={locale}></RangePicker>
+        </Form.Item>
+        <Form.Item label="标题" name="title">
+          <Search
+            placeholder="通过标题搜索"
+            allowClear
+            onSearch={onSearch}
+            style={{
+              width: 200,
+            }}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 40 }}>
+            筛选
+          </Button>
+        </Form.Item>
+      </Form>
+      <Table rowKey="id" columns={columns} dataSource={noteList} onChange={handleTableChange}/>
       {/* <Card title={`根据筛选条件共查询到 count 条结果：`}>
       </Card> */}
     </div>
-  )
+  );
 }
 
 

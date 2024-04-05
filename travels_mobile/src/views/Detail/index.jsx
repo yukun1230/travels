@@ -7,46 +7,16 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// const DetailScreen = ({ navigation, route }) => {
-//   // 使用传递过来的cardId
-//   const { cardId } = route.params;
-const DetailScreen = () => {
-  const navigation = useNavigation();
-  // useFocusEffect是React Navigation提供的一个Hook。它的作用是当屏幕获得或失去焦点时执行一些操作。
-  // useFocusEffect(
-  //   // useCallback确保只有当navigation对象变化时，传递给useFocusEffect的函数才会改变。
-  //   React.useCallback(() => {
-  //     // 当进入详情页时隐藏底部导航
-  //     const parent = navigation.getParent(); //父导航器tabBar
-  //     parent.setOptions({ tabBarStyle: { display: 'none' } });
+const DetailScreen = ({ navigation, route }) => {
+  // 使用传递过来的cardId
+  const { cardId } = route.params;
 
-  //     // 当离开详情页时恢复底部导航
-  //     return () => parent.setOptions({ tabBarStyle: undefined });
-  //   }, [navigation])
-  // );
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
-  //         <TouchableOpacity onPress={() => navigation.goBack()}>
-  //           <Image
-  //             source={require('返回箭头的图片路径')}
-  //             style={{ width: 20, height: 20, marginRight: 10 }}
-  //           />
-  //         </TouchableOpacity>
-  //         {userInfo.avatar && (
-  //           <Image
-  //             source={{ uri: userInfo.avatar }}
-  //             style={{ width: 40, height: 40, borderRadius: 20 }}
-  //           />
-  //         )}
-  //       </View>
-  //     ),
-  //   });
-  // }, [navigation, userInfo]);
+
+  
 
 
   useEffect(() => {
+    console.log(cardId);
     navigation.setOptions({
       // 设置顶部导航栏左箭头 以及用户头像 昵称
       headerLeft: () => (

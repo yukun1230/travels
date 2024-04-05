@@ -23,16 +23,8 @@ const Card = ({ item, index, columnIndex }) => {
   // };
   const navigation = useNavigation();
   const onPressCard = () => {
-    navigation.navigate('Detail');
-    axios.get(NGROK_URL + '/travels/getTravels')
-      .then(res => {
-        // const { avatar, nickname, _id } = res.data;
-        console.log(res.data.travels[0]);
-
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    console.log(item._id);
+    navigation.navigate('Detail', { cardId: item._id });
   };
 
   return (
@@ -189,15 +181,20 @@ export default HomeScreen = () => {
   const [inited, setInited] = useState(false);
 
   const page = useRef(1);
-  const pageSize = 4;
+  const pageSize = 6;
   const loading = useRef(false);
   const listRef = useRef(null);
   // const [isLoading, setIsLoading] = useState(false);
 
 
+  
+
+
+
+
   // useEffect(() => {
-  //   axios.get(`${NGROK_URL}/travels/getTravels`, {
-  //     params: { page: 1, pageSize: 3 },
+  //   axios.get(`${NGROK_URL}/travels/getDetails`, {
+  //     params: { id: "660d5b4977d1fe0ef4ab3e26" },
   //   }) .then(res => {
   //           console.log(res.data);
   //         })
@@ -419,7 +416,7 @@ export default HomeScreen = () => {
       onEndReached={() => loadData(false)}
       refreshing={refreshing}
       onRefresh={() => loadData(true)}
-      onEndReachedThreshold={1} 
+      onEndReachedThreshold={0.1} 
       renderItem={({ item, index, columnIndex }) => {
         return (
           <View
@@ -504,7 +501,7 @@ const styles = StyleSheet.create({
   scrollToTopButton: {
     alignItems: 'center',
     position: 'absolute',
-    left: 12,
+    right: 12,
     bottom: 20,
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 4,

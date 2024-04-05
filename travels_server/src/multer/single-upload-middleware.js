@@ -27,9 +27,9 @@ const storage = multer.diskStorage({
 })
 
 // 4. 为 multer 添加配置
-const multerConfig = multer({
+const singleUploadMiddleware = multer({
   storage: storage,
   limits: { fileSize: 2097152 } // 2M，图片大小限制
 })
 
-module.exports = multerConfig
+module.exports = singleUploadMiddleware

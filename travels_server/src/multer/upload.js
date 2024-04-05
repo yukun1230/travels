@@ -1,10 +1,11 @@
 // 引入配置好的 multerConfig
-const multerConfig = require('./multerConfig')
+const singleUploadMiddleware = require('./single-upload-middleware')
+const multiUploadMiddleware = require('./multi-upload-middleware')
 const fs = require('fs')
 // 上传到服务器地址
 const BaseURL = 'http://5fvskc9y2ble.xiaomiqiu.com'
 // 上传到服务器的目录，小米球
-const imgPath = '/public/avatarUploads/'
+const imgPath = '/public/photos/'
 const path = require('path')
 const handlePath = (dir) => {
   return path.join(__dirname, './', dir)
@@ -36,31 +37,10 @@ const hanldeImgDelAndRename = (id, filename, dirPath) => {
   })
 }
 
-// 对图片进行重命名
-// const hanldeImgRename = (filename, dirPath) => {
-//   // TODO 查找该路径下的所有图片文件
-//   fs.readdir(dirPath, (err, files) => {
-//     for (let i in files) {
-//       // 当前图片的名称
-//       const currentImgName = path.basename(files[i])
-//       // 图片的名称数组：[时间戳, 后缀]
-//       const imgNameArr = currentImgName.split('.')
-
-//       // 根据新存入的文件名(时间戳.jpg)，找到对应文件，然后重命名为: 时间戳.id.jpg
-//       if (currentImgName === filename) {
-//         const old_path = dirPath + '/' + currentImgName
-//         const new_path = dirPath + '/' + imgNameArr[0] + '.' + path.extname(files[i])
-//         // 重命名该文件
-//         fs.rename(old_path, new_path, (err) => { })
-//       }
-//     }
-//   })
-// }
-
 // 封装上传单图片的接口
 function uploadAvatar(req, res) {
   return new Promise((resolve, reject) => {
-    multerConfig.single('file')(req, res, function (err) {  // 单文件
+    singleUploadMiddleware.single('file')(req, res, function (err) {  // 单文件
       if (err) {
         // 传递的图片格式错误或者超出文件限制大小，就会reject出去
         reject(err)
@@ -81,22 +61,24 @@ function uploadAvatar(req, res) {
 
 // 封装上传多文件的接口
 function uploadMultiPhoto(req, res) {
-  console.log(req.file);
   let returnData = [];
   return new Promise((resolve, reject) => {
-    multerConfig.array('file')(req, res, function (err) {  // 多文件
+    multiUploadMiddleware.array('file',20) (req, res, function (err) {  // 多文件，最多20个文件
+      console.log(req.files)
       if (err) {
         reject(err)
       } else {
-        for (let i = 0; i < req.file.filename.length; i++) {
-          let img = req.file[i].filename.split('.')
+        for (let i = 0; i < req.files.length; i++) {
+          let img = req.files[i].filename.split('.')
+          let width = req.body[req.files[i].originalname].split('/')[0]
+          let height = req.body[req.files[i].originalname].split('/')[1]
           returnData.push({
+            // 拼接成完整的服务器静态资源图片路径
             uri: BaseURL + imgPath + img[0] + '.' + img[1],
-            height: req.file[i].height,
-            width: req.file[i].width
+            width: width,
+            height: height
           })
         }
-        // 拼接成完整的服务器静态资源图片路径
         resolve(returnData)
       }
     })
