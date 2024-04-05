@@ -1,6 +1,7 @@
 import userData from '@/mock/data.json'
 import { message } from "antd";
 import {getToken} from "@/utils"
+import axios from 'axios';
 
 const userList = userData.userInfoList
 
@@ -28,4 +29,13 @@ function getProfileAPI(){
     }, 100);
   })
 }
-export {loginAPI, getProfileAPI}
+
+// 删除游记
+function delNoteAPI(id){
+  return axios({ 
+    url:`http://localhost:3004/noteList/${id}`,
+    method: 'delete'
+  })
+}
+
+export {loginAPI, getProfileAPI, delNoteAPI}
