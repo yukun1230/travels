@@ -55,7 +55,7 @@ const MyTravelCard = ({ id, imageUrl, title, content, status }) => {
             <Text style={styles.buttonText}>删除</Text>
           </TouchableOpacity>
           {status === 1 ? 
-            <TouchableOpacity style={[styles.button, { borderColor: 'rgb(81,178,127)' }]} onPress={() => { navigation.navigate('Detail') }}>
+            <TouchableOpacity style={[styles.button, { borderColor: 'rgb(81,178,127)' }]} onPress={() => { navigation.navigate('Detail', { cardId: id }) }}>
               <Text style={{ color: 'rgb(81,178,127)' }}>详情</Text>
           </TouchableOpacity> : 
           <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => { }}>

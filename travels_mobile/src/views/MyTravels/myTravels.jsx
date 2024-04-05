@@ -1,15 +1,16 @@
-import * as React from 'react';
+import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, Button } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider, Card, Title, Paragraph } from 'react-native-paper';
-import {  useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, clearUser } from '../../redux/userSlice';
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
 import MyTravelCard from './MyTravelCard'
 import MyLikeCard from './MyLikeCard';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
 
 
 const travelCardsData = [{
@@ -72,6 +73,33 @@ const AvatarMenu = () => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
+
+
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = await getToken();
+  //       console.log(token);
+  //       const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+  //         headers: { 'token': token },
+  //       });
+  //       console.log(response.data);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+
+
+
+
+
+
+
   return (
     <Menu
       visible={visible}
@@ -105,35 +133,19 @@ const AvatarMenu = () => {
 };
 
 
-const FirstRoute = () => (
-  // 我的游记组件
-  <View style={[styles.scene]} >
+const FirstRoute = ({ myTravels }) => (
+  <View style={[styles.scene]}>
     <ScrollView>
-      <MyTravelCard
-      // 我的游记卡片组件
-        key={travelCardsData[0].id} // 使用卡片的 id 作为 key
-        id={travelCardsData[0].id} // 也将 id 传递给 TravelCard 组件
-        imageUrl={travelCardsData[0].imageUrl}
-        title={travelCardsData[0].title}
-        content={travelCardsData[0].content}
-        status={travelCardsData[0].status}
-      />
-      <MyTravelCard
-        key={travelCardsData[1].id} // 使用卡片的 id 作为 key
-        id={travelCardsData[1].id} // 也将 id 传递给 TravelCard 组件
-        imageUrl={travelCardsData[1].imageUrl}
-        title={travelCardsData[1].title}
-        content={travelCardsData[1].content}
-        status={travelCardsData[1].status}
-      />
-      <MyTravelCard
-        key={travelCardsData[2].id} // 使用卡片的 id 作为 key
-        id={travelCardsData[2].id} // 也将 id 传递给 TravelCard 组件
-        imageUrl={travelCardsData[2].imageUrl}
-        title={travelCardsData[2].title}
-        content={travelCardsData[2].content}
-        status={travelCardsData[2].status}
-      />
+      {myTravels.map((travel) => (
+        <MyTravelCard
+          key={travel._id}
+          id={travel._id}
+          imageUrl={travel.photo[0] ? travel.photo[0].uri : '默认图片地址'}
+          title={travel.title}
+          content={travel.content}
+          status={travel.travelState}
+        />
+      ))}
     </ScrollView>
   </View>
 );
@@ -171,20 +183,54 @@ const SecondRoute = () => {
   
  
 const initialLayout = { width: Dimensions.get('window').width };
-const renderScene = SceneMap({
-  // 选项卡配置
-  first: FirstRoute,
-  second: SecondRoute,
-});
+// const renderScene = SceneMap({
+//   // 选项卡配置
+//   first: FirstRoute,
+//   second: SecondRoute,
+// });
 
 export default function MyTravelsScreen() {
   const userInfo = useSelector(state => state.user);
   const navigation = useNavigation();
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = useState(0);
   const [routes] = React.useState([
     { key: 'first', title: '我的游记' },
     { key: 'second', title: '我的收藏' },
   ]);
+  const [myTravels, setMyTravels] = useState([]);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const token = await getToken();
+          const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+            headers: { 'token': token },
+          });
+          console.log(response.data.MyTravels);
+          if (response.data && response.data.MyTravels) {
+            setMyTravels(response.data.MyTravels);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
+
+
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'first':
+        return <FirstRoute myTravels={myTravels} />;
+      case 'second':
+        return <SecondRoute likedTravelsData={likedTravelsData} />;
+      default:
+        return null;
+    }
+  };
   
   const renderTabBar = props => (
     // 选项栏配置
