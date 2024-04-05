@@ -31,7 +31,7 @@ const DetailScreen = ({ navigation, route }) => {
         // 更新导航栏信息
         navigation.setOptions({
           headerLeft: () => (
-            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10,marginTop:-16 }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <AntDesign name="left" size={24} color="black" />
               </TouchableOpacity>
@@ -42,8 +42,13 @@ const DetailScreen = ({ navigation, route }) => {
               <Text style={{ fontSize: 18, marginLeft: 15 }}>{res.data.travelDetail.userInfo.nickname}</Text>
             </View>
           ),
+          // headerStyle: {
+          //   backgroundColor:'blue', // 设置顶部间距
+          //   height:10,
+          // },
         });
         setIsLoading(false);
+        console.log(res.data.travelDetail);
       })
       .catch(err => {
         console.error(err);
@@ -86,13 +91,30 @@ const DetailScreen = ({ navigation, route }) => {
             </View>
             
             <View style={{ backgroundColor: "white", flex: 1, padding: 10 }} >
-              <View style={styles.locationContainer}>
+              
+              {travelDetail.location && <View style={{ flexDirection: 'row' }}>
                 {/* 地址标签 */}
-                <View style={styles.locationIcon}>
-                  <AntDesign name="enviroment" size={18} color="white" />
-                </View>
-                <Text style={styles.locationText}>上海</Text>
-              </View>
+                {travelDetail.location.country && travelDetail.location.country!=='中国'&& <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.country}</Text>
+                </View>}
+                {travelDetail.location.province && <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.province}</Text>
+                </View>}
+                {travelDetail.location.city && <View style={styles.locationContainer}>
+                  <View style={styles.locationIcon}>
+                    <AntDesign name="enviroment" size={12} color="white" />
+                  </View>
+                  <Text style={styles.locationText}>{travelDetail.location.city}</Text>
+                </View>}
+                
+              </View>}
+
               <View>
                 {/* 标题 */}
                 <Text style={styles.detailTitle}>{travelDetail.title}</Text>
@@ -170,16 +192,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 子元素水平排列
     alignItems: 'center', // 子元素垂直居中
     alignSelf: 'flex-start',
-    marginTop: 15,
+    // marginTop: 0,
     marginLeft: 2,
-    height: 24,
-    borderRadius: 12,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: 'rgb(243,243,243)',
+    marginRight:8,
   },
   locationIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: 'black',
     justifyContent: 'center', // 图标垂直居中
     alignItems: 'center', // 图标水平居中
@@ -187,18 +210,18 @@ const styles = StyleSheet.create({
   },
   locationText: {
     color: 'black', // 文字颜色
-    marginRight: 15, // 文字和右箭头之间的距离
+    marginRight: 10, // 文字和右箭头之间的距离
     fontSize: 12, // 文字大小
     fontWeight: 'bold'
   },
   detailTitle:{
-    marginTop: 15,
+    marginTop: 8,
     fontSize: 20,
     fontWeight: 'bold',
   },
   detailContent:{
     marginTop: 12,
-    minHeight: 98,
+    minHeight: 160,
     fontSize: 15,
   },
   footer: {

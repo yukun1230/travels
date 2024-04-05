@@ -180,74 +180,11 @@ export default HomeScreen = () => {
   const [noMore, setNoMore] = useState(false);
   const [inited, setInited] = useState(false);
 
-  const page = useRef(1);
+  const page = useRef(0);
   const pageSize = 6;
   const loading = useRef(false);
   const listRef = useRef(null);
-  // const [isLoading, setIsLoading] = useState(false);
-
-
-  
-
-
-
-
-  // useEffect(() => {
-  //   axios.get(`${NGROK_URL}/travels/getDetails`, {
-  //     params: { id: "660d5b4977d1fe0ef4ab3e26" },
-  //   }) .then(res => {
-  //           console.log(res.data);
-  //         })
-  //         .catch(err => {
-  //           console.error(err);
-  //         });
-  //     }
-  // , []); 
-
-
-  // const CardList = [
-  //   {
-  //     "_id": "660d5b4977d1fe0ef4ab3e27",
-  //     "uri": "https://img1.baidu.com/it/u=2226443709,1655735334&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=1226",
-  //     "title": "尾页,好看的风景锁屏壁纸,唯美天空手机壁纸",
-  //     "width": 690,
-  //     "height": 1226,
-  //     "avatar": "https://img1.baidu.com/it/u=2226443709,1655735334&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=1226",
-  //     "nickname": "套娃定律"
-  //   },]
-  // const [cardList, setCardList] = useState([]);
-  // useEffect(() => {
-  //   const fetchCardList = async () => {
-  //     setIsLoading(true); // 开始加载数据
-  //     try {
-  //       const response = await axios.get(NGROK_URL + '/travels/getTravels');
-  //       const travels = response.data.travels;
-  //       const formattedData = travels.map(travel => {
-  //         // 取第一个照片作为展示，确保photo数组不为空
-  //         const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
-  //         return {
-  //           _id: travel._id,
-  //           uri: firstPhoto.uri,
-  //           title: travel.title,
-  //           width: firstPhoto.width,
-  //           height: firstPhoto.height,
-  //           avatar: travel.userInfo.avatar,
-  //           nickname: travel.userInfo.nickname,
-  //         };
-  //       });
-  //       setCardList(formattedData); // 更新卡片列表数据
-  //       // console.log(formattedData);
-  //     } catch (err) {
-  //       console.error(err);
-  //     } finally {
-  //       setIsLoading(false); // 完成加载，无论请求成功还是失败
-  //     }
-  //   };
-  //   fetchCardList();
-  // }, []);
-  // useEffect(() => {
-  //   console.log(cardList,'abc');
-  // }, [cardList]);
+ 
   // 控制返回顶部按钮
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);
   const handleScroll = (event) => {
@@ -264,83 +201,13 @@ export default HomeScreen = () => {
   };
 
 
-  
-
-  // const loadData = (page = 1, refreshing) => {
-    
-  //   if (loading.current) {
-  //     return;
-  //   }
-  //   loading.current = true;
-  //   if (refreshing) {
-  //     setRefreshing(true);
-  //   }
-  //   setIsLoading(true);
-  //     const newData = cardList.slice((page - 1) * pageSize, page * pageSize).map(img => {
-  //       const { width, height } = img;
-  //       const cardWidth = Math.floor(window.width / 2);
-  //       return {
-  //         ...img,
-  //         width: cardWidth,
-  //         height: Math.floor(height / width * cardWidth)
-  //       };
-  //     });
-  //     const noMore = newData.length < pageSize;
-  //     loading.current = false;
-  //     page.current = refreshing ? 1 : page;
-  //     setData(prevData => refreshing ? newData : [...prevData, ...newData]);
-  //     setRefreshing(false);
-  //     setNoMore(noMore);
-  //     setInited(true);
-  //     setIsLoading(false);
-  // };
-
-  // const loadData = async (isRefreshing = false) => {
-  //   const cardWidth = Math.floor(window.width / 2);
-  //   if (loading.current && !isRefreshing) {
-  //     // 如果当前正在加载数据，且不是刷新操作，则直接返回
-  //     return;
-  //   }
-
-  //   loading.current = true;
-  //   setIsLoading(true);
-  //   if (isRefreshing) {
-  //     setRefreshing(true);
-  //   }
-
-  //   try {
-  //     // 直接请求所有数据，无需分页参数
-  //     const response = await axios.get(`${NGROK_URL}/travels/getTravels`);
-  //     const travels = response.data.travels;
-
-  //     // 处理获取到的数据
-  //     const formattedData = travels.map(travel => {
-  //       const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
-  //       return {
-  //         _id: travel._id,
-  //         uri: firstPhoto.uri,
-  //         title: travel.title,
-  //         width: cardWidth,
-  //         height: Math.floor(firstPhoto.height / firstPhoto.width * cardWidth),
-  //         avatar: travel.userInfo.avatar,
-  //         nickname: travel.userInfo.nickname,
-  //       };
-  //     });
-
-  //     // 使用新数据替换旧数据
-  //     setData(formattedData);
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setIsLoading(false);
-  //     setRefreshing(false);
-  //     setInited(true);
-  //     loading.current = false;
-  //   }
-  // };
   const loadData = async (isRefreshing = false) => {
     // 刷新操作时重置页码到1，否则加载下一页
     // console.log('当前页',page);
+    if (isRefreshing){
+      page.current=0;
+    }
+    
     const nextPage = isRefreshing ? 1 : page.current + 1;
 
     if (loading.current && !isRefreshing) {
@@ -356,7 +223,7 @@ export default HomeScreen = () => {
 
     try {
       const response = await axios.get(`${NGROK_URL}/travels/getTravels`, {
-        params: { page: page.current, pageSize: pageSize },
+        params: { page: nextPage, pageSize: pageSize },
       })
       
       const travels = response.data.travels;
