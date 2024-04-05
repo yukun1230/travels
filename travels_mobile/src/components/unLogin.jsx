@@ -1,12 +1,12 @@
-import { Card, Title, Paragraph } from 'react-native-paper';
-import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Card } from 'react-native-paper';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 
 const UnLoginScreen = () => {
   const navigation = useNavigation();
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 180 }}>
+    <View style={styles.aboveAll}>
       <Card style={styles.card}>
         <Text style={styles.title}>您还没登录</Text>
         <Text style={styles.subtitle}>请先登录或注册再进行此操作</Text>
@@ -25,6 +25,11 @@ const UnLoginScreen = () => {
 }
 
 const styles = StyleSheet.create({
+  aboveAll: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 180
+  },
   card: {
     shadowRadius: 10, // 设置阴影模糊半径
     backgroundColor: 'white',

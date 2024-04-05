@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  KeyboardAvoidingView, 
-  Platform 
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
@@ -68,8 +68,8 @@ export default addTravelsScreen = () => {
         })
       }
       setImage([...image, ...uri_image]); // 头像回显
-      setFile(myform)  // 用于发送到后端,图片信息uri、name、type
-      setDimension(mydimension)  // 用于发送到后端，图片的宽度和高度信息
+      setFile([...file, ...myform])  // 用于发送到后端,图片信息uri、name、type
+      setDimension([...dimension, ...mydimension])  // 用于发送到后端，图片的宽度和高度信息
     }
   };
 
@@ -89,11 +89,9 @@ export default addTravelsScreen = () => {
     let myArray = [...image]
     let fileArray = [...file]
     let dimensionArray = [...dimension]
-    if (index !== -1) {
-      myArray.splice(index, 1);
-      fileArray.splice(index, 1);
-      dimensionArray.splice(index, 1);
-    };
+    myArray.splice(index, 1);
+    fileArray.splice(index, 1);
+    dimensionArray.splice(index, 1);
     setImage(myArray);
     setFile(fileArray);
     setDimension(dimensionArray);
@@ -144,7 +142,12 @@ export default addTravelsScreen = () => {
       {!userInfo.id && <UnLoginScreen />}
       {userInfo.id && <View style={styles.aboveAll}>
         <LoadingOverlay isVisible={isLoading} />
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          scrollEnabled={image.length < 3 ? false : true}//是否允许滚动
+          // scrollEnabled={false}
+        >
           {image.map(item => (
             <View style={styles.photo_Container} key={item} >
               <TouchableOpacity style={styles.delPhoto} onPress={() => deletePhoto(item)}>
@@ -156,12 +159,13 @@ export default addTravelsScreen = () => {
               />
             </View>
           ))}
-          <TouchableOpacity  //添加游记的图标
-            style={styles.icon}
-            onPress={pickImage}
-          >
-            <Text style={styles.plus_Text}>+</Text>
-          </TouchableOpacity>
+          <View style={styles.icon}>
+            <TouchableOpacity  //添加游记的图标
+              onPress={pickImage}
+            >
+              <Text style={styles.plus_Text}>+</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
         <FormItem
           required
@@ -201,20 +205,20 @@ export default addTravelsScreen = () => {
             errors={errors.content}
             render={({ field: { onChange, value } }) => (
               <View style={{ height: Math.max(200, height) }}>
-                  <TextInput
-                    style={[styles.contentInput, { height: Math.max(200, height) }]}
-                    value={value}
-                    multiline  //设置多行
-                    numberOfLines={6} //行数为5
-                    textAlignVertical="top"
-                    placeholderTextColor="#ccc"
-                    autoCapitalize="none"
-                    onContentSizeChange={(e) => setHeight(e.nativeEvent.contentSize.height)}
-                    onChangeText={(text) => {
-                      onChange(text);
-                    }}
-                    placeholder="第一张图片会自动成为你的“封面”，竖图美照更受欢迎哟！"
-                  />
+                <TextInput
+                  style={[styles.contentInput, { height: Math.max(200, height) }]}
+                  value={value}
+                  multiline  //设置多行
+                  numberOfLines={6} //行数为5
+                  textAlignVertical="top"
+                  placeholderTextColor="#ccc"
+                  autoCapitalize="none"
+                  onContentSizeChange={(e) => setHeight(e.nativeEvent.contentSize.height)}
+                  onChangeText={(text) => {
+                    onChange(text);
+                  }}
+                  placeholder="第一张图片会自动成为你的“封面”，竖图美照更受欢迎哟！"
+                />
               </View>
             )}
           />
@@ -313,15 +317,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#B3BAC1',
-    marginTop: 10,
-    marginRight: 10,
+    marginTop: 10
   },
   contentInput: {
     fontSize: 20,
     padding: 10,
     paddingBottom: 10,
-    // height: Math.max(40, height),
-    // height: 200
   },
   plus_Text: {
     color: '#B3BAC1',
