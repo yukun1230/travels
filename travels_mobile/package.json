@@ -42,6 +42,7 @@
     "react-native-svg": "^14.1.0",
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^3.5.2",
+    "react-native-toast-message": "^2.2.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-waterfall-flow": "^1.1.5",
     "react-native-web": "~0.19.6",

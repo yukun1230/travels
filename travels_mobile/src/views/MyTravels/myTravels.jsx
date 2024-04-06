@@ -11,6 +11,7 @@ import MyTravelCard from './MyTravelCard'
 import MyLikeCard from './MyLikeCard';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
+import UnLoginScreen from '../../components/unLogin';
 
 
 // const travelCardsData = [{
@@ -136,7 +137,7 @@ const AvatarMenu = () => {
 const FirstRoute = ({ myTravels, fetchTravels }) => (
   <View style={[styles.scene]}>
     <ScrollView>
-      {myTravels.map((travel) => (
+      {myTravels.length!==0 ? myTravels.map((travel) => (
         <MyTravelCard
           key={travel._id}
           id={travel._id}
@@ -148,7 +149,8 @@ const FirstRoute = ({ myTravels, fetchTravels }) => (
           location={travel.location ? travel.location : {}}
           fetchTravels={fetchTravels}
         />
-      ))}
+      )) : <View style={{padding:20}}><Text style={{fontSize:18}}>您还没有发布过游记哦，快去发布一篇吧~</Text></View>
+      }
     </ScrollView>
   </View>
 );
@@ -201,6 +203,9 @@ export default function MyTravelsScreen() {
     { key: 'second', title: '我的收藏' },
   ]);
   const [myTravels, setMyTravels] = useState([]);
+  useEffect(() => {
+    console.log(myTravels);
+  })
 
 
 const fetchTravels = async () => {
@@ -299,16 +304,18 @@ useFocusEffect(
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
       </View>
-
+      {userInfo.id ? 
       <TabView
-      // 选项卡组件
+        // 选项卡组件
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={initialLayout}
         style={styles.tabView}
         renderTabBar={renderTabBar}
-      />
+      />: 
+      <UnLoginScreen></UnLoginScreen>}
+      
     </View>
   );
 }

@@ -2,13 +2,12 @@ import {
   Text,
   View,
   TextInput,
-  Alert,
   StyleSheet,
   TouchableWithoutFeedback,
-  Image
+  Image,
 } from 'react-native';
 import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
@@ -20,6 +19,7 @@ import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../../appSlice';
 import { setUser } from '../../redux/userSlice';
+import Toast from 'react-native-toast-message';
 
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)
@@ -30,23 +30,41 @@ export default LoginScreen = ({ navigation }) => {
     // getToken
     navigation.navigate("注册界面")
   }
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      username: '',
-      password: ''
-    },
-  });
+ 
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm({
+  defaultValues: {
+    username: '',
+    password: ''
+  },
+});
+  
+  const handleClear = () => {
+    setValue('username', '');
+    setValue('password', '');
+  }
 
   const onSubmit = async (data) => {
-    // const message = await removeToken()
-    // console.log(message)
+    // 提交信息验证，登录
     axios.post(NGROK_URL + '/users/login', data).then(
       res => {
-        Alert.alert(res.data.message);
+        if(res.data.message==="登录成功"){
+          Toast.show({
+          type: 'success',
+          text1: res.data.message,
+          position: 'top',
+          autoHide: true,
+          visibilityTime: 1000,
+        })
+        }else{
+          Toast.show({
+          type: 'error',
+          text1: res.data.message,
+          position: 'top',
+          autoHide: true,
+          visibilityTime: 1000,
+          })
+        }
+        
         console.log(res.data);
         const { _id, avatar, nickname } = res.data.user;
         // 使用 dispatch 将用户信息保存到 Redux
@@ -63,6 +81,27 @@ export default LoginScreen = ({ navigation }) => {
     // dispatch(changePage())
     navigation.navigate("主界面")
   }
+
+  
+ useEffect(() => {
+  // 如果有Token，直接跳转首页
+  const checkTokenAndRedirect = async () => {
+    const token = await getToken();
+    console.log(token);
+    if (token) {
+      navigation.navigate("主界面");
+    }
+  };
+  checkTokenAndRedirect();
+}, []);
+
+
+
+
+
+
+
+
   return (
     <View style={styles.loginSection}>
       <Text style={styles.aboveTitle}>旅游日记平台</Text>
@@ -76,7 +115,7 @@ export default LoginScreen = ({ navigation }) => {
           required: '不能为空',
           pattern: {
             value: /^[a-zA-Z0-9_-]{4,16}$/,
-            message: '用户名格式校验错误,应为4到16位(字母,数字,下划线,减号)',
+            message: '用户名错误,请输入4到16位字符(字母,数字,下划线,减号)',
           },
         }}
         render={({ field: { onChange, value } }) => (
@@ -97,7 +136,7 @@ export default LoginScreen = ({ navigation }) => {
           required: '不能为空',
           pattern: {
             value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/,
-            message: '密码格式校验错误,应为8到16位(大小写字母和数字)',
+            message: '密码格式错误,请输入8到16位密码(大小写字母和数字)',
           },
         }}
         errors={errors.password}
@@ -125,7 +164,7 @@ export default LoginScreen = ({ navigation }) => {
       />
       <View style={{ flexDirection: "row", marginTop: 10 }}>
         <Button style={styles.login_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>登录</Button>
-        <Button style={styles.login_Button} textStyle={{ fontSize: 18, color: "white" }}>重置</Button>
+        <Button style={styles.login_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleClear}>重置 </Button>
       </View>
       <View style={styles.subButton}>
         <Text style={styles.subButtonText} onPress={handlelogin}>新用户注册</Text>
