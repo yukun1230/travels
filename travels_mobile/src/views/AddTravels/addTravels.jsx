@@ -51,12 +51,17 @@ export default addTravelsScreen = () => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = countryName;
+      newValues[index+1] = '';
+      newValues[index + 2] = '';
       return newValues;
     });
     const selectedCountry = placeList.find(country => country.name === countryName);
     if (selectedCountry) {
       setFilteredProvinces(selectedCountry.provinces);
       setFilteredCities([]);
+    }else{
+      setFilteredProvinces([]);
+      setFilteredCities([])
     }
   };
 
@@ -64,6 +69,7 @@ export default addTravelsScreen = () => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = provinceName;
+      newValues[index+1] = '';
       return newValues;
     });
 
@@ -72,7 +78,9 @@ export default addTravelsScreen = () => {
       const selectedProvince = selectedCountry.provinces.find(province => province.name === provinceName);
       if (selectedProvince) {
         setFilteredCities(selectedProvince.cities);
-      }
+      }else(
+        setFilteredCities([])
+      )
     }
   };
 
