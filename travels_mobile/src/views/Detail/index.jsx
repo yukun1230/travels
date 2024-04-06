@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper'
 import { AntDesign } from '@expo/vector-icons';
@@ -128,7 +128,7 @@ const DetailScreen = ({ navigation, route }) => {
             </View>
           </>
         ) : (
-          <Text>Loading...</Text>
+            <Text style={styles.loading}>Loading...</Text>
         )}
       </ScrollView>
       <View style={styles.footer}>
@@ -157,6 +157,9 @@ const DetailScreen = ({ navigation, route }) => {
     
   );
 };
+
+
+const screenHeight = Dimensions.get('window').height;
 
 
 const styles = StyleSheet.create({
@@ -220,8 +223,12 @@ const styles = StyleSheet.create({
   },
   detailContent:{
     marginTop: 12,
-    minHeight: 160,
+    minHeight: screenHeight-500,
+    lineHeight: 28,
     fontSize: 15,
+  },
+  loading:{
+    height: screenHeight+100
   },
   footer: {
     position: 'absolute', 

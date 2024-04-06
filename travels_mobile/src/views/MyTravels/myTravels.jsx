@@ -13,28 +13,28 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 
 
-const travelCardsData = [{
-    id: '1',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "探索未知的地方",
-    content: "这是关于我的第一次旅行的一段描述...",
-    status: 1
-  },
-  {
-    id: '2',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "探索未知的地方2",
-    content: "这是关于我的第一次旅行的一段描述2...",
-    status: 2
-  },
-  {
-    id: '3',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "探索未知的地方3",
-    content: "这是关于我的第一次旅行的一段描述3...",
-    status: 0
-  },
-]
+// const travelCardsData = [{
+//     id: '1',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "探索未知的地方",
+//     content: "这是关于我的第一次旅行的一段描述...",
+//     status: 1
+//   },
+//   {
+//     id: '2',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "探索未知的地方2",
+//     content: "这是关于我的第一次旅行的一段描述2...",
+//     status: 2
+//   },
+//   {
+//     id: '3',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "探索未知的地方3",
+//     content: "这是关于我的第一次旅行的一段描述3...",
+//     status: 0
+//   },
+// ]
 
 const likedTravelsData = [
   {
@@ -133,17 +133,20 @@ const AvatarMenu = () => {
 };
 
 
-const FirstRoute = ({ myTravels }) => (
+const FirstRoute = ({ myTravels, fetchTravels }) => (
   <View style={[styles.scene]}>
     <ScrollView>
       {myTravels.map((travel) => (
         <MyTravelCard
           key={travel._id}
           id={travel._id}
-          imageUrl={travel.photo[0] ? travel.photo[0].uri : '默认图片地址'}
+          // imageUrl={travel.photo[0] ? travel.photo[0].uri : '默认图片地址'}
+          photo={travel.photo}
           title={travel.title}
           content={travel.content}
           status={travel.travelState}
+          location={travel.location ? travel.location : {}}
+          fetchTravels={fetchTravels}
         />
       ))}
     </ScrollView>
@@ -198,33 +201,58 @@ export default function MyTravelsScreen() {
     { key: 'second', title: '我的收藏' },
   ]);
   const [myTravels, setMyTravels] = useState([]);
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const token = await getToken();
-          const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
-            headers: { 'token': token },
-          });
-          console.log(response.data.MyTravels);
-          if (response.data && response.data.MyTravels) {
-            setMyTravels(response.data.MyTravels);
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      };
 
-      fetchData();
-    }, [])
-  );
+
+const fetchTravels = async () => {
+  try {
+    const token = await getToken();
+    const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+      headers: { 'token': token },
+    });
+    if (response.data && response.data.MyTravels) {
+      setMyTravels(response.data.MyTravels);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+useFocusEffect(
+  useCallback(() => {
+    fetchTravels();
+  }, [])
+);
+
+
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchData = async () => {
+  //       try {
+  //         const token = await getToken();
+  //         const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+  //           headers: { 'token': token },
+  //         });
+  //         console.log(response.data.MyTravels);
+  //         if (response.data && response.data.MyTravels) {
+  //           setMyTravels(response.data.MyTravels);
+  //           console.log(response.data.MyTravels);
+  //         }
+  //       } catch (err) {
+  //         console.error(err);
+  //       }
+  //     };
+
+  //     fetchData();
+  //   }, [])
+  // );
 
 
 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'first':
-        return <FirstRoute myTravels={myTravels} />;
+        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} />;
       case 'second':
         return <SecondRoute likedTravelsData={likedTravelsData} />;
       default:

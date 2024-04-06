@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import UnLoginScreen from '../../components/unLogin';
@@ -25,7 +25,7 @@ import placeList from './placeList';
 import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 
-export default addTravelsScreen = () => {
+export default addTravelsScreen = ({ route }) => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
   const [file, setFile] = useState([]); // 数组用于传到后端
   const [dimension, setDimension] = useState([]); // 数组用于存储图片的长度和宽度
@@ -46,17 +46,32 @@ export default addTravelsScreen = () => {
       content: ''
     },
   });
+  // const { CardData } = route.params;
+  let CardData = {};
+  if(route.params){
+    CardData = route.params;
+  }
+  
+  useEffect(() => {
+    console.log('传递参数',CardData);
+  })
+
 
   const handleCountryChange = (countryName, index) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = countryName;
+      newValues[index+1] = '';
+      newValues[index + 2] = '';
       return newValues;
     });
     const selectedCountry = placeList.find(country => country.name === countryName);
     if (selectedCountry) {
       setFilteredProvinces(selectedCountry.provinces);
       setFilteredCities([]);
+    }else{
+      setFilteredProvinces([]);
+      setFilteredCities([])
     }
   };
 
@@ -64,6 +79,7 @@ export default addTravelsScreen = () => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = provinceName;
+      newValues[index+1] = '';
       return newValues;
     });
 
@@ -72,7 +88,9 @@ export default addTravelsScreen = () => {
       const selectedProvince = selectedCountry.provinces.find(province => province.name === provinceName);
       if (selectedProvince) {
         setFilteredCities(selectedProvince.cities);
-      }
+      }else(
+        setFilteredCities([])
+      )
     }
   };
 
