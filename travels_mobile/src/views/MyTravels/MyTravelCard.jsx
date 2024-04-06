@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
+import React, { useState } from 'react';
+import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Card, Title, Paragraph,Dialog, Portal, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
+import axios from 'axios';
+import { NGROK_URL } from '../../config/ngrok'
 
 // 现在组件接收一个额外的 id 参数
-const MyTravelCard = ({ id, photo, title, content, status, location }) => {
+const MyTravelCard = ({ id, photo, title, content, status, location,fetchTravels }) => {
   const navigation = useNavigation();
   let statusInfo = '';
   if (status === 1) {
@@ -21,12 +24,80 @@ const MyTravelCard = ({ id, photo, title, content, status, location }) => {
     title:title,
     content:content,
     location:location
+
   }
+
+  // const handleDelete = async () => {
+  //   const token = await getToken();
+  //   console.log(id);
+  //   axios.post(`${NGROK_URL}/travels/deleteOneTravel`, {
+  //     headers: { 'token': token },
+  //     data: {
+  //       id: id
+  //     }
+  //   }).then(res => {
+  //     console.log(res.data);
+  //     // navigation.navigate('我的游记');
+  //   }).catch(err => {
+  //     console.log(err);
+  //   })
+  // }
+
+//  const handleDelete = async () => {
+//   try {
+//     const token = await getToken();
+//     await axios.post(`${NGROK_URL}/travels/deleteOneTravel`, { id }, { headers: { 'token': token } });
+//     // 删除成功后，调用 fetchTravels 来刷新列表
+//     fetchTravels();
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+const [visible, setVisible] = useState(false);
+const showDialog = () => setVisible(true);
+
+const hideDialog = () => setVisible(false);
+
+
+
+
+const handleDelete = async () => {
+  try {
+    const token = await getToken();
+    const response = await axios.post(`${NGROK_URL}/travels/deleteOneTravel`,
+      { id: id },
+      { headers: { 'token': token } }
+    );
+    console.log(response.data);
+    // 删除成功，调用传入的 fetchTravels 函数刷新列表
+    fetchTravels();
+    hideDialog();
+  } catch (error) {
+    console.error("删除失败:", error);
+  }
+};
+      
+    
 
 
 
   return (
     <Card style={styles.card}>
+      
+      <Portal>
+        {/* 删除对话框 */}
+        <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
+          <Dialog.Title style={styles.dialogTitleStyle}>删除确认</Dialog.Title>
+          <Dialog.Content style={styles.dialogContentStyle}>
+            <Text style={{fontSize:16}}>您确定要删除这篇游记吗？</Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{marginTop:-10}}>
+            <Button textColor="rgb(34,150,243)" onPress={hideDialog}>取消</Button>
+            <Button textColor="#d32f2f" onPress={handleDelete}>确认</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <View style={styles.topContainer}>
         <Image
           source={{ uri: photo[0].uri }}
@@ -62,7 +133,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location }) => {
 
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => { }}>
+          <TouchableOpacity style={styles.button} onPress={showDialog}>
             <Text style={styles.buttonText}>删除</Text>
           </TouchableOpacity>
           {status === 1 ? 
@@ -84,6 +155,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location }) => {
 const styles = StyleSheet.create({
   card: {
     margin: 10,
+    // marginBottom:5,
     overflow: 'hidden',
     backgroundColor: 'white',
   },
@@ -141,7 +213,19 @@ const styles = StyleSheet.create({
   },
   editButton: {
     borderColor: '#007BFF',
-  }
+  },
+  dialogStyle: {
+    backgroundColor: 'white', // 修改对话框的背景色
+    borderRadius: 10, // 设置边角圆滑度
+    padding: 0, // 内部间距
+  },
+  dialogTitleStyle: {
+    color: '#333333', // 标题文字颜色
+    // textAlign: 'center', // 标题居中
+  },
+  dialogContentStyle: {
+    color: '#666666', // 内容文字颜色
+  },
 });
 
 export default MyTravelCard;

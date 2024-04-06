@@ -59,6 +59,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, userName }) => {
 const styles = StyleSheet.create({
   card: {
     margin: 10,
+    // marginBottom: 0,
     overflow: 'hidden',
     backgroundColor: 'white',
   },

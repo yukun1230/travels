@@ -133,7 +133,7 @@ const AvatarMenu = () => {
 };
 
 
-const FirstRoute = ({ myTravels }) => (
+const FirstRoute = ({ myTravels, fetchTravels }) => (
   <View style={[styles.scene]}>
     <ScrollView>
       {myTravels.map((travel) => (
@@ -146,6 +146,7 @@ const FirstRoute = ({ myTravels }) => (
           content={travel.content}
           status={travel.travelState}
           location={travel.location ? travel.location : {}}
+          fetchTravels={fetchTravels}
         />
       ))}
     </ScrollView>
@@ -200,34 +201,58 @@ export default function MyTravelsScreen() {
     { key: 'second', title: '我的收藏' },
   ]);
   const [myTravels, setMyTravels] = useState([]);
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const token = await getToken();
-          const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
-            headers: { 'token': token },
-          });
-          // console.log(response.data.MyTravels);
-          if (response.data && response.data.MyTravels) {
-            setMyTravels(response.data.MyTravels);
-            // console.log(response.data.MyTravels);
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      };
 
-      fetchData();
-    }, [])
-  );
+
+const fetchTravels = async () => {
+  try {
+    const token = await getToken();
+    const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+      headers: { 'token': token },
+    });
+    if (response.data && response.data.MyTravels) {
+      setMyTravels(response.data.MyTravels);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+useFocusEffect(
+  useCallback(() => {
+    fetchTravels();
+  }, [])
+);
+
+
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchData = async () => {
+  //       try {
+  //         const token = await getToken();
+  //         const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+  //           headers: { 'token': token },
+  //         });
+  //         console.log(response.data.MyTravels);
+  //         if (response.data && response.data.MyTravels) {
+  //           setMyTravels(response.data.MyTravels);
+  //           console.log(response.data.MyTravels);
+  //         }
+  //       } catch (err) {
+  //         console.error(err);
+  //       }
+  //     };
+
+  //     fetchData();
+  //   }, [])
+  // );
 
 
 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'first':
-        return <FirstRoute myTravels={myTravels} />;
+        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} />;
       case 'second':
         return <SecondRoute likedTravelsData={likedTravelsData} />;
       default:
