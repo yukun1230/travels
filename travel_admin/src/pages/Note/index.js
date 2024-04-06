@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import "./index.scss";
 import axios from "axios";
 import { delNoteAPI } from '@/api'
+import { useNavigate } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 
 const Note = () => {
-  const content = <p>Content</p>;
+  const navigate = useNavigate()
   // 游记状态枚举
   const status = {
     0: <Tag color="warning">待审核</Tag>,
@@ -80,7 +81,8 @@ const Note = () => {
       render: (data) => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button type="primary" shape="circle" icon={<EditOutlined />} 
+            onClick={() => navigate(`/detail?id=${data.id}`)} />
             <Popconfirm
               title="删除文章"
               description="确认要删除当前文章吗?"
