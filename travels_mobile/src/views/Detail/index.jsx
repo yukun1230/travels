@@ -128,7 +128,7 @@ const DetailScreen = ({ navigation, route }) => {
             </View>
           </>
         ) : (
-            <Text style={styles.loading}>Loading...</Text>
+            <Text style={styles.loading}>加载中...</Text>
         )}
       </ScrollView>
       <View style={styles.footer}>
@@ -228,6 +228,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   loading:{
+    marginTop: 50,
+    alignSelf: 'center',
+    fontSize: 20,
     height: screenHeight+100
   },
   footer: {

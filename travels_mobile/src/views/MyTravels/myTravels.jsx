@@ -12,7 +12,7 @@ import MyLikeCard from './MyLikeCard';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
-
+import LoadingOverlay from '../../components/LoadingOverlay'; 
 
 // const travelCardsData = [{
 //     id: '1',
@@ -134,26 +134,33 @@ const AvatarMenu = () => {
 };
 
 
-const FirstRoute = ({ myTravels, fetchTravels }) => (
-  <View style={[styles.scene]}>
-    <ScrollView>
-      {myTravels.length!==0 ? myTravels.map((travel) => (
-        <MyTravelCard
-          key={travel._id}
-          id={travel._id}
-          // imageUrl={travel.photo[0] ? travel.photo[0].uri : '默认图片地址'}
-          photo={travel.photo}
-          title={travel.title}
-          content={travel.content}
-          status={travel.travelState}
-          location={travel.location ? travel.location : {}}
-          fetchTravels={fetchTravels}
-        />
-      )) : <View style={{padding:20}}><Text style={{fontSize:18}}>您还没有发布过游记哦，快去发布一篇吧~</Text></View>
-      }
-    </ScrollView>
-  </View>
-);
+const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
+  // 根据条件判断要渲染的内容
+  const content = myTravels.length !== 0 ? (
+    myTravels.map((travel) => (
+      <MyTravelCard
+        key={travel._id}
+        id={travel._id}
+        photo={travel.photo}
+        title={travel.title}
+        content={travel.content}
+        status={travel.travelState}
+        location={travel.location ? travel.location : {}}
+        fetchTravels={fetchTravels}
+      />
+    ))
+  ) : (
+    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有发布过游记哦，快去发布一篇吧~</Text></View>
+  );
+
+  return (
+    <View style={[styles.scene]}>
+      <ScrollView>
+        {content}
+      </ScrollView>
+    </View>
+  );
+};
 
 
 const SecondRoute = () => {
@@ -198,7 +205,7 @@ export default function MyTravelsScreen() {
   const userInfo = useSelector(state => state.user);
   const navigation = useNavigation();
   const [index, setIndex] = useState(0);
-  const [routes] = React.useState([
+  const [routes] = useState([
     { key: 'first', title: '我的游记' },
     { key: 'second', title: '我的收藏' },
   ]);
@@ -207,26 +214,32 @@ export default function MyTravelsScreen() {
     console.log(myTravels);
   })
 
+  const [isLoading, setIsLoading] = useState(true);
 
-const fetchTravels = async () => {
-  try {
-    const token = await getToken();
-    const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
-      headers: { 'token': token },
-    });
-    if (response.data && response.data.MyTravels) {
-      setMyTravels(response.data.MyTravels);
+  const fetchTravels = async () => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        setIsLoading(false);
+        return
+      }
+      const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+        headers: { 'token': token },
+      });
+      if (response.data && response.data.MyTravels) {
+        setMyTravels(response.data.MyTravels);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
-useFocusEffect(
-  useCallback(() => {
-    fetchTravels();
-  }, [])
-);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTravels();
+    }, [])
+  );
 
 
 
@@ -257,7 +270,7 @@ useFocusEffect(
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'first':
-        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} />;
+        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading}/>;
       case 'second':
         return <SecondRoute likedTravelsData={likedTravelsData} />;
       default:
@@ -291,6 +304,7 @@ useFocusEffect(
 
   return (
     <View style={styles.container}>
+      <LoadingOverlay isVisible={isLoading} />
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <AvatarMenu></AvatarMenu>
