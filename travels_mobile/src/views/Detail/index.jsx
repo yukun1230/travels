@@ -128,7 +128,7 @@ const DetailScreen = ({ navigation, route }) => {
             </View>
           </>
         ) : (
-          <Text>Loading...</Text>
+            <Text style={styles.loading}>Loading...</Text>
         )}
       </ScrollView>
       <View style={styles.footer}>
@@ -223,8 +223,12 @@ const styles = StyleSheet.create({
   },
   detailContent:{
     marginTop: 12,
-    minHeight: screenHeight-570,
+    minHeight: screenHeight-500,
+    lineHeight: 28,
     fontSize: 15,
+  },
+  loading:{
+    height: screenHeight+100
   },
   footer: {
     position: 'absolute', 

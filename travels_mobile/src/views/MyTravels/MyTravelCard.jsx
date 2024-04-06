@@ -4,7 +4,7 @@ import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 // 现在组件接收一个额外的 id 参数
-const MyTravelCard = ({ id, imageUrl, title, content, status }) => {
+const MyTravelCard = ({ id, photo, title, content, status, location }) => {
   const navigation = useNavigation();
   let statusInfo = '';
   if (status === 1) {
@@ -14,11 +14,22 @@ const MyTravelCard = ({ id, imageUrl, title, content, status }) => {
   }else if (status === 2) {
     statusInfo = '待审核';
   }
+
+  const CardData={
+    id:id,
+    photo:photo,
+    title:title,
+    content:content,
+    location:location
+  }
+
+
+
   return (
     <Card style={styles.card}>
       <View style={styles.topContainer}>
         <Image
-          source={{ uri: imageUrl }}
+          source={{ uri: photo[0].uri }}
           style={styles.image}
         />
         <View style={styles.textContainer}>
@@ -58,7 +69,8 @@ const MyTravelCard = ({ id, imageUrl, title, content, status }) => {
             <TouchableOpacity style={[styles.button, { borderColor: 'rgb(81,178,127)' }]} onPress={() => { navigation.navigate('Detail', { cardId: id }) }}>
               <Text style={{ color: 'rgb(81,178,127)' }}>详情</Text>
           </TouchableOpacity> : 
-          <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => { }}>
+            <TouchableOpacity style={[styles.button, styles.editButton]} 
+            onPress={() => { navigation.navigate('游记发布',{CardData:CardData}) }}>
             <Text style={{ color: '#007BFF' }}>编辑</Text>
           </TouchableOpacity>}
 
