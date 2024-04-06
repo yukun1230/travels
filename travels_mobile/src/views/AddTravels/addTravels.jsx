@@ -162,138 +162,140 @@ export default addTravelsScreen = () => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <>
       {!userInfo.id && <UnLoginScreen />}
-      {userInfo.id && <View style={styles.aboveAll}>
-        <LoadingOverlay isVisible={isLoading} />
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={image.length < 3 ? false : true} //是否允许滚动，当图片数量少于3个的时候，设置滚动不可用，为什么要这么设置呢？因为这里有bug，当没有图片时，也可以滚动，这就导致了‘添加图片’的图标左右横跳非常不美观
-        >
-          {image.map(item => (
-            <View style={styles.photo_Container} key={item} >
-              <TouchableOpacity style={styles.delPhoto} onPress={() => deletePhoto(item)}>
-                <Text style={{ color: "white", fontSize: 20, height: 20, marginBottom: 9 }}>×</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {userInfo.id && <View style={styles.aboveAll}>
+          <LoadingOverlay isVisible={isLoading} />
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={image.length < 3 ? false : true} //是否允许滚动，当图片数量少于3个的时候，设置滚动不可用，为什么要这么设置呢？因为这里有bug，当没有图片时，也可以滚动，这就导致了‘添加图片’的图标左右横跳非常不美观
+          >
+            {image.map(item => (
+              <View style={styles.photo_Container} key={item} >
+                <TouchableOpacity style={styles.delPhoto} onPress={() => deletePhoto(item)}>
+                  <Text style={{ color: "white", fontSize: 20, height: 20, marginBottom: 9 }}>×</Text>
+                </TouchableOpacity>
+                <Image
+                  source={{ uri: item }}
+                  style={styles.photo_image}
+                />
+              </View>
+            ))}
+            <View style={styles.icon}>
+              <TouchableOpacity  //添加游记的图标
+                onPress={pickImage}
+              >
+                <Text style={styles.plus_Text}>+</Text>
               </TouchableOpacity>
-              <Image
-                source={{ uri: item }}
-                style={styles.photo_image}
-              />
             </View>
-          ))}
-          <View style={styles.icon}>
-            <TouchableOpacity  //添加游记的图标
-              onPress={pickImage}
-            >
-              <Text style={styles.plus_Text}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-        <FormItem
-          required
-          name="title"
-          control={control}
-          errors={errors.title}
-          rules={{
-            required: '不能为空',
-          }}
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              placeholderTextColor="#ccc"
-              style={styles.titleInput}
-              placeholder='填写标题'
-            />
-          )}
-          style={{ height: 40, marginBottom: 20 }}
-        />
-        <View>
+          </ScrollView>
           <FormItem
             required
+            name="title"
             control={control}
-            name="content"
+            errors={errors.title}
             rules={{
               required: '不能为空',
             }}
-            errors={errors.content}
             render={({ field: { onChange, value } }) => (
-              <View style={{ height: Math.max(200, height) }}>
-                <TextInput
-                  style={[styles.contentInput, { height: Math.max(200, height) }]}
-                  value={value}
-                  multiline  //设置多行
-                  numberOfLines={6} //行数为5
-                  textAlignVertical="top"
-                  placeholderTextColor="#ccc"
-                  autoCapitalize="none"
-                  onContentSizeChange={(e) => setHeight(e.nativeEvent.contentSize.height)}
-                  onChangeText={(text) => {
-                    onChange(text);
-                  }}
-                  placeholder="第一张图片会自动成为你的“封面”，竖图美照更受欢迎哟！"
-                />
-              </View>
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                placeholderTextColor="#ccc"
+                style={styles.titleInput}
+                placeholder='填写标题'
+              />
             )}
+            style={{ height: 40, marginBottom: 20 }}
           />
-          <TouchableOpacity onPress={()=>setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-            <View style={styles.locationIcon}>
-              <AntDesign name="enviroment" size={18} color="white" />
+          <View>
+            <FormItem
+              required
+              control={control}
+              name="content"
+              rules={{
+                required: '不能为空',
+              }}
+              errors={errors.content}
+              render={({ field: { onChange, value } }) => (
+                <View style={{ height: Math.max(200, height) }}>
+                  <TextInput
+                    style={[styles.contentInput, { height: Math.max(200, height) }]}
+                    value={value}
+                    multiline  //设置多行
+                    numberOfLines={6} //行数为5
+                    textAlignVertical="top"
+                    placeholderTextColor="#ccc"
+                    autoCapitalize="none"
+                    onContentSizeChange={(e) => setHeight(e.nativeEvent.contentSize.height)}
+                    onChangeText={(text) => {
+                      onChange(text);
+                    }}
+                    placeholder="第一张图片会自动成为你的“封面”，竖图美照更受欢迎哟！"
+                  />
+                </View>
+              )}
+            />
+            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+              <View style={styles.locationIcon}>
+                <AntDesign name="enviroment" size={18} color="white" />
+              </View>
+              {!selectedValues[0] && <Text style={styles.locationText}>添加地点</Text>}
+              {selectedValues[0] && <Text style={{ fontSize: 18, marginRight: 15, marginLeft: 8 }}>地点：{selectedValues.filter(item => item != '').join('•')}</Text>}
+              {fold && <Text style={{ fontSize: 16 }}>{'>'}</Text>}
+              {!fold && <Text style={{ fontSize: 16, transform: [{ rotate: '90deg' }] }}>{'>'}</Text>}
+            </TouchableOpacity>
+            {!fold && <Card style={{ flexDirection: 'column', alignItems: 'center', marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18 }}>选择国家</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={selectedValues[0]}
+                  onValueChange={(value) => handleCountryChange(value, 0)}>
+                  <Picker.Item label='未选' value='' />
+                  {placeList.map((country, index) => (
+                    <Picker.Item label={country.name} value={country.name} key={index} />
+                  ))}
+                </Picker>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18 }}>选择省份</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={selectedValues[1]}
+                  onValueChange={(value) => handleProvinceChange(value, 1)}>
+                  <Picker.Item label='未选' value='' />
+                  {filteredProvinces.map((province, index) => (
+                    <Picker.Item label={province.name} value={province.name} key={index} />
+                  ))}
+                </Picker>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18 }}>选择城市</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={selectedValues[2]}
+                  onValueChange={(value) => setSelectedValues((prevValues) => {
+                    const newValues = [...prevValues];
+                    newValues[2] = value;
+                    return newValues;
+                  })}>
+                  <Picker.Item label='未选' value='' />
+                  {filteredCities.map((city, index) => (
+                    <Picker.Item label={city} value={city} key={index} />
+                  ))}
+                </Picker>
+              </View>
+            </Card>}
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
+              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>发布</Button>
             </View>
-            {!selectedValues[0] && <Text style={styles.locationText}>添加地点</Text>}
-            {selectedValues[0] && <Text style={{ fontSize: 18, marginRight:15, marginLeft:8 }}>地点：{selectedValues.filter(item=>item != '').join('•')}</Text>}
-            {fold &&<Text style={{fontSize: 16}}>{'>'}</Text>}
-            {!fold &&<Text style={{fontSize: 16, transform: [{ rotate: '90deg' }]}}>{'>'}</Text>}
-          </TouchableOpacity>
-          {!fold&&<Card style={{flexDirection: 'column', alignItems: 'center', marginTop: 20, marginLeft: 20, marginRight: 20 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 18 }}>选择国家</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={selectedValues[0]}
-                onValueChange={(value) => handleCountryChange(value, 0)}>
-                <Picker.Item label='未选' value='' />
-                {placeList.map((country, index) => (
-                  <Picker.Item label={country.name} value={country.name} key={index} />
-                ))}
-              </Picker>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 18 }}>选择省份</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={selectedValues[1]}
-                onValueChange={(value) => handleProvinceChange(value, 1)}>
-                <Picker.Item label='未选' value='' />
-                {filteredProvinces.map((province, index) => (
-                  <Picker.Item label={province.name} value={province.name} key={index} />
-                ))}
-              </Picker>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 18 }}>选择城市</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={selectedValues[2]}
-                onValueChange={(value) => setSelectedValues((prevValues) => {
-                  const newValues = [...prevValues];
-                  newValues[2] = value;
-                  return newValues;
-                })}>
-                <Picker.Item label='未选' value='' />
-                {filteredCities.map((city, index) => (
-                  <Picker.Item label={city} value={city} key={index} />
-                ))}
-              </Picker>
-            </View>
-          </Card>}
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>发布</Button>
           </View>
-        </View>
-      </View>}
-    </ScrollView>
+        </View>}
+      </ScrollView>
+    </>
   )
 }
 
