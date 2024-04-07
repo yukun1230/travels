@@ -34,7 +34,7 @@ class TravelController {
       console.log(req.query.page)
       // 这里之后再加个筛选条件，只返回审核通过后的游记
       // const travels = await Travel.find({travelState: 1}, '_id photo title userInfo').skip(page * pageSize).limit(pageSize)
-      const travels = await Travel.find({}, '_id photo title userInfo').skip(page * pageSize).limit(pageSize)
+      const travels = await Travel.find({}, '_id photo title userInfo').sort({'_id':-1}).skip(page * pageSize).limit(pageSize)
       res.send({
         message: "获取游记信息成功",
         travels
