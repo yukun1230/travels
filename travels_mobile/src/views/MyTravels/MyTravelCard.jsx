@@ -79,22 +79,27 @@ const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravel
   };
 
 
-
-
-
   return (
     <Card style={styles.card}>
-
-      <Portal>
+      <Portal >
         {/* 删除对话框 */}
         <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
           <Dialog.Title style={styles.dialogTitleStyle}>删除确认</Dialog.Title>
           <Dialog.Content style={styles.dialogContentStyle}>
             <Text style={{ fontSize: 16 }}>您确定要删除这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10 }}>
-            <Button textColor="rgb(34,150,243)" onPress={hideDialog}>取消</Button>
-            <Button textColor="#d32f2f" onPress={handleDelete}>确认</Button>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'black',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:0.5,height:50, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
+                <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
+              </TouchableOpacity>
+            </View>
+            {/* <View></View> */}
+            
+            <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
+            alignItems: 'center',}} onPress={handleDelete}>
+              <Text style={{ color: '#d32f2f',fontSize:18 }}>确认</Text>
+            </TouchableOpacity>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -220,11 +225,12 @@ const styles = StyleSheet.create({
     padding: 0, // 内部间距
   },
   dialogTitleStyle: {
-    color: '#333333', // 标题文字颜色
+    color: 'black', // 标题文字颜色
     // textAlign: 'center', // 标题居中
   },
   dialogContentStyle: {
-    color: '#666666', // 内容文字颜色
+    color: 'grey', // 内容文字颜色
+    marginBottom: 10, // 内容与对话框底部的间距
   },
 });
 
