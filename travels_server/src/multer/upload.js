@@ -5,7 +5,8 @@ const fs = require('fs')
 // 上传到服务器地址
 const BaseURL = 'http://5fvskc9y2ble.xiaomiqiu.com'
 // 上传到服务器的目录，小米球
-const imgPath = '/public/photos/'
+const imgPath_photo = '/public/photos/'
+const imgPath_avatar = '/public/avatarUploads/'
 const path = require('path')
 const handlePath = (dir) => {
   return path.join(__dirname, './', dir)
@@ -52,7 +53,7 @@ function uploadAvatar(req, res) {
         resolve({
           id: req.body.username,
           // 重新返回符合规定的图片链接地址. img[0]是文件名，img[1]是后缀名,req.body.username是用户名
-          img_url: BaseURL + imgPath + img[0] + '.' + req.body.username + '.' + img[1]
+          img_url: BaseURL + imgPath_avatar + img[0] + '.' + req.body.username + '.' + img[1]
         })
       }
     })
@@ -74,7 +75,7 @@ function uploadMultiPhoto(req, res) {
           let height = req.body[req.files[i].originalname].split('/')[1]
           returnData.push({
             // 拼接成完整的服务器静态资源图片路径
-            uri: BaseURL + imgPath + img[0] + '.' + img[1],
+            uri: BaseURL + imgPath_photo + img[0] + '.' + img[1],
             width: width,
             height: height
           })

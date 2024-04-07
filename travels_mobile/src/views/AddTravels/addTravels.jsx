@@ -24,6 +24,7 @@ import { Picker } from '@react-native-picker/picker';
 import placeList from './placeList';
 import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 export default addTravelsScreen = ({ route }) => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
@@ -35,11 +36,13 @@ export default addTravelsScreen = ({ route }) => {
   const [selectedValues, setSelectedValues] = useState([]);  // 选择的数组
   const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
   const [filteredCities, setFilteredCities] = useState([]);  // 城市
+  const navigation = useNavigation();
   const userInfo = useSelector(state => state.user); // 获取保存的用户信息
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitSuccessful },
   } = useForm({
     defaultValues: {
       title: '',
@@ -52,7 +55,7 @@ export default addTravelsScreen = ({ route }) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = countryName;
-      newValues[index+1] = '';
+      newValues[index + 1] = '';
       newValues[index + 2] = '';
       return newValues;
     });
@@ -60,7 +63,7 @@ export default addTravelsScreen = ({ route }) => {
     if (selectedCountry) {
       setFilteredProvinces(selectedCountry.provinces);
       setFilteredCities([]);
-    }else{
+    } else {
       setFilteredProvinces([]);
       setFilteredCities([])
     }
@@ -70,7 +73,7 @@ export default addTravelsScreen = ({ route }) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = provinceName;
-      newValues[index+1] = '';
+      newValues[index + 1] = '';
       return newValues;
     });
 
@@ -79,7 +82,7 @@ export default addTravelsScreen = ({ route }) => {
       const selectedProvince = selectedCountry.provinces.find(province => province.name === provinceName);
       if (selectedProvince) {
         setFilteredCities(selectedProvince.cities);
-      }else(
+      } else (
         setFilteredCities([])
       )
     }
@@ -121,6 +124,10 @@ export default addTravelsScreen = ({ route }) => {
     }
   };
 
+  useEffect(()=>{
+    reset(); // 重置
+  },[isSubmitSuccessful])
+
   // 删除照片操作
   const deletePhoto = async (uri) => {
     let index = image.indexOf(uri);
@@ -137,7 +144,6 @@ export default addTravelsScreen = ({ route }) => {
 
   // 提交表单
   const onSubmit = async (data) => {
-    console.log(selectedValues)
     if (file.length > 0) {  // 如果文件存在
       let params = new FormData();
       for (let item of file) params.append('file', item);// 添加游记的图片
@@ -150,7 +156,7 @@ export default addTravelsScreen = ({ route }) => {
       params.append("city", selectedValues[2]); // 添加位置信息(城市)
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       setIsLoading(true); // 取消加载图标
-      axios.post(NGROK_URL + '/travels/upload', params, {
+      await axios.post(NGROK_URL + '/travels/upload', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }
@@ -165,6 +171,11 @@ export default addTravelsScreen = ({ route }) => {
           setIsLoading(false);
         }
       )
+      setFile([]);  //文件清空
+      setSelectedValues([" "," "," "]); // 地点清空
+      setImage([]); // 回显清空
+      setDimension([]); // 图片尺寸清空
+      navigation.navigate("我的游记")
     } else {
       Alert.alert("您还没有上传图片，请上传图片后再发布");
     }
@@ -205,6 +216,7 @@ export default addTravelsScreen = ({ route }) => {
             name="title"
             control={control}
             errors={errors.title}
+            isSubmitSuccessful={isSubmitSuccessful.title}
             rules={{
               required: '不能为空',
             }}
@@ -228,6 +240,7 @@ export default addTravelsScreen = ({ route }) => {
                 required: '不能为空',
               }}
               errors={errors.content}
+              isSubmitSuccessful={isSubmitSuccessful.content}
               render={({ field: { onChange, value } }) => (
                 <View style={{ height: Math.max(200, height) }}>
                   <TextInput

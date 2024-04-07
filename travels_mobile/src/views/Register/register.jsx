@@ -4,12 +4,13 @@ import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/colo
 import { NGROK_URL } from '../../config/ngrok'
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import {Text,View,TextInput,StyleSheet,TouchableOpacity,TouchableWithoutFeedback,
-Image,ScrollView} from 'react-native';
+import { Text, View, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
+  Image, ScrollView 
+} from 'react-native';
 import { useForm } from 'react-hook-form';
 import FormItem from './components/formItem';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
@@ -46,7 +47,7 @@ export default function RegisterScreen() {
   const [image, setImage] = useState(null);
   const [file, setFile] = useState({ file: null })
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation()  
+  const navigation = useNavigation()
 
   // 选取图片
   const pickImage = async () => {
@@ -57,7 +58,6 @@ export default function RegisterScreen() {
       aspect: [1, 1],  // 编辑比例
       quality: 0.3,  // 图片质量
     });
-    // console.log(result);
     if (!result.canceled) {
       let uri = result.assets[0].uri;
       let uriArr = uri.split('/');
@@ -73,18 +73,15 @@ export default function RegisterScreen() {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const params = new FormData();
     delete data.passwordsure   // 删除‘确认密码’
-    console.log(NGROK_URL + '/users/register');
     data = { ...file, ...data }
-    console.log(data);
     for (let i in data) {
       params.append(i, data[i]);
     };
-    console.log(params)
     setIsLoading(true);
-    axios.post(NGROK_URL + '/users/register', params, {
+    await axios.post(NGROK_URL + '/users/register', params, {
       headers: {
         'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
       }
@@ -92,41 +89,40 @@ export default function RegisterScreen() {
       res => {
         console.log(res.data);
         setIsLoading(false);
-  if(res.data==="注册成功"){
+        if (res.data === "注册成功") {
           Toast.show({
-          type: 'success',
-          text1: res.data,
-          position: 'top',
-          autoHide: true,
-          visibilityTime: 1000,
-        })
-        navigation.navigate('登录界面');
-        }else{
+            type: 'success',
+            text1: res.data,
+            position: 'top',
+            autoHide: true,
+            visibilityTime: 1000,
+          })
+          navigation.navigate('登录界面');
+        } else {
           Toast.show({
-          type: 'error',
-          text1: res.data.message,
-          position: 'top',
-          autoHide: true,
-          visibilityTime: 1000,
+            type: 'error',
+            text1: res.data.message,
+            position: 'top',
+            autoHide: true,
+            visibilityTime: 1000,
           })
         }
       }
     ).catch(
-      err=>{
+      err => {
         console.log(err);
         setIsLoading(false);
       }
-      
     )
   };
   return (
     <ScrollView style={styles.wrapper}>
       <LoadingOverlay isVisible={isLoading} />
       <TouchableOpacity
-          style={{ marginTop:65}}
-          onPress={() => navigation.navigate('登录界面')}>
-          <AntDesign name="left" size={24} color="black" />
-        </TouchableOpacity>
+        style={{ marginTop: 65 }}
+        onPress={() => navigation.navigate('登录界面')}>
+        <AntDesign name="left" size={24} color="black" />
+      </TouchableOpacity>
       <View>
       </View>
       <Text style={styles.title}>用户注册</Text>

@@ -8,11 +8,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
 import StorageScreen from './src/views/Storage'
-<<<<<<< HEAD
 import editTravelScreen from './src/views/EditTravel/editTravel'
-=======
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
->>>>>>> 0c50d6a952f323848ae67cf9bb1619c56994cbbd
 
 const Stack = createNativeStackNavigator();
 

@@ -89,14 +89,12 @@ class TravelController {
   async updateOneTravel(req, res) {
     try {
       const uploadRes = await uploadMultiPhoto(req, res)  // 上传新添加的图片
-      // console.log(JSON.parse(req.body.photo[1]))
       const newPhotoArray = JSON.parse(req.body.photo)
-      // const newPhotoArray = [...req.body.photo, ...uploadRes]
       await Travel.findOneAndUpdate({ _id: req.body.id }, {
         $set: {
           title: req.body.title,
           content: req.body.content,
-          location: req.body.location,
+          location: JSON.parse(req.body.location),
           photo: [...newPhotoArray.photodata, ...uploadRes]
         }  // 这里需要拼接一下
       })

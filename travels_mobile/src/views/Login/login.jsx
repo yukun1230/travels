@@ -45,7 +45,7 @@ export default LoginScreen = ({ navigation }) => {
 
   const onSubmit = async (data) => {
     // 提交信息验证，登录
-    axios.post(NGROK_URL + '/users/login', data).then(
+    await axios.post(NGROK_URL + '/users/login', data).then(
       res => {
         if(res.data.message==="登录成功"){
           Toast.show({
@@ -78,7 +78,6 @@ export default LoginScreen = ({ navigation }) => {
     )
   };
   const handleVisit = () => {
-    // dispatch(changePage())
     navigation.navigate("主界面")
   }
 
@@ -94,13 +93,6 @@ export default LoginScreen = ({ navigation }) => {
   };
   checkTokenAndRedirect();
 }, []);
-
-
-
-
-
-
-
 
   return (
     <View style={styles.loginSection}>

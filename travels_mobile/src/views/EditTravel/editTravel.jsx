@@ -32,7 +32,7 @@ export default editTravelScreen = ({ route }) => {
   const [isLoading, setIsLoading] = useState(false);  // 用于设置加载moadl是否展示
   const [height, setHeight] = useState(0);  // 关于输入文本框高度的选项
   const [fold, setFold] = useState(true)  // 地点选择卡片是否折叠，默认折叠
-  const [selectedValues, setSelectedValues] = useState([]);  // 选择的数组
+  const [selectedValues, setSelectedValues] = useState([" "," "," "]);  // 选择的数组
   const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
   const [filteredCities, setFilteredCities] = useState([]);  // 城市
   const [photo, setPhoto] = useState([]); // 用于保存photo信息
@@ -171,16 +171,14 @@ export default editTravelScreen = ({ route }) => {
 
   // 提交表单(更新游记)
   const onSubmit = async (data) => {
-    if (file.length > 0) {  // 如果文件存在
+    if (file.length > 0) {  // 如果文件存在(即有新添加的图片)
       let params = new FormData();
       for (let item of file) params.append('file', item);// 添加游记的图片
       for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
       for (let i = 0; i < dimension.length; i++)  // 添加图片信息
         params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`);
       for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
-      params.append("country", selectedValues[0]); // 添加位置信息(国家)
-      params.append("province", selectedValues[1]); // 添加位置信息(省份)
-      params.append("city", selectedValues[2]); // 添加位置信息(城市)
+      params.append("location", JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}));
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       params.append('id', CardData.id) // 添加游记id
       console.log(JSON.stringify({photodata: photo}))
@@ -206,13 +204,11 @@ export default editTravelScreen = ({ route }) => {
       let params = new FormData();
       for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
       for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
-      params.append("country", selectedValues[0]); // 添加位置信息(国家)
-      params.append("providince", selectedValues[1]); // 添加位置信息(省份)
-      params.append("city", selectedValues[2]); // 添加位置信息(城市)
+      console.log(JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}))
+      params.append("location", JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}))
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       params.append('id', CardData.id) // 添加游记id
-      console.log("photo", photo);
-      console.log(JSON.stringify({photodata: photo}))  // photo是数组，{photodata: photo}转成对象，然后再用Json.stringify
+      // photo是数组，{photodata: photo}转成对象，然后再用Json.stringify
       params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
       setIsLoading(true); // 开始加载图标
       axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
@@ -231,7 +227,6 @@ export default editTravelScreen = ({ route }) => {
           setIsLoading(false);
         }
       )
-
     } else {
       Alert.alert("您还没有上传图片，请上传图片后再发布");
     }
