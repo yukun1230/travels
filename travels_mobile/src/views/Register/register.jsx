@@ -4,21 +4,14 @@ import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/colo
 import { NGROK_URL } from '../../config/ngrok'
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import {
-  Text,
-  View,
-  TextInput,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Image,
-  ScrollView
-} from 'react-native';
+import {Text,View,TextInput,StyleSheet,TouchableOpacity,TouchableWithoutFeedback,
+Image,ScrollView} from 'react-native';
 import { useForm } from 'react-hook-form';
 import FormItem from './components/formItem';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { useNavigation } from '@react-navigation/native'; 
+import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 const Input = (props) => {
   return (
@@ -98,15 +91,25 @@ export default function RegisterScreen() {
     }).then(
       res => {
         console.log(res.data);
-        
-        if (res.data.message) {
-          Alert.alert(res.data.message);
-          setIsLoading(false);
-          return
-        }
-        Alert.alert("注册成功")
         setIsLoading(false);
+  if(res.data==="注册成功"){
+          Toast.show({
+          type: 'success',
+          text1: res.data,
+          position: 'top',
+          autoHide: true,
+          visibilityTime: 1000,
+        })
         navigation.navigate('登录界面');
+        }else{
+          Toast.show({
+          type: 'error',
+          text1: res.data.message,
+          position: 'top',
+          autoHide: true,
+          visibilityTime: 1000,
+          })
+        }
       }
     ).catch(
       err=>{
@@ -119,6 +122,13 @@ export default function RegisterScreen() {
   return (
     <ScrollView style={styles.wrapper}>
       <LoadingOverlay isVisible={isLoading} />
+      <TouchableOpacity
+          style={{ marginTop:65}}
+          onPress={() => navigation.navigate('登录界面')}>
+          <AntDesign name="left" size={24} color="black" />
+        </TouchableOpacity>
+      <View>
+      </View>
       <Text style={styles.title}>用户注册</Text>
       <FormItem
         required
@@ -277,8 +287,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: THEME_LABEL,
     textAlign: 'center',
-    marginTop: 32,
-    marginBottom: 32
+    marginTop: 10,
+    marginBottom: 20
   },
   register_Button: {
     backgroundColor: '#2196F3',
@@ -293,7 +303,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    marginLeft: 60,
+    marginLeft: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#B3BAC1',

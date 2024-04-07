@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 

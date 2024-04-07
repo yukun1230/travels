@@ -8,9 +8,40 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
 import StorageScreen from './src/views/Storage'
+<<<<<<< HEAD
 import editTravelScreen from './src/views/EditTravel/editTravel'
+=======
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+>>>>>>> 0c50d6a952f323848ae67cf9bb1619c56994cbbd
 
 const Stack = createNativeStackNavigator();
+
+const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: '#A5D6A7', height: 40, width: '80%', backgroundColor: '#A5D6A7' ,marginTop:60}}
+      contentContainerStyle={{ paddingHorizontal: 15 }} 
+      text1Style={{
+        fontSize: 16,
+        fontWeight: '400', 
+        textAlign: 'center' 
+      }}
+    />
+  ),
+  error: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: '#EF9A9A', height: 40, width: '80%', backgroundColor: '#EF9A9A' ,marginTop:60}}
+      contentContainerStyle={{ paddingHorizontal: 15 }} 
+      text1Style={{
+        fontSize: 16,
+        fontWeight: '400', 
+        textAlign: 'center' 
+      }}
+    />
+  ),
+};
 
 export default function App() {
   return (
@@ -18,7 +49,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="登录界面" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="注册界面" component={RegisterScreen} options={{ headerTitle: '' }} />
+          <Stack.Screen name="注册界面" component={RegisterScreen} options={{ headerShown: false }} />
           <Stack.Screen name="主界面" component={MainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Detail" component={DetailScreen} options={{
             headerTitle: '',
@@ -31,6 +62,7 @@ export default function App() {
           <Stack.Screen name="编辑游记" component={editTravelScreen}  />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast config={toastConfig} />
     </PaperProvider>
   )
 }
