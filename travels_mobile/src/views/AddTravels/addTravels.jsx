@@ -162,6 +162,7 @@ export default addTravelsScreen = ({ route }) => {
         }
       }).then(
         res => {
+          console.log(res.data);
           Alert.alert(res.data.message);
           setIsLoading(false);
         }

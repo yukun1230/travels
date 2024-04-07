@@ -211,6 +211,7 @@ export default editTravelScreen = ({ route }) => {
       // photo是数组，{photodata: photo}转成对象，然后再用Json.stringify
       params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
       setIsLoading(true); // 开始加载图标
+      console.log('编辑提交内容',params);
       axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
