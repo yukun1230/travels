@@ -13,19 +13,19 @@ import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/colo
 import React, { useEffect, useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
-import UnLoginScreen from '../../components/unLogin';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok';
-import '../../util/axios.config';
+import '../../util/axios.config';  // 拦截器相关
 import { useSelector, useDispatch } from 'react-redux';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { Picker } from '@react-native-picker/picker';
-import placeList from './placeList';
+import placeList from '../AddTravels/placeList';
 import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
-export default addTravelsScreen = ({ route }) => {
+export default editTravelScreen = ({ route }) => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
   const [file, setFile] = useState([]); // 数组用于传到后端
   const [dimension, setDimension] = useState([]); // 数组用于存储图片的长度和宽度
@@ -35,24 +35,41 @@ export default addTravelsScreen = ({ route }) => {
   const [selectedValues, setSelectedValues] = useState([]);  // 选择的数组
   const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
   const [filteredCities, setFilteredCities] = useState([]);  // 城市
+  const [photo, setPhoto] = useState([]); // 用于保存photo信息
   const userInfo = useSelector(state => state.user); // 获取保存的用户信息
+  const navigation = useNavigation();
+
+  let CardData = {};
+  if (route.params) {
+    CardData = route.params;
+  }
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: '',
-      content: ''
+      title: `${CardData.title}`,
+      content: `${CardData.content}`
     },
   });
+  useEffect(() => {
+    // 参数初始化(回显)
+    const photoUriArray = [];
+    for (let i = 0; i < CardData.photo.length; i++) {
+      photoUriArray.push(CardData.photo[i].uri);
+    }
+    setSelectedValues([CardData.location.country, CardData.location.province, CardData.location.city]);
+    setImage([...photoUriArray]);
+    setPhoto([...CardData.photo]);  // 保存photo数组
+  }, []) // 这个[]要加，不然会报错
 
 
   const handleCountryChange = (countryName, index) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = countryName;
-      newValues[index+1] = '';
+      newValues[index + 1] = '';
       newValues[index + 2] = '';
       return newValues;
     });
@@ -60,7 +77,7 @@ export default addTravelsScreen = ({ route }) => {
     if (selectedCountry) {
       setFilteredProvinces(selectedCountry.provinces);
       setFilteredCities([]);
-    }else{
+    } else {
       setFilteredProvinces([]);
       setFilteredCities([])
     }
@@ -70,7 +87,7 @@ export default addTravelsScreen = ({ route }) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = provinceName;
-      newValues[index+1] = '';
+      newValues[index + 1] = '';
       return newValues;
     });
 
@@ -79,7 +96,7 @@ export default addTravelsScreen = ({ route }) => {
       const selectedProvince = selectedCountry.provinces.find(province => province.name === provinceName);
       if (selectedProvince) {
         setFilteredCities(selectedProvince.cities);
-      }else(
+      } else (
         setFilteredCities([])
       )
     }
@@ -123,21 +140,37 @@ export default addTravelsScreen = ({ route }) => {
 
   // 删除照片操作
   const deletePhoto = async (uri) => {
-    let index = image.indexOf(uri);
-    let myArray = [...image]
-    let fileArray = [...file]
-    let dimensionArray = [...dimension]
-    myArray.splice(index, 1);
-    fileArray.splice(index, 1);
-    dimensionArray.splice(index, 1);
+    let http_count = 0;
+    let file_count = 0;
+    let index = image.indexOf(uri);  // image数组的索引，对应于uri，这个uri是什么？后端的图片地址还是本机地址
+    let myArray = [...image]  // 图片uri数组
+    for (let i = 0; i < myArray.length; i++) {
+      if (myArray[i].split(":")[0] === "file") {
+        file_count++;
+      } else {
+        http_count++;
+      }
+    }
+    let fileArray = [...file]  // 文件uri数组，对应于用户新增的图片
+    let photoArray = [...photo]
+    let dimensionArray = [...dimension]  // 图片尺寸的数组
+    myArray.splice(index, 1);  // 这个没毛病
+    if (index >= http_count) {
+      let newIndex = index - http_count
+      fileArray.splice(newIndex, 1);  // 关键地方
+    } else {
+      photoArray.splice(index, 1)  // 从photo中删除
+    }
+    dimensionArray.splice(index, 1); // photo不需要关心 dimension
     setImage(myArray);
     setFile(fileArray);
+    console.log("file", file);
+    setPhoto(photoArray);
     setDimension(dimensionArray);
   }
 
-  // 提交表单
+  // 提交表单(更新游记)
   const onSubmit = async (data) => {
-    console.log(selectedValues)
     if (file.length > 0) {  // 如果文件存在
       let params = new FormData();
       for (let item of file) params.append('file', item);// 添加游记的图片
@@ -149,8 +182,11 @@ export default addTravelsScreen = ({ route }) => {
       params.append("province", selectedValues[1]); // 添加位置信息(省份)
       params.append("city", selectedValues[2]); // 添加位置信息(城市)
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
-      setIsLoading(true); // 取消加载图标
-      axios.post(NGROK_URL + '/travels/upload', params, {
+      params.append('id', CardData.id) // 添加游记id
+      console.log(JSON.stringify({photodata: photo}))
+      params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
+      setIsLoading(true); // 开始加载图标
+      axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }
@@ -158,6 +194,7 @@ export default addTravelsScreen = ({ route }) => {
         res => {
           Alert.alert(res.data.message);
           setIsLoading(false);
+          navigation.goBack()
         }
       ).catch(
         err => {
@@ -165,6 +202,36 @@ export default addTravelsScreen = ({ route }) => {
           setIsLoading(false);
         }
       )
+    } else if (photo.length > 0) {
+      let params = new FormData();
+      for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
+      for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
+      params.append("country", selectedValues[0]); // 添加位置信息(国家)
+      params.append("providince", selectedValues[1]); // 添加位置信息(省份)
+      params.append("city", selectedValues[2]); // 添加位置信息(城市)
+      params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
+      params.append('id', CardData.id) // 添加游记id
+      console.log("photo", photo);
+      console.log(JSON.stringify({photodata: photo}))  // photo是数组，{photodata: photo}转成对象，然后再用Json.stringify
+      params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
+      setIsLoading(true); // 开始加载图标
+      axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
+        }
+      }).then(
+        res => {
+          Alert.alert(res.data.message);
+          setIsLoading(false);
+          navigation.goBack()
+        }
+      ).catch(
+        err => {
+          console.log(err);
+          setIsLoading(false);
+        }
+      )
+
     } else {
       Alert.alert("您还没有上传图片，请上传图片后再发布");
     }
@@ -172,9 +239,8 @@ export default addTravelsScreen = ({ route }) => {
 
   return (
     <>
-      {!userInfo.id && <UnLoginScreen />}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {userInfo.id && <View style={styles.aboveAll}>
+        <View style={styles.aboveAll}>
           <LoadingOverlay isVisible={isLoading} />
           <ScrollView
             horizontal={true}
@@ -234,7 +300,7 @@ export default addTravelsScreen = ({ route }) => {
                     style={[styles.contentInput, { height: Math.max(200, height) }]}
                     value={value}
                     multiline  //设置多行
-                    numberOfLines={6} //行数为5
+                    numberOfLines={6} //行数为 6
                     textAlignVertical="top"
                     placeholderTextColor="#ccc"
                     autoCapitalize="none"
@@ -299,10 +365,10 @@ export default addTravelsScreen = ({ route }) => {
               </View>
             </Card>}
             <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>发布</Button>
+              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>提交修改</Button>
             </View>
           </View>
-        </View>}
+        </View>
       </ScrollView>
     </>
   )

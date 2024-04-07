@@ -86,6 +86,25 @@ class TravelController {
       res.send(e)
     }
   }
+  async updateOneTravel(req, res) {
+    try {
+      const uploadRes = await uploadMultiPhoto(req, res)  // 上传新添加的图片
+      // console.log(JSON.parse(req.body.photo[1]))
+      const newPhotoArray = JSON.parse(req.body.photo)
+      // const newPhotoArray = [...req.body.photo, ...uploadRes]
+      await Travel.findOneAndUpdate({ _id: req.body.id }, {
+        $set: {
+          title: req.body.title,
+          content: req.body.content,
+          location: req.body.location,
+          photo: [...newPhotoArray.photodata, ...uploadRes]
+        }  // 这里需要拼接一下
+      })
+      res.send({ message: "更新成功" });
+    } catch (e) {
+      console.log("更新失败")
+    }
+  }
 }
 
 module.exports = new TravelController()

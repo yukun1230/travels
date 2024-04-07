@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Card, Title, Paragraph,Dialog, Portal, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Dialog, Portal, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 
 // 现在组件接收一个额外的 id 参数
-const MyTravelCard = ({ id, photo, title, content, status, location,fetchTravels }) => {
+const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravels }) => {
   const navigation = useNavigation();
   let statusInfo = '';
   if (status === 1) {
     statusInfo = '已通过';
-  }else if (status === 0) {
+  } else if (status === 0) {
     statusInfo = '未通过';
-  }else if (status === 2) {
+  } else if (status === 2) {
     statusInfo = '待审核';
   }
 
-  const CardData={
-    id:id,
-    photo:photo,
-    title:title,
-    content:content,
-    location:location
+  const CardData = {
+    id: id,
+    photo: photo,
+    title: title,
+    content: content,
+    location: location
 
   }
 
@@ -43,56 +43,56 @@ const MyTravelCard = ({ id, photo, title, content, status, location,fetchTravels
   //   })
   // }
 
-//  const handleDelete = async () => {
-//   try {
-//     const token = await getToken();
-//     await axios.post(`${NGROK_URL}/travels/deleteOneTravel`, { id }, { headers: { 'token': token } });
-//     // 删除成功后，调用 fetchTravels 来刷新列表
-//     fetchTravels();
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
+  //  const handleDelete = async () => {
+  //   try {
+  //     const token = await getToken();
+  //     await axios.post(`${NGROK_URL}/travels/deleteOneTravel`, { id }, { headers: { 'token': token } });
+  //     // 删除成功后，调用 fetchTravels 来刷新列表
+  //     fetchTravels();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-const [visible, setVisible] = useState(false);
-const showDialog = () => setVisible(true);
+  const [visible, setVisible] = useState(false);
+  const showDialog = () => setVisible(true);
 
-const hideDialog = () => setVisible(false);
-
-
+  const hideDialog = () => setVisible(false);
 
 
-const handleDelete = async () => {
-  try {
-    const token = await getToken();
-    const response = await axios.post(`${NGROK_URL}/travels/deleteOneTravel`,
-      { id: id },
-      { headers: { 'token': token } }
-    );
-    console.log(response.data);
-    // 删除成功，调用传入的 fetchTravels 函数刷新列表
-    fetchTravels();
-    hideDialog();
-  } catch (error) {
-    console.error("删除失败:", error);
-  }
-};
-      
-    
+
+
+  const handleDelete = async () => {
+    try {
+      const token = await getToken();
+      const response = await axios.post(`${NGROK_URL}/travels/deleteOneTravel`,
+        { id: id },
+        { headers: { 'token': token } }
+      );
+      console.log(response.data);
+      // 删除成功，调用传入的 fetchTravels 函数刷新列表
+      fetchTravels();
+      hideDialog();
+    } catch (error) {
+      console.error("删除失败:", error);
+    }
+  };
+
+
 
 
 
   return (
     <Card style={styles.card}>
-      
+
       <Portal>
         {/* 删除对话框 */}
         <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
           <Dialog.Title style={styles.dialogTitleStyle}>删除确认</Dialog.Title>
           <Dialog.Content style={styles.dialogContentStyle}>
-            <Text style={{fontSize:16}}>您确定要删除这篇游记吗？</Text>
+            <Text style={{ fontSize: 16 }}>您确定要删除这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{marginTop:-10}}>
+          <Dialog.Actions style={{ marginTop: -10 }}>
             <Button textColor="rgb(34,150,243)" onPress={hideDialog}>取消</Button>
             <Button textColor="#d32f2f" onPress={handleDelete}>确认</Button>
           </Dialog.Actions>
@@ -136,14 +136,14 @@ const handleDelete = async () => {
           <TouchableOpacity style={styles.button} onPress={showDialog}>
             <Text style={styles.buttonText}>删除</Text>
           </TouchableOpacity>
-          {status === 1 ? 
+          {status === 1 ?
             <TouchableOpacity style={[styles.button, { borderColor: 'rgb(81,178,127)' }]} onPress={() => { navigation.navigate('Detail', { cardId: id }) }}>
               <Text style={{ color: 'rgb(81,178,127)' }}>详情</Text>
-          </TouchableOpacity> : 
-            <TouchableOpacity style={[styles.button, styles.editButton]} 
-            onPress={() => { navigation.navigate('游记发布',{CardData:CardData}) }}>
-            <Text style={{ color: '#007BFF' }}>编辑</Text>
-          </TouchableOpacity>}
+            </TouchableOpacity> :
+            <TouchableOpacity style={[styles.button, styles.editButton]}
+              onPress={() => { navigation.navigate('编辑游记', { ...CardData }) }}>
+              <Text style={{ color: '#007BFF' }}>编辑</Text>
+            </TouchableOpacity>}
 
         </View>
       </Card.Actions>

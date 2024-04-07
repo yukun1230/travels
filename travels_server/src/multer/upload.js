@@ -64,7 +64,7 @@ function uploadMultiPhoto(req, res) {
   let returnData = [];
   return new Promise((resolve, reject) => {
     multiUploadMiddleware.array('file',20) (req, res, function (err) {  // 多文件，最多20个文件
-      console.log(req.files)
+      // console.log(req.files)
       if (err) {
         reject(err)
       } else {

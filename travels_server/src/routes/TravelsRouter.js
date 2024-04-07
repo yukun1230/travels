@@ -34,6 +34,8 @@ TravelsRouter.get('/getMyTravels', auth, travelController.getMyTravels)
 // mobile---游记上传接口
 TravelsRouter.post('/upload', travelController.upload)
 
+// mobile---游记更新接口
+TravelsRouter.post('/updateOneTravel', travelController.updateOneTravel)
 
 // web---分页获取所有游记信息(用于PC端审核) 
 TravelsRouter.get('web/getTravels', async (req, res) => {

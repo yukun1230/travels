@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
 import StorageScreen from './src/views/Storage'
-
+import editTravelScreen from './src/views/EditTravel/editTravel'
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +28,7 @@ export default function App() {
             },
           }} />
           <Stack.Screen name="本机仓库" component={StorageScreen}  />
+          <Stack.Screen name="编辑游记" component={editTravelScreen}  />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
