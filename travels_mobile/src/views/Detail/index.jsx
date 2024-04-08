@@ -94,19 +94,19 @@ const DetailScreen = ({ navigation, route }) => {
               
               {travelDetail.location && <View style={{ flexDirection: 'row' }}>
                 {/* 地址标签 */}
-                {travelDetail.location.country && travelDetail.location.country!=='中国'&& <View style={styles.locationContainer}>
+                {travelDetail.location.country && travelDetail.location.country!=='undefined' && travelDetail.location.country!=='中国'&& <View style={styles.locationContainer}>
                   <View style={styles.locationIcon}>
                     <AntDesign name="enviroment" size={12} color="white" />
                   </View>
                   <Text style={styles.locationText}>{travelDetail.location.country}</Text>
                 </View>}
-                {travelDetail.location.province && <View style={styles.locationContainer}>
+                {travelDetail.location.province && travelDetail.location.province!=='undefined' &&  <View style={styles.locationContainer}>
                   <View style={styles.locationIcon}>
                     <AntDesign name="enviroment" size={12} color="white" />
                   </View>
                   <Text style={styles.locationText}>{travelDetail.location.province}</Text>
                 </View>}
-                {travelDetail.location.city && <View style={styles.locationContainer}>
+                { travelDetail.location.city && travelDetail.location.city!=='undefined' && <View style={styles.locationContainer}>
                   <View style={styles.locationIcon}>
                     <AntDesign name="enviroment" size={12} color="white" />
                   </View>

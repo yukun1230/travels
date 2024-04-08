@@ -48,13 +48,7 @@ const Card = ({ item, index, columnIndex }) => {
               style={{ width: 20, height: 20, borderRadius: 10 }}
             />
             <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                {/* 观看次数 */}
-                <AntDesign name="eyeo" size={14} color="black" />
-                <Text style={{ fontSize: 12 }}>10000</Text>
-              </View>
-            </View>
+            
           </View>
         </View>
       </TouchableOpacity>
@@ -137,10 +131,10 @@ const AvatarMenu = () => {
 
 
 
-const Header = () => {
+const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 头部组件
   const navigation = useNavigation();
-  const [searchText, setSearchText] = useState('');
+  
   const dispatch = useDispatch();
   return (
     <View style={{ flexDirection: "row", marginRight: 16, marginTop: 56,height:8 }}>
@@ -157,7 +151,7 @@ const Header = () => {
       <View style={{ flex: 3 }}>
         {/* 搜索框 */}
         <TextInput
-          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, padding: 10, borderRadius: 20, borderColor: "#2196F3" }}
+          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, paddingLeft: 10, borderRadius: 20, borderColor: "#2196F3",fontSize: 14 }}
           placeholder="请输入您要搜索的内容"
           onChangeText={searchText => setSearchText(searchText)}
           defaultValue={searchText}
@@ -167,12 +161,14 @@ const Header = () => {
         <Button
           style={{ backgroundColor: '#2196F3', height: 35, borderRadius: 20, borderColor: "#2196F3" }}
           textStyle={{ fontSize: 18, color: "white" }}
+          onPress={handleSearch}
         >搜索
         </Button>
       </View>
     </View>
   )
-}
+};
+
 
 export default HomeScreen = () => {
   const [data, setData] = useState([]);
@@ -184,6 +180,8 @@ export default HomeScreen = () => {
   const pageSize = 6;
   const loading = useRef(false);
   const listRef = useRef(null);
+  const [searchText, setSearchText] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
  
   // 控制返回顶部按钮
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);
@@ -200,12 +198,64 @@ export default HomeScreen = () => {
     
   };
 
+  const handleSearch = async () => {
+    setIsSearching(true);
+    try {
+      // 假设后端接口 URL 为 `${NGROK_URL}/travels/search`，并且接受一个名为 `query` 的查询参数
+      
+      
+      const response = await axios.get(`${NGROK_URL}/travels/search`, {
+        params: {
+          query: searchText // 使用 state 中保存的 searchText 作为查询参数
+        }
+      });
+      // console.log(response.data.data);
+      const travels = response.data.data;
+      const formattedData = travels.map(travel => {
+        const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+        return {
+          _id: travel._id,
+          uri: firstPhoto.uri,
+          title: travel.title,
+          width: Math.floor(window.width / 2),
+          height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+          avatar: travel.userInfo.avatar,
+          nickname: travel.userInfo.nickname,
+        };
+      });
+      console.log(travels);
+      // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
+      setData(formattedData);
+    } catch (error) {
+      console.error("搜索请求失败:", error);
+    }
+  };
+
+
+  useEffect(() => {
+  console.log(`当前 isSearching: ${isSearching}`);
+  if (!isSearching) {
+    // 当结束搜索时，可能希望重新加载原始数据或执行其他操作
+    console.log("结束搜索，重置或重新加载数据");
+    loadData(true); // 假设这里调用了重置或重新加载数据的函数
+  }
+}, [isSearching]);
+
+
+  
+
+
 
   const loadData = async (isRefreshing = false) => {
     // 刷新操作时重置页码到1，否则加载下一页
     // console.log('当前页',page);
     if (isRefreshing){
       page.current=0;
+      setIsSearching(false);
+      // console.log(isSearching);
+    }
+    if(isSearching){
+      return;
     }
     
     const nextPage = isRefreshing ? 1 : page.current + 1;
@@ -244,6 +294,7 @@ export default HomeScreen = () => {
 
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
       setData(prevData => isRefreshing ? formattedData : [ ...prevData,...formattedData]);
+      console.log(1);
       if (!isRefreshing) {
         setNoMore(formattedData.length < pageSize);
       }
@@ -267,14 +318,14 @@ export default HomeScreen = () => {
   return (
     <View style={{ flex: 1}}>
       {/* <LoadingOverlay isVisible={isLoading} /> */}
-      <Header />
-      
+      {/* <Header /> */}
+       <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch} />
       <WaterfallFlow
       ref={listRef}
       style={{ flex: 1, marginTop: 40 }}
       contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-      ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} />}
-      ListEmptyComponent={<Empty inited={inited} />}
+      ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
+      ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
       data={data}
       numColumns={2}
       initialNumToRender={10}
@@ -283,7 +334,7 @@ export default HomeScreen = () => {
       onEndReached={() => loadData(false)}
       refreshing={refreshing}
       onRefresh={() => loadData(true)}
-      onEndReachedThreshold={0.1} 
+      onEndReachedThreshold={0} 
       renderItem={({ item, index, columnIndex }) => {
         return (
           <View
@@ -316,10 +367,20 @@ export default HomeScreen = () => {
   );
 };
 
-const Footer = ({ noMore, inited, isEmpty }) => {
+const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
   if (!inited || isEmpty) {
     return null;
   }
+
+
+  if (isSearching) {
+    return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
+      <Text style={{ color: '#999', marginLeft: 8 }}>没有更多内容了~</Text>
+    </View>
+    )
+  }
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
       {!noMore && <ActivityIndicator color="red" />}
@@ -328,7 +389,14 @@ const Footer = ({ noMore, inited, isEmpty }) => {
   );
 };
 
-const Empty = ({ inited }) => {
+const Empty = ({ inited,isSearching }) => {
+  if(isSearching){
+    return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
+      <Text style={{ color: '#999', marginLeft: 8 }}>抱歉，没有您要找的内容哦~</Text>
+    </View>
+    )
+  }
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
       {!inited && <ActivityIndicator color="red" />}

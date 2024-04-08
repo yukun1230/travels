@@ -88,8 +88,8 @@ const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravel
           <Dialog.Content style={styles.dialogContentStyle}>
             <Text style={{ fontSize: 16 }}>您确定要删除这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'black',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
-            <View style={{flex:1,borderRightWidth:0.5,height:50, justifyContent: 'center',alignItems: 'center',}}>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'grey',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:0.5,borderRightColor:'grey',height:50, justifyContent: 'center',alignItems: 'center',}}>
               <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
                 <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>
