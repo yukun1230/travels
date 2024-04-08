@@ -1,4 +1,4 @@
-import { Card, Form, Button, Checkbox, Input, message } from "antd";
+import { Card, Form, Button, Input, message } from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import './index.scss'
 import { useDispatch } from "react-redux";

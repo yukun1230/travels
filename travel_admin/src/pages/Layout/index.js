@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
 import { HomeOutlined,DiffOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Popconfirm } from 'antd';
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserInfo, clearUserInfo} from '@/store/modules/user';
+import { clearUserInfo} from '@/store/modules/user';
 
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 const items = [
   {
     label: '游记管理',
@@ -22,7 +21,7 @@ const items = [
 
 const TravelLayout = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate()
   // 点击菜单跳转路由
@@ -33,9 +32,9 @@ const TravelLayout = () => {
   const selectedKey = location.pathname
   const dispatch = useDispatch()
   // 获取个人信息
-  useEffect(()=>{
-    dispatch(fetchUserInfo())
-  },[dispatch])
+  // useEffect(()=>{
+  //   dispatch(fetchUserInfo())
+  // },[dispatch])
   const name = useSelector(state => {
     return state.user.userInfo.account
   })
