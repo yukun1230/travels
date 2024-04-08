@@ -1,47 +1,56 @@
 import { Form, Button, Radio, DatePicker, Card, Popover, Popconfirm } from "antd";
 import locale from "antd/es/date-picker/locale/zh_CN";
 import { Table, Tag, Space, Input } from "antd";
-import { EditOutlined, DeleteOutlined, AudioOutlined } from "@ant-design/icons";
+import { EditOutlined, InfoCircleOutlined,DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/error.png";
 import { useEffect, useState } from "react";
 import "./index.scss";
 import axios from "axios";
 import { delNoteAPI } from '@/api'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import { request } from "@/utils";
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
+
 
 const Note = () => {
   const navigate = useNavigate()
   // 游记状态枚举
   const status = {
-    0: <Tag color="warning">待审核</Tag>,
-    1: <Tag color="success">已通过</Tag>,
+    1: <Tag color="warning">已通过</Tag>,
+    2: <Tag color="success">待审核</Tag>,
   };
   // 列数据
   const columns = [
     {
+      title: '序号',
+      dataIndex: 'key',
+      width:80
+    },
+    {
       title: "封面",
-      dataIndex: "cover",
+      dataIndex: "photo",
       width: 150,
-      render: (cover) => {
+      render: (photo) => {
         return (
-          <img src={cover.images[0] || img404} width={100} height={80} alt="" />
+          <img src={photo[0].uri || img404} width={100} height={80} alt="" />
         );
       },
     },
     {
       title: "标题",
       dataIndex: "title",
+      ellipsis: true,
     },
     {
       title: "状态",
-      dataIndex: "status",
+      dataIndex: "travelState",
       width: 120,
-      render: (data) => {
-        return data.code != 2 ? (
-          status[data.code]
+      render: (travelState,data) => {
+        return travelState !== 0 ? (
+          status[travelState]
         ) : (
           <Popover title={data.remark} trigger="hover">
             <Tag color="error">未通过</Tag>
@@ -50,7 +59,7 @@ const Note = () => {
       },
       filters: [
         {
-          text: "待审核",
+          text: "未通过",
           value: 0,
         },
         {
@@ -58,20 +67,28 @@ const Note = () => {
           value: 1,
         },
         {
-          text: "未通过",
+          text: "待审核",
           value: 2,
         },
       ],
-      onFilter: (value, record) => record.status === value,
+      onFilter: (value, record) => {
+        console.log(value,record.travelState)
+        return record.travelState === value
+      },
+    },
+    {
+      title: "内容",
+      dataIndex: "content",
+      ellipsis: true,
     },
     {
       title: "发布时间",
-      dataIndex: "pubDate",
+      dataIndex: "createTime",
       width: "15%",
       sortDirections: ["descend", "ascend"],
       sorter: (a, b) => {
-        const a1 = +new Date(a.pubDate);
-        const b1 = +new Date(b.pubDate);
+        const a1 = +new Date(a.createTime);
+        const b1 = +new Date(b.createTime);
         return a1 - b1;
       },
     },
@@ -81,20 +98,23 @@ const Note = () => {
       render: (data) => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} 
-            onClick={() => navigate(`/detail?id=${data.id}`)} />
+            <InfoCircleOutlined onClick={() => navigate(`/detail?id=${data._id}&view=1`)}/>
+            {
+              data.travelState === 2 ?<Button type="primary" shape="circle" icon={<EditOutlined />} 
+              onClick={() => navigate(`/detail?id=${data._id}&view=0`)} />:''
+            }
             <Popconfirm
               title="删除文章"
               description="确认要删除当前文章吗?"
               onConfirm={() => onConfirm(data)}
               okText="Yes"
               cancelText="No">
-              <Button
+              {isCanDel?<Button
                 type="primary"
                 danger
                 shape="circle"
                 icon={<DeleteOutlined />}
-              />
+              />:''}
             </Popconfirm>
           </Space>
         );
@@ -104,31 +124,48 @@ const Note = () => {
   // 获取列表
   const [reqData, setReqData] = useState({
     title: "",
-    status: "",
+    travelState: "",
     begin_date: "",
     end_date: "",
     page: 1,
-    per_page: 4,
+    pageSize: 10,
   });
   // 游记列表数据管理
   const [noteList, setNoteList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [isCanDel,setIsCanDel] = useState(false);
+
+  const type_id = useSelector(state => {
+    console.log(state.user)
+    return state.user.userInfo.type_id
+  })
+  useEffect(()=>{
+      setIsCanDel(type_id==='1'?true:false)
+  },[type_id])
   useEffect(() => {
-    async function fetchNoteList() {
-      const res = await axios.get("http://localhost:3004/noteList");
-      // await request.get('',{reqData})
-      setNoteList(res.data);
-      setTotalCount(res.data.length);
+    function fetchNoteList() {
+      // const res = await axios.get("http://localhost:3004/noteList");
+      console.log(reqData)
+      request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
+        //添加序号
+        let list=res.travels;
+        for (let index = 0; index < list.length; index++) {
+          let key=(reqData.page-1)*reqData.pageSize+index+1;
+          list[index].key=key;
+        }
+        setNoteList(list);
+        setTotalCount(res.quantity);
+      })
     }
     fetchNoteList();
   }, [reqData]);
   // 筛选功能
   const onFinish = (formValues) => {
     console.log(formValues);
-    const { title, date, status } = formValues;
+    const { title, date, travelState } = formValues;
     setReqData({
       ...reqData,
-      status: status,
+      travelState: travelState,
       begin_date: date ? date[0].format("YYYY-MM-DD") : "",
       end_date: date ? date[1].format("YYYY-MM-DD") : "",
       title: title,
@@ -145,7 +182,8 @@ const Note = () => {
   const handleTableChange = (page) => {
     setReqData({
       ...reqData,
-      page: page,
+      page: page.current,
+      pageSize:page.pageSize
     });
   };
   // onConfirm 删除操作
@@ -158,11 +196,11 @@ const Note = () => {
   return (
     <div>
       <Form
-        initialValues={{ status: "" }}
+        initialValues={{ travelState: "" }}
         className="formStyle"
         onFinish={onFinish}
       >
-        <Form.Item label="状态" name="status">
+        <Form.Item label="状态" name="travelState">
           <Radio.Group>
             <Radio value={""}>全部</Radio>
             <Radio value={0}>待审核</Radio>
@@ -196,7 +234,9 @@ const Note = () => {
         columns={columns}
         dataSource={noteList}
         pagination={{
-          pageSize: 4,
+          page: reqData.page,
+          pageSize: reqData.pageSize,
+          total: totalCount
         }}
         scroll={{
           y: "80%",

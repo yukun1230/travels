@@ -34,6 +34,7 @@ const fetchLogin = (loginForm) => {
   return async (dispatch) => {
     const res = await loginAPI(loginForm);
     dispatch(setToken(res.token))
+    dispatch(setUserInfo(res))
   }
 }
 
