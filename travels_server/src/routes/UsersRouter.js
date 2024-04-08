@@ -8,7 +8,6 @@ const app = express();
 const SECRET = 'yukun';
 app.use(express.json());
 const userController = require('../controllers/UserController')
-
 // 获取用户信息
 UsersRouter.get('/', (req, res) => {
   console.log('req对象')

@@ -4,8 +4,9 @@ import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/colo
 import { NGROK_URL } from '../../config/ngrok'
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import { Text, View, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
-  Image, ScrollView 
+import {
+  Text, View, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
+  Image, ScrollView
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import FormItem from './components/formItem';
@@ -74,47 +75,60 @@ export default function RegisterScreen() {
   };
 
   const onSubmit = async (data) => {
-    const params = new FormData();
-    delete data.passwordsure   // 删除‘确认密码’
-    data = { ...file, ...data }
-    for (let i in data) {
-      params.append(i, data[i]);
-    };
     setIsLoading(true);
-    await axios.post(NGROK_URL + '/users/register', params, {
-      headers: {
-        'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
-      }
-    }).then(
-      res => {
-        console.log(res.data);
-        setIsLoading(false);
-        if (res.data === "注册成功") {
-          Toast.show({
-            type: 'success',
-            text1: res.data,
-            position: 'top',
-            autoHide: true,
-            visibilityTime: 1000,
-          })
-          navigation.navigate('登录界面');
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: res.data.message,
-            position: 'top',
-            autoHide: true,
-            visibilityTime: 1000,
-          })
+    if (!!file.file) {  // 当存在头像文件的时候执行下面的
+      const params = new FormData();
+      delete data.passwordsure   // 删除‘确认密码’
+      data = { ...file, ...data }
+      for (let i in data) {
+        params.append(i, data[i]);
+      };
+      console.log(params)
+      await axios.post(NGROK_URL + '/users/register', params, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }
-      }
-    ).catch(
-      err => {
-        console.log(err);
-        setIsLoading(false);
-      }
-    )
+      }).then(
+        res => {
+          console.log(res.data);
+          setIsLoading(false);
+          if (res.data === "注册成功") {
+            Toast.show({
+              type: 'success',
+              text1: res.data,
+              position: 'top',
+              autoHide: true,
+              visibilityTime: 1000,
+            })
+            navigation.navigate('登录界面');
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: res.data.message,
+              position: 'top',
+              autoHide: true,
+              visibilityTime: 1000,
+            })
+          }
+        }
+      ).catch(
+        err => {
+          console.log(err);
+          setIsLoading(false);
+        }
+      )
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: "您还没有上传头像哦~",
+        position: 'top',
+        autoHide: true,
+        visibilityTime: 1000,
+      })
+      setIsLoading(false);
+    }
   };
+
   return (
     <ScrollView style={styles.wrapper}>
       <LoadingOverlay isVisible={isLoading} />
