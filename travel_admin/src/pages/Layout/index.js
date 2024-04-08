@@ -1,9 +1,10 @@
-import { HomeOutlined,DiffOutlined, LogoutOutlined } from '@ant-design/icons';
+import { DiffOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Popconfirm } from 'antd';
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearUserInfo} from '@/store/modules/user';
+import { clearUserInfo, fetchUserInfo} from '@/store/modules/user';
+import { useEffect } from 'react';
 
 const { Header, Sider } = Layout;
 const items = [
@@ -11,12 +12,12 @@ const items = [
     label: '游记管理',
     key: '/',
     icon: <DiffOutlined />,
-  },
-  {
-    label: '数据面板',
-    key: 'home',
-    icon: <HomeOutlined />,
   }
+  // ,{
+  //   label: '数据面板',
+  //   key: 'home',
+  //   icon: <HomeOutlined />,
+  // }
 ]
 
 const TravelLayout = () => {
@@ -32,9 +33,9 @@ const TravelLayout = () => {
   const selectedKey = location.pathname
   const dispatch = useDispatch()
   // 获取个人信息
-  // useEffect(()=>{
-  //   dispatch(fetchUserInfo())
-  // },[dispatch])
+  useEffect(()=>{
+    dispatch(fetchUserInfo())
+  },[dispatch])
   const name = useSelector(state => {
     return state.user.userInfo.account
   })
@@ -46,7 +47,7 @@ const TravelLayout = () => {
   return (
     <Layout>
       <Header className='header'>
-        <div className="logo" />
+        <div className='logo'>爱游记</div>
         <div className="user-info">
           <span className="user-name">{name}</span>
           <span className="user-logout">
@@ -68,7 +69,7 @@ const TravelLayout = () => {
       </Header>
       <Layout>
         <Sider
-          width={200}
+          width={180}
           style={{
             background: colorBgContainer,
           }}

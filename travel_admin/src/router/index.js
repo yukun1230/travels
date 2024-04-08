@@ -4,7 +4,6 @@ import Login from '@/pages/Login'
 import AuthRoute from "@/components/AuthRoute";
 import Note from "@/pages/Note";
 import Home from "@/pages/Home";
-import Detail from "@/pages/Detail";
 
 const router = createBrowserRouter([
   { 
@@ -18,10 +17,6 @@ const router = createBrowserRouter([
       {
         path: 'home',
         element: <Home></Home>
-      },
-      {
-        path: 'detail',
-        element: <Detail></Detail>
       }
     ]
   },

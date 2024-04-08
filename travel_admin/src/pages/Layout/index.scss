@@ -3,8 +3,14 @@
 }
 .header{
   padding: 0;
-  display: 'flex';
   align-items: 'center';
+}
+.logo{
+  font-style: italic;
+  color: #fc6627;
+  font-size: 28px;
+  font-weight: bolder;
+  margin-left: 40px;
 }
 .user-info{
   position: absolute;
