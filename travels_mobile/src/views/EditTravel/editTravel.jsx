@@ -60,13 +60,33 @@ export default editTravelScreen = ({ route }) => {
       photoUriArray.push(CardData.photo[i].uri);
     }
     setSelectedValues([CardData.location.country, CardData.location.province, CardData.location.city]);
+    const selectedCountry = placeList.find(country => country.name === CardData.location.country);
+    if (selectedCountry) {
+      const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
+      if (selectedProvince) {
+        setFilteredCities(selectedProvince.cities);
+      } else (
+        setFilteredCities([])
+      )
+      setFilteredProvinces(selectedCountry.provinces);
+    } else {
+      setFilteredProvinces([]);
+    }
+    if (selectedCountry) {
+      const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
+      if (selectedProvince) {
+        setFilteredCities(selectedProvince.cities);
+      } else (
+        setFilteredCities([])
+      )
+    }
     setImage([...photoUriArray]);
     setPhoto([...CardData.photo]);  // 保存photo数组
   }, []) // 这个[]要加，不然会报错
 
 
   const handleCountryChange = (countryName, index) => {
-    setSelectedValues((prevValues) => {
+    setSelectedValues((prevValues) => {  //这个函数，preValues是干啥的呀，不是很懂
       const newValues = [...prevValues];
       newValues[index] = countryName;
       newValues[index + 1] = '';

@@ -26,7 +26,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
-export default addTravelsScreen = ({ route }) => {
+export default addTravelsScreen = () => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
   const [file, setFile] = useState([]); // 数组用于传到后端
   const [dimension, setDimension] = useState([]); // 数组用于存储图片的长度和宽度
@@ -173,7 +173,7 @@ export default addTravelsScreen = ({ route }) => {
         }
       )
       setFile([]);  //文件清空
-      setSelectedValues([" "," "," "]); // 地点清空
+      setSelectedValues([]); // 地点清空
       setImage([]); // 回显清空
       setDimension([]); // 图片尺寸清空
       navigation.navigate("我的游记")
