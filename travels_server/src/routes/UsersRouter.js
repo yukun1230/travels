@@ -17,7 +17,7 @@ UsersRouter.get('/', (req, res) => {
 UsersRouter.post('/login', async (req, res) => {
   const user = await User.findOne({
     username: req.body.username
-  }, { username: 1, password: 1,avatar: 1,nickname: 1 })
+  }, { username: 1, password: 1, avatar: 1, nickname: 1 })
   // 这里真滴搞，不加{password：1}获取的文档(document)里面居然都没有password一项，怕不是被默认不返回了？
   if (!user) {
     return res.send({
@@ -32,14 +32,13 @@ UsersRouter.post('/login', async (req, res) => {
           const token = jwt.sign({
             id: String(user._id),
           }, SECRET, { expiresIn: "0.5d" }) // 设置token失效时间为半天
-            res.header("Authorization", token)  // token放在请求头中
-            res.send({
+          res.header("Authorization", token)  // token放在请求头中
+          res.send({
             message: "登录成功",
             user,  // 用户信息不一定要返回，里面包含密码的密文
-            // token: token
           })
         } else {
-            res.send({
+          res.send({
             message: "密码错误"
           })
         }
@@ -51,20 +50,20 @@ UsersRouter.post('/login', async (req, res) => {
 // 一个中间件,用于验证token
 const auth = async (req, res, next) => {
   try {
-      console.log(req.headers.token)
-      const { id } = jwt.verify(req.headers.token, SECRET);  // 这个操作需要时间
-      req.user = await User.findById(id, { username: 1, avatar: 1,nickname: 1 });
-      next();
+    console.log(req.headers.token)
+    const { id } = jwt.verify(req.headers.token, SECRET);  // 这个操作需要时间
+    req.user = await User.findById(id, { username: 1, avatar: 1, nickname: 1 });
+    next();
   } catch (e) {
     next();
   }
 }
 
-UsersRouter.get('/getUserInfo', auth, async (req,res) => {
+UsersRouter.get('/getUserInfo', auth, async (req, res) => {
   if (!!req.user) {
     res.send(req.user);
   } else {
-    res.send({message:'token无效'})
+    res.send({ message: 'token无效' })
   }
 })
 

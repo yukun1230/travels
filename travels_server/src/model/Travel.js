@@ -27,6 +27,7 @@ const TravelScheme = new mongoose.Schema({
     nickname: String,
     avatar: String
   },
+  rejectedReason: String,
   createTime: {  // 游记创建时间
     type: Date,
     default: Date.now
@@ -34,7 +35,9 @@ const TravelScheme = new mongoose.Schema({
   updateTime: {  // 游记更新时间
     type: Date,
     default: Date.now
-  }
+  },
+  collectedCount: Number,
+  likedCount: Number
 })
 
 const Travel = mongoose.model('Travel', TravelScheme)  // 将结构编译成模型

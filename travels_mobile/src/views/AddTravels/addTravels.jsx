@@ -155,6 +155,8 @@ export default addTravelsScreen = () => {
       params.append("province", selectedValues[1]); // 添加位置信息(省份)
       params.append("city", selectedValues[2]); // 添加位置信息(城市)
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
+      params.append("collectedCount", 0);
+      params.append("likedCount", 0);
       setIsLoading(true); // 取消加载图标
       await axios.post(NGROK_URL + '/travels/upload', params, {
         headers: {

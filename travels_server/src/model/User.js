@@ -30,7 +30,13 @@ const UserSchema = new mongoose.Schema({
   updateTime: {
     type: Date,
     default: Date.now
-  }
+  },
+  collectTravels: [{
+    type: String
+  }],
+  likeTravels: [{
+    type: String
+  }]
 })
 
 const User = mongoose.model('User', UserSchema)  // 将结构编译成模型
