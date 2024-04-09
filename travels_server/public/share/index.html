@@ -1,0 +1,114 @@
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <title>游记分享</title>
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<body>
+  <div id="text"></div><!-- 准备好一个"容器 -->
+  <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script><!-- 引入babel,用于将jsx转为js -->
+  <script type="text/javascript" src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect } = React
+    const queryString = window.location.search; // 获取 URL 查询字符串
+    const urlParams = new URLSearchParams(queryString);// 解析查询字符串
+    const param = urlParams.get('id');// 获取参数值
+    const NGROK_URL = 'http://5fvskc9y2ble.xiaomiqiu.com';
+
+    function App() {
+      const [travelInfo, setTravelInfo] = useState({});
+      const [photoUri, setPhotoUri] = useState([])
+      const swiper = new Swiper('.swiper', {
+        direction: 'horizontal',// Optional parameters
+        autoplay: {
+          delay: 2000,
+        },
+        loop: true,
+        pagination: { el: '.swiper-pagination' },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+      useEffect(() => {
+        const getInfo = async () => {
+          try {
+            let myArray = []
+            await axios.get(`${NGROK_URL}/travels/getDetails`, {
+              params: { id: param },
+            }).then(res => {
+              const { title, content } = res.data.travelDetail;
+              const myArray = Object.values(res.data.travelDetail.photo)
+              let myPhoto = []
+              setTravelInfo({ title: title, content: content, photo: myArray });
+              for (let i = 0; i < myArray.length; i++) myPhoto.push(myArray[i].uri)
+              setPhotoUri(myPhoto);
+            })
+          } catch (e) {
+            console.log("发生错误")
+            console.log(e)
+          }
+        };
+        getInfo();
+      }, []);
+
+      return (
+        <div class='above-all'>
+          <div class="swiper">
+            <div class="swiper-wrapper">{
+              photoUri.map((item, index) => {
+                return (
+                  <div class="swiper-slide">
+                    <img src={item} alt="" width="500px" height="800px" />
+                  </div>
+                )
+              })}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-scrollbar"></div>
+          </div>
+          <div >
+            <h2 class='title'>{travelInfo.title}</h2>
+          </div>
+          <text class='content'>{travelInfo.content}</text>
+        </div>
+      )
+    }
+    ReactDOM.render(<App />, document.getElementById('text'))
+  </script>
+</body>
+
+<style>
+  .above-all {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-content: center;
+    margin: 40px 5% 10% 5%;
+  }
+
+  .swiper {
+    width: 100%;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 60px;
+  }
+
+  .content {
+    font-size: 50px;
+    white-space: pre-line;
+  }
+</style>

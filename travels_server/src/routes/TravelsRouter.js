@@ -31,6 +31,26 @@ TravelsRouter.post('/deleteOneTravel', auth, travelController.deleteOneTravel);
 // mobile---由用户的token获取获取用户发布的游记(用于我的游记), travelState为3的不返回
 TravelsRouter.get('/getMyTravels', auth, travelController.getMyTravels);
 
+
+TravelsRouter.get('/getCollectedTravels', auth, async (req, res) => {
+  const result = [];
+  const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels').exec()
+  if (userInfo.collectTravels) {
+    for (let i = 0; i < userInfo.collectTravels.length; i++) {
+      result.push(await Travel.findById(userInfo.collectTravels[i], '_id photo title content userInfo'))
+    }
+    res.send({
+      message: "获取成功",
+      result: result
+    })
+  } else {
+    res.send({
+      message: "没有收藏的游记"
+    })
+  }
+});
+
+
 // mobile---游记上传接口
 TravelsRouter.post('/upload', travelController.upload);
 
@@ -122,15 +142,15 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
       findCon.title = { $regex: title };
     }
     if (beginDate) {
-      findCon.createTime = { $lte: endDate, $gte: beginDate };
+      findCon.createTime = { $lte: { toDate: endDate }, $gte: { toDate: beginDate } };
     }
     if (travelState) {
       findCon.travelState = { $ne: 3, $eq: travelState };
     }
     // const customOrder = [2, 0, 1];// 2是待审核，0是拒绝，1是通过
     const travels = await Travel.find(findCon, '_id photo title content travelState userInfo createTime rejectedReason')
-    .sort( {travels : 1, _id: -1})
-    .skip(page * pageSize).limit(pageSize)
+      .sort({ travels: 1, _id: -1 })
+      .skip(page * pageSize).limit(pageSize)
     res.send({
       message: "获取游记信息成功",
       quantity: await Travel.countDocuments(findCon),
