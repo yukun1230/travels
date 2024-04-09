@@ -5,9 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
+import { AntDesign } from '@expo/vector-icons';
 
 // 现在组件接收一个额外的 id 参数
-const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravels }) => {
+const MyTravelCard = ({ id, photo, title, content, status, location, rejectedReason, fetchTravels }) => {
   const navigation = useNavigation();
   let statusInfo = '';
   if (status === 1) {
@@ -60,6 +61,10 @@ const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravel
   const hideDialog = () => setVisible(false);
 
 
+  const [rejectVisible, setRejectVisible] = useState(false);
+  const showReject = () => setRejectVisible(true);
+
+  const hideReject = () => setRejectVisible(false);
 
 
   const handleDelete = async () => {
@@ -103,6 +108,28 @@ const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravel
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <Portal >
+        {/* 删除对话框 */}
+        <Dialog visible={rejectVisible} onDismiss={hideReject} style={styles.dialogStyle}>
+          <Dialog.Title style={styles.dialogTitleStyle}>未通过审核</Dialog.Title>
+          <Dialog.Content style={styles.dialogContentStyle}>
+            <Text style={{ fontSize: 16 }}>原因: {rejectedReason}</Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'grey',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:0.5,borderRightColor:'grey',height:50, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideReject}>
+                <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
+              </TouchableOpacity>
+            </View>
+            {/* <View></View> */}
+            
+            <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
+            alignItems: 'center',}} onPress={() => { navigation.navigate('编辑游记', { ...CardData });hideReject(); }}>
+              <Text style={{ color: '#007BFF' ,fontSize:18 }}>重新编辑</Text>
+            </TouchableOpacity>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <View style={styles.topContainer}>
         <Image
           source={{ uri: photo[0].uri }}
@@ -129,9 +156,18 @@ const MyTravelCard = ({ id, photo, title, content, status, location, fetchTravel
         {status === 1 && <View style={[styles.statusContainer, { backgroundColor: "rgb(81,178,127)" }]}>
           <Text style={styles.status}>{statusInfo}</Text>
         </View>}
-        {status === 0 && <View style={[styles.statusContainer, { backgroundColor: "#d32f2f" }]}>
-          <Text style={styles.status}>{statusInfo}</Text>
-        </View>}
+        {status === 0 && 
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+          <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 20,width: 60,height: 30,borderRadius: 8, backgroundColor: "#d32f2f" }}>
+            <Text style={styles.status}>{statusInfo}</Text>
+            {/* <Text>{rejectedReason}</Text> */}
+          </View>
+          
+          <TouchableOpacity style={{marginRight:105}} onPress={showReject}>
+              <AntDesign name="warning" size={24} color="red" />
+          </TouchableOpacity>
+
+        </View>   }
         {status === 2 && <View style={[styles.statusContainer, { backgroundColor: "rgb(255, 204, 0)" }]}>
           <Text style={styles.status}>{statusInfo}</Text>
         </View>}

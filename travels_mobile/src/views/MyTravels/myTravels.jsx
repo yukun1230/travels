@@ -37,25 +37,25 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 //   },
 // ]
 
-const likedTravelsData = [
-  {
-    id: '661296661e818dc1be4173c9',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "秋天的童话",
-    content: "秋天，是一年中最美的季节，枫叶红了...",
-    userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    nickname: "小明"
-  },
-  {
-    id: '66124581bcd45d58c3de542e',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "秋天的童话2",
-    content: "秋天，是一年中最美的季节，枫叶红了2...",
-    userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    nickname: "小明"
-  },
+// const likedTravelsData = [
+//   {
+//     id: '661296661e818dc1be4173c9',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "秋天的童话",
+//     content: "秋天，是一年中最美的季节，枫叶红了...",
+//     userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     nickname: "小明"
+//   },
+//   {
+//     id: '66124581bcd45d58c3de542e',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "秋天的童话2",
+//     content: "秋天，是一年中最美的季节，枫叶红了2...",
+//     userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     nickname: "小明"
+//   },
 
-];
+// ];
 
 
 
@@ -147,6 +147,7 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
         status={travel.travelState}
         location={travel.location ? travel.location : {}}
         fetchTravels={fetchTravels}
+        rejectedReason={travel.rejectedReason ? travel.rejectedReason : ''}
       />
     ))
   ) : (
@@ -226,7 +227,7 @@ export default function MyTravelsScreen() {
       const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
         headers: { 'token': token },
       });
-      // console.log(response2.data);
+      console.log(response1.data);
       if (response1.data.MyTravels) {
         setMyTravels(response1.data.MyTravels);
       };
