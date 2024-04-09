@@ -59,6 +59,8 @@ const StorageScreen = () => {
         <Text>ID: {userInfo.id}</Text>
         <Text>Nickname: {userInfo.nickname}</Text>
         <Text>Avatar: {userInfo.avatar}</Text>
+        <Text>collectTravels: {userInfo.collectTravels}</Text>
+        <Text>likeTravels: {userInfo.likeTravels}</Text>
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Dimensions,Share } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper'
 import { AntDesign } from '@expo/vector-icons';
@@ -9,25 +9,32 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import LoadingOverlay from '../../components/LoadingOverlay'; 
-
+import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, clearUser } from '../../redux/userSlice';
+import Toast from 'react-native-toast-message';
 
 const DetailScreen = ({ navigation, route }) => {
   // 使用传递过来的cardId
-
+  const dispatch = useDispatch();
   const [travelDetail, setTravelDetail] = useState(null);
   const { cardId } = route.params;
   const [isLoading, setIsLoading] = useState(false);
-
-
+  const userInfo = useSelector(state => state.user);
+  const [liked, setLiked] = useState(userInfo.likeTravels.includes(cardId));
+  const [collected,setCollected] = useState(userInfo.collectTravels.includes(cardId));
+  const [isRequesting, setIsRequesting] = useState(false);
 
 
   useEffect(() => {
     setIsLoading(true);
+    console.log(userInfo,cardId);
     axios.get(`${NGROK_URL}/travels/getDetails`, {
       params: { id: cardId },
     })
       .then(res => {
         setTravelDetail(res.data.travelDetail);
+        console.log(res.data.travelDetail);
         // 更新导航栏信息
         navigation.setOptions({
           headerLeft: () => (
@@ -48,7 +55,7 @@ const DetailScreen = ({ navigation, route }) => {
           // },
         });
         setIsLoading(false);
-        console.log(res.data.travelDetail);
+        // console.log(res.data.travelDetail);
       })
       .catch(err => {
         console.error(err);
@@ -67,6 +74,173 @@ const DetailScreen = ({ navigation, route }) => {
       </View>
     )
   }
+
+
+  const handleShare=()=>{
+    console.log('分享');
+  //   Share.share({
+  //   message: 'React Native | A framework for building native apps using React',
+  //   url: 'http://facebook.github.io/react-native/',
+  //   title: 'React Native'
+  // }, {
+  //   // Android only:
+  //   dialogTitle: 'Share React Native website',
+  //   // iOS only:
+  //   excludedActivityTypes: [
+  //     'com.apple.UIKit.activity.PostToTwitter'
+  //   ]
+  // });
+  Share.share({
+    message: 'Check out this amazing website!',
+    url: 'https://www.example.com',
+    title: 'Awesome Website'
+  }, {
+    // Android only:
+    dialogTitle: 'Share React Native website',
+    // iOS only:
+    
+  })
+  }
+
+  const handleCollect = async (cardId) => {
+    // 处理收藏逻辑
+  try {
+    if (!userInfo.id) {
+      console.log('用户未登录');
+      Toast.show({
+            type: 'error',
+            text1: '您还没有登录哦~',
+            position: 'top',
+            autoHide: true,
+            visibilityTime: 1000,
+      })
+      return;
+    }
+    if (isRequesting) {
+      return;
+    }
+    setIsRequesting(true);
+    const token = await getToken();
+    if (!token) {
+      console.log('无有效Token，需要登录');
+      return;
+    }
+    // console.log(userInfo.id, cardId, token,collected);
+
+    if (!collected) {
+            const response = await axios.post(`${NGROK_URL}/travels/collectTravel`, { travelId:cardId }, { headers: { 'token': token } });
+            console.log(response.data.message);
+            setIsRequesting(false);
+            if (response.data.message==='收藏成功') {
+                setCollected(true); // 更新状态
+                setTravelDetail((prevDetail) => ({
+                  ...prevDetail,
+                  collectedCount: prevDetail.collectedCount + 1,
+                }));
+                dispatch(setUser({
+                  ...userInfo,
+                  collectTravels: [...userInfo.collectTravels,cardId],
+                }));
+
+            } else {
+                console.log('收藏失败', response.data.message);
+            }
+        } else {
+            const response = await axios.post(`${NGROK_URL}/travels/UndoCollectTravel`, { travelId:cardId }, { headers: { 'token': token } });
+            console.log(response.data.message);
+            setIsRequesting(false);
+            if (response.data.message==='取消收藏成功') {
+              setCollected(false); // 更新状态
+              setTravelDetail((prevDetail) => ({
+                ...prevDetail,
+                collectedCount: prevDetail.collectedCount - 1,
+              }));
+              dispatch(setUser({
+                  ...userInfo,
+                  collectTravels: userInfo.collectTravels.filter(item => item !== cardId),
+              }));
+              
+            } else {
+                console.log('收藏失败', response.data.message);
+            }
+        }
+  } catch (error) {
+    console.error('点赞请求失败:', error);
+  }
+};
+
+
+const handleLike  = async (cardId) => {
+  // 处理点赞逻辑
+  
+  try {
+    if (!userInfo.id) {
+      console.log('用户未登录');
+      Toast.show({
+            type: 'error',
+            text1: '您还没有登录哦~',
+            position: 'top',
+            autoHide: true,
+            visibilityTime: 1000,
+      })
+      return;
+    }
+    if (isRequesting) {
+      return;
+    }
+    setIsRequesting(true);
+    const token = await getToken();
+    if (!token) {
+      console.log('无有效Token，需要登录');
+      return;
+    }
+    // console.log(userInfo.id, cardId, token,liked);
+
+    if (!liked) {
+            const response = await axios.post(`${NGROK_URL}/travels/likeTravel`, { travelId:cardId }, { headers: { 'token': token } });
+            console.log(response.data.message);
+            setIsRequesting(false);
+            if (response.data.message==='点赞成功') {
+                setLiked(true); // 更新状态
+                setTravelDetail((prevDetail) => ({
+                  ...prevDetail,
+                  likedCount: prevDetail.likedCount + 1,
+                }));
+                // console.log(userInfo);
+                console.log([...userInfo.likeTravels,cardId]);
+                dispatch(setUser({
+                  ...userInfo,
+                  likeTravels: [...userInfo.likeTravels,cardId],
+                }));
+            } else {
+                console.log('点赞失败', response.data.message);
+            }
+        } else {
+            const response = await axios.post(`${NGROK_URL}/travels/UndoLikeTravel`, { travelId:cardId }, { headers: { 'token': token } });
+            console.log(response.data.message);
+            setIsRequesting(false);
+            if (response.data.message==='取消点赞成功') {
+                setLiked(false); // 更新状态
+                setTravelDetail((prevDetail) => ({
+                  ...prevDetail,
+                  likedCount: prevDetail.likedCount - 1,
+
+                }));
+                // console.log(userInfo.likeTravels.filter(item => item !== cardId));
+                dispatch(setUser({
+                  ...userInfo,
+                  likeTravels: userInfo.likeTravels.filter(item => item !== cardId),
+                }));
+            } else {
+                console.log('取消点赞失败', response.data.message);
+            }
+        }
+  } catch (error) {
+    console.error('点赞请求失败:', error);
+  }
+};
+
+
 
   return (
     <View style={{ flexDirection: 'column' }}>
@@ -133,22 +307,22 @@ const DetailScreen = ({ navigation, route }) => {
       </ScrollView>
       <View style={styles.footer}>
           {/* 底部栏 */}
-          <TextInput style={styles.input} placeholder="评论一下吧~" />
+          {/* <TextInput style={styles.input} placeholder="评论一下吧~" /> */}
           <TouchableOpacity style={styles.footerIcon}>
-            <AntDesign name="like2" size={24} color="black" />
-            <Text style={styles.footerText}>1228</Text>
+            <AntDesign name="like2" size={24} color={liked ? "red":"black"} onPress={() => handleLike(cardId)}/>
+            {travelDetail ? <Text style={[styles.footerText, { color: liked ? "red" : "black" }]}>{travelDetail.likedCount}</Text> : <Text style={[styles.footerText, { color: liked ? "red" : "black" }]}></Text>}
           </TouchableOpacity>
-          <TouchableOpacity style={styles.footerIcon}>
+          {/* <TouchableOpacity style={styles.footerIcon}>
             <FontAwesome6 name="commenting" size={24} color="black" />
             <Text style={styles.footerText}>76</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.footerIcon}>
+          </TouchableOpacity> */}
+          <TouchableOpacity style={styles.footerIcon} onPress={handleShare}>
             <SimpleLineIcons name="share-alt" size={24} color="black" />
             <Text style={styles.footerText}>分享</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.footerIcon}>
-            <MaterialCommunityIcons name="heart-plus-outline" size={24} color="black" />
-            <Text style={styles.footerText}>261</Text>
+          <TouchableOpacity style={styles.footerIcon} onPress={() => handleCollect(cardId)}>
+            <MaterialCommunityIcons name="heart-plus-outline" size={24} color={collected ? "red":"black"} />
+            {travelDetail ? <Text style={[styles.footerText, { color: collected ? "red" : "black" }]}>{travelDetail.collectedCount}</Text> : <Text style={[styles.footerText, { color: liked ? "red" : "black" }]}></Text>}
           </TouchableOpacity>
         </View>
       
@@ -239,7 +413,7 @@ const styles = StyleSheet.create({
     right: 0, 
     bottom: 0, 
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: '#fff',
     padding: 10,

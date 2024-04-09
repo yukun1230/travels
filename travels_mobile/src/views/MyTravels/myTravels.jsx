@@ -210,9 +210,9 @@ export default function MyTravelsScreen() {
     { key: 'second', title: '我的收藏' },
   ]);
   const [myTravels, setMyTravels] = useState([]);
-  useEffect(() => {
-    console.log(myTravels);
-  })
+  // useEffect(() => {
+  //   console.log(myTravels);
+  // })
 
   const [isLoading, setIsLoading] = useState(true);
 

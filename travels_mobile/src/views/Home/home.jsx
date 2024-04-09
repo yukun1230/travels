@@ -70,14 +70,20 @@ const AvatarMenu = () => {
       if (token) {
         axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
           .then(res => {
-            const { avatar, nickname, _id } = res.data;
+            const { avatar, nickname, _id, collectTravels, likeTravels } = res.data;
+            const uniqueCollectTravels = [...new Set(collectTravels)];
+            const uniqueLikeTravels = [...new Set(likeTravels)];
+            // console.log(res.data);
+            console.log(uniqueCollectTravels,uniqueLikeTravels);
             // const nickname = res.data.avatar;
             // 使用 dispatch 将用户信息保存到 Redux
             // console.log(res.data);
             dispatch(setUser({
               avatar: avatar,
               nickname: nickname,
-              id: _id
+              id: _id,
+              collectTravels: uniqueCollectTravels,
+              likeTravels: uniqueLikeTravels
             }));
           })
           .catch(err => {
@@ -223,7 +229,7 @@ export default HomeScreen = () => {
           nickname: travel.userInfo.nickname,
         };
       });
-      console.log(travels);
+      // console.log(travels);
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
       setData(formattedData);
     } catch (error) {
@@ -294,7 +300,7 @@ export default HomeScreen = () => {
 
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
       setData(prevData => isRefreshing ? formattedData : [ ...prevData,...formattedData]);
-      console.log(1);
+      // console.log(1);
       if (!isRefreshing) {
         setNoMore(formattedData.length < pageSize);
       }
