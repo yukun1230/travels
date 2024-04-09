@@ -37,25 +37,25 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 //   },
 // ]
 
-const likedTravelsData = [
-  {
-    id: '1',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "秋天的童话",
-    content: "秋天，是一年中最美的季节，枫叶红了...",
-    userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    userName: "小明"
-  },
-  {
-    id: '2',
-    imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    title: "秋天的童话2",
-    content: "秋天，是一年中最美的季节，枫叶红了2...",
-    userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
-    userName: "小明"
-  },
+// const likedTravelsData = [
+//   {
+//     id: '661296661e818dc1be4173c9',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "秋天的童话",
+//     content: "秋天，是一年中最美的季节，枫叶红了...",
+//     userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     nickname: "小明"
+//   },
+//   {
+//     id: '66124581bcd45d58c3de542e',
+//     imageUrl: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     title: "秋天的童话2",
+//     content: "秋天，是一年中最美的季节，枫叶红了2...",
+//     userAvatar: "https://img0.baidu.com/it/u=4245625267,1147908887&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+//     nickname: "小明"
+//   },
 
-];
+// ];
 
 
 
@@ -124,7 +124,7 @@ const AvatarMenu = () => {
           <Divider />
           <Menu.Item title="写游记" leadingIcon="square-edit-outline" onPress={() => { navigation.navigate('游记发布'); closeMenu(); }} />
           <Divider />
-          <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
+          <Menu.Item title="退出登录" leadingIcon="logout" onPress={() => { navigation.navigate('本机仓库') }} />
         </>
       ) : (
         <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
@@ -147,6 +147,7 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
         status={travel.travelState}
         location={travel.location ? travel.location : {}}
         fetchTravels={fetchTravels}
+        rejectedReason={travel.rejectedReason ? travel.rejectedReason : ''}
       />
     ))
   ) : (
@@ -163,34 +164,30 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 };
 
 
-const SecondRoute = () => {
-  // 我的收藏组件
-  const navigation = useNavigation();
+const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
+   const content = collectedTravels.length !== 0 ? (
+    collectedTravels.map((travel) => (
+      <MyLikeCard
+        key={travel._id}
+        id={travel._id}
+        imageUrl={travel.photo[0].uri}
+        title={travel.title}
+        content={travel.content}
+        userAvatar={travel.userInfo.avatar}
+        nickname={travel.userInfo.nickname}
+        fetchTravels={fetchTravels}
+      />
+    ))
+  ) : (
+    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
+  );
   return (
-    <View style={[styles.scene]} >
+    <View style={[styles.scene]}>
       <ScrollView>
-        <MyLikeCard
-        // 我的收藏卡片组件
-          key={likedTravelsData[0].id}
-          id={likedTravelsData[0].id}
-          imageUrl={likedTravelsData[0].imageUrl}
-          title={likedTravelsData[0].title}
-          content={likedTravelsData[0].content}
-          userAvatar={likedTravelsData[0].userAvatar}
-          userName={likedTravelsData[0].userName}
-        />
-        <MyLikeCard
-          key={likedTravelsData[1].id}
-          id={likedTravelsData[1].id}
-          imageUrl={likedTravelsData[1].imageUrl}
-          title={likedTravelsData[1].title}
-          content={likedTravelsData[1].content}
-          userAvatar={likedTravelsData[1].userAvatar}
-          userName={likedTravelsData[1].userName}
-        />
+        {content}
       </ScrollView>
     </View>
-  )
+  );
 }
   
  
@@ -210,9 +207,10 @@ export default function MyTravelsScreen() {
     { key: 'second', title: '我的收藏' },
   ]);
   const [myTravels, setMyTravels] = useState([]);
-  useEffect(() => {
-    console.log(myTravels);
-  })
+  const [collectedTravels, setCollectedTravels] = useState([]);
+  // useEffect(() => {
+  //   console.log(collectedTravels[0].photo[0].uri);
+  // })
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -223,13 +221,21 @@ export default function MyTravelsScreen() {
         setIsLoading(false);
         return
       }
-      const response = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+      const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
         headers: { 'token': token },
       });
-      if (response.data && response.data.MyTravels) {
-        setMyTravels(response.data.MyTravels);
-        setIsLoading(false);
+      const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
+        headers: { 'token': token },
+      });
+      console.log(response1.data);
+      if (response1.data.MyTravels) {
+        setMyTravels(response1.data.MyTravels);
+      };
+      if (response2.data.result) {
+        // console.log('收藏',response2.data.result);
+        setCollectedTravels(response2.data.result);
       }
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
     }
@@ -272,7 +278,7 @@ export default function MyTravelsScreen() {
       case 'first':
         return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading}/>;
       case 'second':
-        return <SecondRoute likedTravelsData={likedTravelsData} />;
+        return <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       default:
         return null;
     }
