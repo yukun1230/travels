@@ -13,6 +13,7 @@ import { storeToken, getToken, removeToken } from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, clearUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
+import { Dialog, Portal} from 'react-native-paper';
 
 const DetailScreen = ({ navigation, route }) => {
   // 使用传递过来的cardId
@@ -24,7 +25,13 @@ const DetailScreen = ({ navigation, route }) => {
   const [liked, setLiked] = useState(userInfo.likeTravels.includes(cardId));
   const [collected,setCollected] = useState(userInfo.collectTravels.includes(cardId));
   const [isRequesting, setIsRequesting] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => {
+    setIsRequesting(false);
+    setVisible(false)
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -146,28 +153,57 @@ const DetailScreen = ({ navigation, route }) => {
                 console.log('收藏失败', response.data.message);
             }
         } else {
-            const response = await axios.post(`${NGROK_URL}/travels/UndoCollectTravel`, { travelId:cardId }, { headers: { 'token': token } });
-            console.log(response.data.message);
-            setIsRequesting(false);
-            if (response.data.message==='取消收藏成功') {
-              setCollected(false); // 更新状态
-              setTravelDetail((prevDetail) => ({
-                ...prevDetail,
-                collectedCount: prevDetail.collectedCount - 1,
-              }));
-              dispatch(setUser({
-                  ...userInfo,
-                  collectTravels: userInfo.collectTravels.filter(item => item !== cardId),
-              }));
+            // const response = await axios.post(`${NGROK_URL}/travels/UndoCollectTravel`, { travelId:cardId }, { headers: { 'token': token } });
+            // console.log(response.data.message);
+            // setIsRequesting(false);
+            // if (response.data.message==='取消收藏成功') {
+            //   setCollected(false); // 更新状态
+            //   setTravelDetail((prevDetail) => ({
+            //     ...prevDetail,
+            //     collectedCount: prevDetail.collectedCount - 1,
+            //   }));
+            //   dispatch(setUser({
+            //       ...userInfo,
+            //       collectTravels: userInfo.collectTravels.filter(item => item !== cardId),
+            //   }));
               
-            } else {
-                console.log('收藏失败', response.data.message);
-            }
+            // } else {
+            //     console.log('收藏失败', response.data.message);
+            // }
+            showDialog()
         }
   } catch (error) {
     console.error('点赞请求失败:', error);
   }
 };
+
+
+const cancelCollected = async (cardId) => {
+  setIsRequesting(true);
+  const token = await getToken();
+  try {
+    const response = await axios.post(`${NGROK_URL}/travels/UndoCollectTravel`, { travelId:cardId }, { headers: { 'token': token } });
+    console.log(response.data.message);
+    setIsRequesting(false);
+    if (response.data.message==='取消收藏成功') {
+      setCollected(false); // 更新状态
+      setTravelDetail((prevDetail) => ({
+        ...prevDetail,
+        collectedCount: prevDetail.collectedCount - 1,
+      }));
+      dispatch(setUser({
+          ...userInfo,
+          collectTravels: userInfo.collectTravels.filter(item => item !== cardId),
+      }));
+      
+    } else {
+        console.log('收藏失败', response.data.message);
+    };
+    hideDialog()
+  }catch (error) {
+    console.error('点赞请求失败:', error);
+  }
+}
 
 
 const handleLike  = async (cardId) => {
@@ -245,6 +281,28 @@ const handleLike  = async (cardId) => {
   return (
     <View style={{ flexDirection: 'column' }}>
       <LoadingOverlay isVisible={isLoading} />
+      <Portal >
+        {/* 删除对话框 */}
+        <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
+          <Dialog.Title style={styles.dialogTitleStyle}>取消收藏</Dialog.Title>
+          <Dialog.Content style={styles.dialogContentStyle}>
+            <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'grey',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:0.5,borderRightColor:'grey',height:50, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
+                <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
+              </TouchableOpacity>
+            </View>
+            {/* <View></View> */}
+            
+            <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
+            alignItems: 'center',}} onPress={() => cancelCollected(cardId)}>
+              <Text style={{ color: '#d32f2f',fontSize:18 }}>确定</Text>
+            </TouchableOpacity>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       
       
       <ScrollView>
@@ -438,6 +496,19 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
+  },
+  dialogStyle: {
+    backgroundColor: 'white', // 修改对话框的背景色
+    borderRadius: 10, // 设置边角圆滑度
+    padding: 0, // 内部间距
+  },
+  dialogTitleStyle: {
+    color: 'black', // 标题文字颜色
+    // textAlign: 'center', // 标题居中
+  },
+  dialogContentStyle: {
+    color: 'grey', // 内容文字颜色
+    marginBottom: 10, // 内容与对话框底部的间距
   },
 })
 
