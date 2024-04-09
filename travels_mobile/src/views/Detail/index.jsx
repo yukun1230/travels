@@ -85,6 +85,8 @@ const DetailScreen = ({ navigation, route }) => {
 
   const handleShare=()=>{
     console.log('分享');
+    const uri=userInfo.nickname +'给你分享了一篇游记,快来看看吧~    '+'http://5fvskc9y2ble.xiaomiqiu.com/public/share/index.html?id='+cardId;
+    console.log(uri);
   //   Share.share({
   //   message: 'React Native | A framework for building native apps using React',
   //   url: 'http://facebook.github.io/react-native/',
@@ -98,14 +100,11 @@ const DetailScreen = ({ navigation, route }) => {
   //   ]
   // });
   Share.share({
-    message: 'Check out this amazing website!',
-    url: 'https://www.example.com',
-    title: 'Awesome Website'
+    message: uri,
   }, {
     // Android only:
     dialogTitle: 'Share React Native website',
     // iOS only:
-    
   })
   }
 
