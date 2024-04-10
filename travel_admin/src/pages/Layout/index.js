@@ -1,4 +1,4 @@
-import { DiffOutlined, LogoutOutlined } from '@ant-design/icons';
+import { AuditOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Popconfirm } from 'antd';
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ const items = [
   {
     label: '游记管理',
     key: '/',
-    icon: <DiffOutlined />,
+    icon: <AuditOutlined />,
   }
   // ,{
   //   label: '数据面板',
@@ -36,6 +36,7 @@ const TravelLayout = () => {
   useEffect(()=>{
     dispatch(fetchUserInfo())
   },[dispatch])
+  // 用户名
   const name = useSelector(state => {
     return state.user.userInfo.account
   })
@@ -47,7 +48,7 @@ const TravelLayout = () => {
   return (
     <Layout>
       <Header className='header'>
-        <div className='logo'>爱游记</div>
+        <div className='logo'>旅游日记审核管理系统</div>
         <div className="user-info">
           <span className="user-name">{name}</span>
           <span className="user-logout">
@@ -56,16 +57,6 @@ const TravelLayout = () => {
             </Popconfirm>
           </span>
         </div>
-        {/* <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items1}
-          style={{
-            flex: 1,
-            minWidth: 0,
-          }}
-        /> */}
       </Header>
       <Layout>
         <Sider
@@ -77,15 +68,12 @@ const TravelLayout = () => {
           <Menu
             mode="inline"
             selectedKeys={selectedKey}
-            style={{
-              height: '100%',
-              borderRight: 0,
-            }}
+            className="style-menu"
             items={items}
             onClick={menuClick}
           />
         </Sider>
-        <Layout className='content'>
+        <Layout className='style-content'>
           <Outlet></Outlet>
         </Layout>
       </Layout>

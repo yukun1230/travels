@@ -30,7 +30,7 @@ function getProfileAPI(){
   })
 }
 
-// 删除游记
+// 删除游记mock数据
 function delNoteAPI(id){
   return axios({ 
     url:`http://localhost:3004/noteList/${id}`,
