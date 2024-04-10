@@ -14,13 +14,13 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-import '../../util/axios.config'
+import '../../util/axios.config';
 import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../../appSlice';
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
-
+import { Ionicons } from '@expo/vector-icons';
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)
   const dispatch = useDispatch();
@@ -146,8 +146,9 @@ export default LoginScreen = ({ navigation }) => {
             <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
               {
                 showPassword ?
-                  <Image source={require('../../../assets/show.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} /> :
-                  <Image source={require('../../../assets/unshow.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} />
+                  <Ionicons name="eye-outline" size={24} color="grey" style={{alignSelf: 'center',marginRight:10}} />
+                  :
+                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{alignSelf: 'center',marginRight:10}} />
               }
             </TouchableWithoutFeedback>
           </View>

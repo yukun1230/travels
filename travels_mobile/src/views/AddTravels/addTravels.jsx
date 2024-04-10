@@ -23,6 +23,7 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 import { Picker } from '@react-native-picker/picker';
 import placeList from './placeList';
 import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -263,7 +264,7 @@ export default addTravelsScreen = () => {
                 </View>
               )}
             />
-            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop:20 }}>
               <View style={styles.locationIcon}>
                 <AntDesign name="enviroment" size={18} color="white" />
               </View>

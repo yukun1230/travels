@@ -329,7 +329,7 @@ export default editTravelScreen = ({ route }) => {
                 </View>
               )}
             />
-            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: 20 }}>
               <View style={styles.locationIcon}>
                 <AntDesign name="enviroment" size={18} color="white" />
               </View>

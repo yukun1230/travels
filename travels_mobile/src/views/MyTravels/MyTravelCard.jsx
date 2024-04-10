@@ -74,7 +74,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
         { id: id },
         { headers: { 'token': token } }
       );
-      console.log(response.data);
+      // console.log(response.data);
       // 删除成功，调用传入的 fetchTravels 函数刷新列表
       fetchTravels();
       hideDialog();

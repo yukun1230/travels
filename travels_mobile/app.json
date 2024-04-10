@@ -4,7 +4,7 @@
     "slug": "travels_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/travel-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -15,16 +15,22 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.ycy.travel",
       "supportsTablet": true
-
     },
     "android": {
+      "package": "com.ycy.travel",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
+      "output": "server",
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
@@ -33,8 +39,24 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ]
-    ]
+      ],
+      "expo-router"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a4bb2070-605c-4fc2-a432-27494489f04d"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a4bb2070-605c-4fc2-a432-27494489f04d"
+    },
+    "owner": "yukun123"
   },
-  "pages":[]
+  "pages": []
 }

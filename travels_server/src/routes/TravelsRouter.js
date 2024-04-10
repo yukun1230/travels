@@ -141,8 +141,8 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
     if (title) {
       findCon.title = { $regex: title };
     }
-    if (beginDate) {
-      findCon.createTime = { $lte: { toDate: endDate }, $gte: { toDate: beginDate } };
+    if (beginDate) { //endDate
+      findCon.createTime = { $lte: new Date(endDate), $gte: new Date(beginDate) };
     }
     if (travelState) {
       findCon.travelState = { $ne: 3, $eq: travelState };
