@@ -7,13 +7,13 @@ import { PaperProvider } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
-import StorageScreen from './src/views/Storage'
 import editTravelScreen from './src/views/EditTravel/editTravel'
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import Toast, { BaseToast } from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 
 const toastConfig = {
+  // Toast提示自定义配置
   success: (props) => (
     <BaseToast
       {...props}
@@ -50,12 +50,10 @@ export default function App() {
           <Stack.Screen name="主界面" component={MainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Detail" component={DetailScreen} options={{
             headerTitle: '',
-            // 控制导航条与顶部的距离
             headerStyle: {
-              height: 120, // 这里设置你希望的导航条高度
+              height: 120, 
             },
           }} />
-          <Stack.Screen name="本机仓库" component={StorageScreen}  />
           <Stack.Screen name="编辑游记" component={editTravelScreen}  />
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,44 +1,34 @@
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Image,
-} from 'react-native';
-import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
+import {Text, View, TextInput, StyleSheet, TouchableWithoutFeedback, Image} from 'react-native';
+import { THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
 import React, { useState,useEffect } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import '../../util/axios.config'
-import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
-import { useSelector, useDispatch } from 'react-redux'
-import { changePage } from '../../../appSlice';
+import { getToken } from '../../util/tokenRelated'
+import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
 
 export default LoginScreen = ({ navigation }) => {
-  const [showPassword, setShowPassword] = useState(0)
+  const [showPassword, setShowPassword] = useState(0)  //密码框输入显隐控制
   const dispatch = useDispatch();
   const handlelogin = () => {
     // 跳转页面
-    
-    // getToken
     navigation.navigate("注册界面")
   }
  
   const { control, handleSubmit, formState: { errors }, setValue } = useForm({
-  defaultValues: {
-    username: '',
-    password: ''
-  },
-});
+    defaultValues: {
+      username: '',
+      password: ''
+    },
+  });
   
   const handleClear = () => {
+    // 清空输入框
     setValue('username', '');
     setValue('password', '');
   }
@@ -65,7 +55,6 @@ export default LoginScreen = ({ navigation }) => {
           })
         }
         
-        console.log(res.data);
         const { _id, avatar, nickname } = res.data.user;
         // 使用 dispatch 将用户信息保存到 Redux
         dispatch(setUser({
@@ -77,22 +66,30 @@ export default LoginScreen = ({ navigation }) => {
       }
     )
   };
+
   const handleVisit = () => {
     navigation.navigate("主界面")
   }
 
-  
- useEffect(() => {
-  // 如果有Token，直接跳转首页
-  const checkTokenAndRedirect = async () => {
-    const token = await getToken();
-    console.log(token);
-    if (token) {
-      navigation.navigate("主界面");
-    }
-  };
-  checkTokenAndRedirect();
-}, []);
+  useEffect(() => {
+    // 如果有Token，直接跳转首页
+    const checkTokenAndRedirect = async () => {
+      const token = await getToken();
+      if (token) {
+        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
+          .then(res => {
+            if(res.data._id)
+            {
+              navigation.navigate("主界面");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+    };
+    checkTokenAndRedirect();
+  }, []);
 
   return (
     <View style={styles.loginSection}>

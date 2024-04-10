@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const userSlice = createSlice({
+  // redux用户信息仓库
   name: 'user',
   initialState: {
     id: null,
