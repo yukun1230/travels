@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// 配置 baseURL
 const request = axios.create({
   baseURL: 'http://5fvskc9y2ble.xiaomiqiu.com',
   timeout: 5000

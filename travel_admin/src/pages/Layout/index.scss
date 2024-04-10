@@ -6,9 +6,9 @@
   align-items: 'center';
 }
 .logo{
-  font-style: italic;
+  // font-style: italic;
   color: #fc6627;
-  font-size: 28px;
+  font-size: 18px;
   font-weight: bolder;
   margin-left: 40px;
 }
@@ -29,7 +29,11 @@
   }
 }
 
-.content{
+.style-menu{
+  height: 100;
+  border-right: 0;
+}
+.style-content{
   padding: 20px;
   overflow-y: auto;
 }

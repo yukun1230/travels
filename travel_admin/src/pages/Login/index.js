@@ -13,11 +13,10 @@ const Login = () => {
     await dispatch(fetchLogin(values))
     navigate('/')
     message.success("登录成功")
-    console.log("Success:", values);
   };
   return (
     <div className="login">
-      <Card title="旅游日记管理系统" className="login-content">
+      <Card title="旅游日记审核管理系统" className="login-content">
         <Form
           name="normal_login"
           className="login-form"
@@ -30,7 +29,7 @@ const Login = () => {
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="账号:admin/user"
+              placeholder="账号:admin/audit"
             />
           </Form.Item>
           <Form.Item
@@ -43,11 +42,6 @@ const Login = () => {
               placeholder="Password"
             />
           </Form.Item>
-          {/* <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>记住我</Checkbox>
-            </Form.Item>
-          </Form.Item> */}
           <Form.Item className="login-btn">
             <Button
               type="primary"
