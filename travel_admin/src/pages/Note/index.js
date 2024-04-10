@@ -31,10 +31,10 @@ const Note = () => {
     {
       title: "封面",
       dataIndex: "photo",
-      width: "10%",
+      width: "8%",
       render: (photo) => {
         return (
-          <Image height={100} 
+          <Image height={80} 
               src={photo[0].uri || img404}/>
         );
       },
