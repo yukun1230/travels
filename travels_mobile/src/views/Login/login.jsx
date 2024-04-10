@@ -11,7 +11,7 @@ import { getToken } from '../../util/tokenRelated'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
-
+import { Ionicons } from '@expo/vector-icons';
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)  //密码框输入显隐控制
   const dispatch = useDispatch();
@@ -143,8 +143,9 @@ export default LoginScreen = ({ navigation }) => {
             <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
               {
                 showPassword ?
-                  <Image source={require('../../../assets/show.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} /> :
-                  <Image source={require('../../../assets/unshow.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} />
+                  <Ionicons name="eye-outline" size={24} color="grey" style={{alignSelf: 'center',marginRight:10}} />
+                  :
+                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{alignSelf: 'center',marginRight:10}} />
               }
             </TouchableWithoutFeedback>
           </View>

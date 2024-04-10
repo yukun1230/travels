@@ -4,21 +4,31 @@
       "user_id": 1,
       "username": "管理员",
       "account": "admin",
-      "password": "123",
+      "password": "123123",
       "type": "管理员",
-      "type_id": "1",
+      "type_id": 1,
       "id": "e6c5",
-      "token": "yyy"
+      "token": "admin"
     },
     {
       "user_id": 2,
       "username": "审核人员",
-      "account": "user",
-      "password": "111",
+      "account": "audit",
+      "password": "111111",
       "type": "审核人员",
       "type_id": 2,
       "id": "b8dc",
-      "token": "yyy"
+      "token": "audit"
+    },
+    {
+      "user_id": 3,
+      "username": "审核人员",
+      "account": "user",
+      "password": "111",
+      "type": "其他",
+      "type_id": 2,
+      "id": "b8dy",
+      "token": "user"
     }
   ]
 }

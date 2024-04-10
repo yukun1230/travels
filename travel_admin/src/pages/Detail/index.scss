@@ -1,3 +1,19 @@
 .bread-crumb:hover{
   cursor: pointer;
 }
+.travel-content{
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.view-actions{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .reason{
+    margin-bottom: 0;
+  }
+}
+.view-actions.two{
+  justify-content: space-between;
+}

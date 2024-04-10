@@ -1,11 +1,11 @@
 import { Form, Button, Radio, DatePicker, Popover, Popconfirm } from "antd";
-import locale from "antd/es/date-picker/locale/zh_CN";
-import { message,Table, Tag, Space, Input } from "antd";
+import { message,Table, Tag, Space, Input, Image } from "antd";
 import { EditOutlined,DeleteOutlined,EyeOutlined } from "@ant-design/icons";
+import locale from "antd/es/date-picker/locale/zh_CN";
 import img404 from "@/assets/error.png";
-import { useEffect, useState} from "react";
-import "./index.scss";
+import { useEffect, useState,useRef} from "react";
 import { useSelector } from 'react-redux';
+import "./index.scss";
 import { request } from "@/utils";
 import Detail from "../Detail";
 import dayjs from "dayjs";
@@ -14,25 +14,28 @@ const { RangePicker } = DatePicker;
 
 
 const Note = () => {
+  // 角色类型
+  const type_id = useSelector(state => state.user.userInfo.type_id)
   // 游记状态枚举
   const status = {
-    1: <Tag color="warning">已通过</Tag>,
-    2: <Tag color="success">待审核</Tag>,
+    1: <Tag color="success">已通过</Tag>,
+    2: <Tag color="warning">待审核</Tag>,
   };
   // 列数据
   const columns = [
     {
-      title: '序号',
-      dataIndex: 'key',
-      width:70
+      title: "序号",
+      dataIndex: "key",
+      width:"5%"
     },
     {
       title: "封面",
       dataIndex: "photo",
-      width: '10%',
+      width: "8%",
       render: (photo) => {
         return (
-          <img src={photo[0].uri || img404}  height={80} alt="" />
+          <Image height={80} 
+              src={photo[0].uri || img404}/>
         );
       },
     },
@@ -93,29 +96,43 @@ const Note = () => {
     },
     {
       title: "操作",
-      width: "12%",
+      width: "15%",
       render: (data) => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EyeOutlined />} 
-            onClick={()=>{toView(data,1)}} /> 
-            {/* <InfoCircleOutlined onClick={() => navigate(`/detail?id=${data._id}&view=1`)}/> */}
-            {
-              data.travelState === 2 && <Button type="primary" shape="circle" icon={<EditOutlined />} 
-              onClick={()=>{toView(data,0)}} /> 
-            }
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                toView(data, 1);
+              }}
+            />
+            {data.travelState === 2 && (
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  toView(data, 0);
+                }}
+              />
+            )}
             <Popconfirm
               title="删除游记"
               description="确认要删除当前游记吗?"
               onConfirm={() => onConfirm(data)}
               okText="确定"
-              cancelText="取消">
-              {isCanDel && <Button
-                type="primary"
-                danger
-                shape="circle"
-                icon={<DeleteOutlined />}
-              /> }
+              cancelText="取消"
+            >
+              {isCanDel && (
+                <Button
+                  type="primary"
+                  danger
+                  shape="circle"
+                  icon={<DeleteOutlined />}
+                />
+              )}
             </Popconfirm>
           </Space>
         );
@@ -139,28 +156,25 @@ const Note = () => {
   const [view,setView] =useState(1)
   const [isShow,setIsShow] = useState(false)
 
-  const type_id = useSelector(state => state.user.userInfo.type_id)
-
   useEffect(()=>{
-      setIsCanDel(type_id==='1'?true:false)
+      setIsCanDel(type_id===1 ? true:false)
   },[type_id])
   useEffect(() => {
     const initData=()=>{
       request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
         //添加序号
-        console.log(res)
-        let list=res.travels;
+        let list=res.travels
         for (let index = 0; index < list.length; index++) {
           let key=(reqData.page-1)*reqData.pageSize+index+1
           list[index].key=key
         }
-        setNoteList(list);
+        setNoteList(list)
         setTotalCount(res.quantity)
       })
     }
     initData()
   }, [reqData])
-  // 筛选功能
+  // 查询操作
   const onFinish = (formValues) => {
     const { title, date, travelState } = formValues;
     setReqData({
@@ -171,7 +185,7 @@ const Note = () => {
       title: title, 
     });
   };
-
+  const divRef=useRef(null)
   // 触发分页
   const handleTableChange = (page) => {
     setReqData({
@@ -179,6 +193,7 @@ const Note = () => {
       page: page.current,
       pageSize:page.pageSize
     });
+    divRef.current.scrollIntoView()
   };
   //详情页返回
   const onCancel= ()=>{
@@ -188,12 +203,12 @@ const Note = () => {
     // const res = await axios.get("http://localhost:3004/noteList");
     request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
       //添加序号
-      let list=res.travels;
+      let list=res.travels
       for (let index = 0; index < list.length; index++) {
         let key=(reqData.page-1)*reqData.pageSize+index+1
         list[index].key=key
       }
-      setNoteList(list);
+      setNoteList(list)
       setTotalCount(res.quantity)
     })
   }
@@ -220,9 +235,9 @@ const Note = () => {
       <div style={{display:!isShow? 'block' : 'none'}}>
           <Form
           initialValues={{ travelState: "" }}
-          className="formStyle"
+          className="form-style"
           onFinish={onFinish}
-        >
+          >
           <Form.Item label="状态" name="travelState">
             <Radio.Group>
               <Radio value={""}>全部</Radio>
@@ -246,13 +261,13 @@ const Note = () => {
             />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 40 }}>
+            <Button type="primary" htmlType="submit" >
               查询
             </Button>
           </Form.Item>
         </Form>
         <Table
-          rowKey="id"
+          rowKey="key"
           columns={columns}
           dataSource={noteList}
           pagination={{
@@ -273,7 +288,7 @@ const Note = () => {
 
       </div>
       {
-        isShow&&<Detail noteId={dataId} onSubmit={onSubmit} onCancel={onCancel} view={view}></Detail>
+        isShow && <Detail noteId={dataId} onSubmit={onSubmit} onCancel={onCancel} view={view}></Detail>
       }
     </div>
   );

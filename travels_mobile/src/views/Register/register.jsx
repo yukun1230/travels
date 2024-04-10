@@ -14,7 +14,7 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-
+import { Ionicons } from '@expo/vector-icons';
 const Input = (props) => {
   return (
     <TextInput
@@ -48,7 +48,7 @@ export default function RegisterScreen() {
   const [image, setImage] = useState(null);
   const [file, setFile] = useState({ file: null })
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   // 选取图片
   const pickImage = async () => {
@@ -210,8 +210,9 @@ export default function RegisterScreen() {
             <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
               {
                 showPassword ?
-                  <Image source={require('../../../assets/show.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} /> :
-                  <Image source={require('../../../assets/unshow.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} />
+                  <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                  :
+                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
               }
             </TouchableWithoutFeedback>
           </View>
@@ -253,9 +254,11 @@ export default function RegisterScreen() {
               style={{ marginRight: 10, flex: 1 }}
               onPress={() => { setShowPasswordSure(!showPasswordSure) }}
             >
-              {showPasswordSure ?
-                <Image source={require('../../../assets/show.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} /> :
-                <Image source={require('../../../assets/unshow.png')} style={{ width: 39, height: 26, alignSelf: 'center' }} />
+              {
+                showPasswordSure ?
+                  <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                  :
+                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
               }
             </TouchableWithoutFeedback>
           </View>
