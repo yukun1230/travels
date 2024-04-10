@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 15,
     paddingRight: 15,
-    marginTop: 150
+    marginTop: 110
   },
   aboveTitle: {
     textAlign: 'center',

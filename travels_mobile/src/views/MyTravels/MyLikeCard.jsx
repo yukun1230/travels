@@ -150,18 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 6,
   },
-  statusContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 150,
-    width: 60,
-    height: 30,
-    borderRadius: 8,
-    backgroundColor: "rgb(81,178,127)"
-  },
-  status: {
-    color: 'white',
-  },
   buttonContainer: {
     flexDirection: 'row',
   },

@@ -255,9 +255,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 16,
     paddingBottom:0,
-    marginTop: 36
+    marginTop: 0
   },
   avatar: {
     width: 36,

@@ -35,13 +35,22 @@ const DetailScreen = ({ navigation, route }) => {
   useEffect(() => {
     // 进入页面发请求
     setIsLoading(true);
+    console.log(cardId);
     // 根据卡片id请求后端游记详情数据
     axios.get(`${NGROK_URL}/travels/getDetails`, {
       params: { id: cardId },
     })
       .then(res => {
         // 数据存入状态
+        if(!res.data.travelDetail.likedCount){
+          res.data.travelDetail.likedCount = 0;
+        }
+        if(!res.data.travelDetail.collectedCount){
+          res.data.travelDetail.collectedCount = 0;
+        }
+        console.log(res.data.travelDetail);
         setTravelDetail(res.data.travelDetail);
+        
         // 更新导航栏信息
         navigation.setOptions({
           headerLeft: () => (

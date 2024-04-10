@@ -133,7 +133,7 @@ const AvatarMenu = () => {
 const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 顶部组件;包括头像菜单,搜索框
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 56,height:8 }}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:8 }}>
       <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
         {/* 头像菜单 */}
         <AvatarMenu></AvatarMenu>

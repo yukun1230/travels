@@ -122,22 +122,27 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
       </View>
       <Card.Actions style={styles.bottomContainer}>
         {/* 审核状态显示 */}
-        {status === 1 && <View style={[styles.statusContainer, { backgroundColor: "rgb(81,178,127)" }]}>
-          <Text style={styles.status}>{statusInfo}</Text>
-        </View>}
-        {status === 0 && 
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-          <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 20,width: 60,height: 30,borderRadius: 8, backgroundColor: "#d32f2f" }}>
+        <View style={{flex:1}}>
+          {status === 1 && <View style={[styles.statusContainer, { backgroundColor: "rgb(81,178,127)" }]}>
             <Text style={styles.status}>{statusInfo}</Text>
-          </View>
-          {/* 点击警示符号弹出未通过原因对话框 */}
-          <TouchableOpacity style={{marginRight:105}} onPress={showReject}>
-              <AntDesign name="warning" size={24} color="red" />
-          </TouchableOpacity>
-        </View>   }
-        {status === 2 && <View style={[styles.statusContainer, { backgroundColor: "rgb(255, 204, 0)" }]}>
-          <Text style={styles.status}>{statusInfo}</Text>
-        </View>}
+          </View>}
+
+          {status === 0 && 
+          <View style={{flexDirection:"row",alignItems: 'center'}}>
+            <View style={[styles.statusContainer, { backgroundColor: "#d32f2f" }]}>
+              <Text style={styles.status}>{statusInfo}</Text>
+            </View>
+            {/* 点击警示符号弹出未通过原因对话框 */}
+            <TouchableOpacity style={{marginLeft:"15%"}} onPress={showReject}>
+                <AntDesign name="warning" size={24} color="red" />
+            </TouchableOpacity>
+          </View>   }
+
+          {status === 2 && <View style={[styles.statusContainer, { backgroundColor: "rgb(255, 204, 0)" }]}>
+            <Text style={styles.status}>{statusInfo}</Text>
+          </View>}
+        </View>
+        
 
         <View style={styles.buttonContainer}>
           {/* 按钮栏 */}
@@ -192,9 +197,9 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   statusContainer: {
+
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 150,
     width: 60,
     height: 30,
     borderRadius: 8,

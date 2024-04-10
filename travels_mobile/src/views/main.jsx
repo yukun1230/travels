@@ -30,20 +30,12 @@ export default function MainScreen() {
     >
       <Tab.Screen name="首页" component={HomeScreen} options={{
         headerShown: false,
-        headerStyle: {
-          height: 100,
-        },
       }} />
       <Tab.Screen name="游记发布" component={AddTravelsScreen} options={{
-        headerStyle: {
-          height: 100,
-        },
+        
       }} />
       <Tab.Screen name="我的游记" component={MyTravelsScreen} options={{
         headerShown: false,
-        headerStyle: {
-          height: 100,
-        },
       }} />
     </Tab.Navigator>
   )
