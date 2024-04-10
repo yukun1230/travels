@@ -1,4 +1,3 @@
-// 主页面
 import * as React from 'react';
 import 'react-native-gesture-handler';
 import HomeScreen from './Home/home';
@@ -9,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen() {
+  // 主界面布局Tab导航器配置
   return (
     <Tab.Navigator // 底部导航栏 
       screenOptions={({ route }) => ({
@@ -21,7 +21,6 @@ export default function MainScreen() {
           } else if (route.name === '我的游记') {
             iconName = focused ? 'person' : 'person-outline';
           }
-          // 这里可以返回任何你喜欢的组件
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#2196F3', // tabBar被激活后的颜色

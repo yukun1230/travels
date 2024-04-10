@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
-import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Card, Title, Paragraph, Dialog, Portal, Button } from 'react-native-paper';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Card, Title, Paragraph, Dialog, Portal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
+import { getToken } from '../../util/tokenRelated';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser, clearUser } from '../../redux/userSlice';
+import { setUser } from '../../redux/userSlice';
 
 
 const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchTravels }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
+
+  // 取消收藏对话框显隐控制
   const [visible, setVisible] = useState(false);
   const showDialog = () => setVisible(true);
-
   const hideDialog = () => setVisible(false);
 
+  // 取消收藏函数
   const handleCancelCollect = async () => {
     try {
       const token = await getToken();
@@ -34,8 +36,12 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
     } else {
         console.log('取消收藏失败', response.data.message);
     };
+<<<<<<< HEAD
       // console.log(response.data);
       // 删除成功，调用传入的 fetchTravels 函数刷新列表
+=======
+      //删除后自动调用fetchTravels()刷新页面
+>>>>>>> 6a2c5296ae7702e59a92088c54100c28ee2ef673
       fetchTravels();
       hideDialog();
     } catch (error) {
@@ -47,7 +53,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
   return (
     <Card style={styles.card}>
       <Portal >
-        {/* 删除对话框 */}
+        {/* 取消收藏对话框 */}
         <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
           <Dialog.Title style={styles.dialogTitleStyle}>取消收藏</Dialog.Title>
           <Dialog.Content style={styles.dialogContentStyle}>
@@ -59,8 +65,6 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
                 <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>
             </View>
-            {/* <View></View> */}
-            
             <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
             alignItems: 'center',}} onPress={handleCancelCollect}>
               <Text style={{ color: '#d32f2f',fontSize:18 }}>确认</Text>
@@ -75,6 +79,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
         />
         <View style={styles.textContainer}>
           <Title
+            //标题超出长度自动缩略 
             numberOfLines={1}
             ellipsizeMode='tail'
             style={styles.title}
@@ -82,6 +87,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
             {title}
           </Title>
           <Paragraph
+            //内容超出长度自动缩略 
             numberOfLines={3}
             ellipsizeMode='tail'
             style={styles.paragraph}
@@ -92,6 +98,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
       </View>
       <Card.Actions style={styles.bottomContainer}>
         <View style={styles.likeUser}>
+          {/* 用户信息显示 */}
           <Image
             source={{ uri: userAvatar }}
             style={{
@@ -103,6 +110,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
           <Text style={{ marginLeft: 10 }}>{nickname}</Text>
         </View>
         <View style={styles.buttonContainer}>
+          {/* 按钮栏 */}
           <TouchableOpacity style={styles.button} onPress={showDialog}>
             <Text style={styles.buttonText}>删除</Text>
           </TouchableOpacity>
@@ -115,10 +123,11 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
   );
 };
 
+
+// 样式表
 const styles = StyleSheet.create({
   card: {
     margin: 10,
-    // marginBottom: 0,
     overflow: 'hidden',
     backgroundColor: 'white',
   },
@@ -184,19 +193,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dialogStyle: {
-    backgroundColor: 'white', // 修改对话框的背景色
-    borderRadius: 10, // 设置边角圆滑度
-    padding: 0, // 内部间距
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    padding: 0, 
   },
   dialogTitleStyle: {
-    color: 'black', // 标题文字颜色
-    // textAlign: 'center', // 标题居中
+    color: 'black', 
   },
   dialogContentStyle: {
-    color: 'grey', // 内容文字颜色
-    marginBottom: 10, // 内容与对话框底部的间距
-  },
-  
+    color: 'grey', 
+    marginBottom: 10, 
+  }
 });
 
 export default MyLikeCard;

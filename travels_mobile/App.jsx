@@ -4,7 +4,7 @@ import {store} from './src/redux/store';
 import Index from './Index'
 
 function App() {
-    // const store = createStore(rootReducer);
+    // redux仓库包裹
     return(
     <Provider store={store}>
         <Index/>

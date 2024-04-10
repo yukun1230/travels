@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Card, Title, Paragraph, Dialog, Portal, Button } from 'react-native-paper';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Card, Title, Paragraph, Dialog, Portal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { storeToken, getToken, removeToken } from '../../util/tokenRelated';
+import { getToken } from '../../util/tokenRelated';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { AntDesign } from '@expo/vector-icons';
 
-// 现在组件接收一个额外的 id 参数
 const MyTravelCard = ({ id, photo, title, content, status, location, rejectedReason, fetchTravels }) => {
   const navigation = useNavigation();
+  // 状态信息匹配
   let statusInfo = '';
   if (status === 1) {
     statusInfo = '已通过';
@@ -18,71 +18,46 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
   } else if (status === 2) {
     statusInfo = '待审核';
   }
-
+  // 卡片数据
   const CardData = {
     id: id,
     photo: photo,
     title: title,
     content: content,
     location: location
-
   }
 
-  // const handleDelete = async () => {
-  //   const token = await getToken();
-  //   console.log(id);
-  //   axios.post(`${NGROK_URL}/travels/deleteOneTravel`, {
-  //     headers: { 'token': token },
-  //     data: {
-  //       id: id
-  //     }
-  //   }).then(res => {
-  //     console.log(res.data);
-  //     // navigation.navigate('我的游记');
-  //   }).catch(err => {
-  //     console.log(err);
-  //   })
-  // }
-
-  //  const handleDelete = async () => {
-  //   try {
-  //     const token = await getToken();
-  //     await axios.post(`${NGROK_URL}/travels/deleteOneTravel`, { id }, { headers: { 'token': token } });
-  //     // 删除成功后，调用 fetchTravels 来刷新列表
-  //     fetchTravels();
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
+  // 删除对话框显隐控制
   const [visible, setVisible] = useState(false);
   const showDialog = () => setVisible(true);
-
   const hideDialog = () => setVisible(false);
 
-
+  // 审核未通过对话框显隐控制
   const [rejectVisible, setRejectVisible] = useState(false);
   const showReject = () => setRejectVisible(true);
-
   const hideReject = () => setRejectVisible(false);
 
-
   const handleDelete = async () => {
+    // 删除游记功能
     try {
       const token = await getToken();
       const response = await axios.post(`${NGROK_URL}/travels/deleteOneTravel`,
         { id: id },
         { headers: { 'token': token } }
       );
+<<<<<<< HEAD
       // console.log(response.data);
       // 删除成功，调用传入的 fetchTravels 函数刷新列表
+=======
+      // 调用fetchTravels()刷新页面
+>>>>>>> 6a2c5296ae7702e59a92088c54100c28ee2ef673
       fetchTravels();
+      // 隐藏对话框
       hideDialog();
     } catch (error) {
       console.error("删除失败:", error);
     }
   };
-
 
   return (
     <Card style={styles.card}>
@@ -99,8 +74,6 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
                 <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>
             </View>
-            {/* <View></View> */}
-            
             <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
             alignItems: 'center',}} onPress={handleDelete}>
               <Text style={{ color: '#d32f2f',fontSize:18 }}>确认</Text>
@@ -109,7 +82,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
         </Dialog>
       </Portal>
       <Portal >
-        {/* 删除对话框 */}
+        {/* 审核未通过对话框*/}
         <Dialog visible={rejectVisible} onDismiss={hideReject} style={styles.dialogStyle}>
           <Dialog.Title style={styles.dialogTitleStyle}>未通过审核</Dialog.Title>
           <Dialog.Content style={styles.dialogContentStyle}>
@@ -121,8 +94,6 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
                 <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>
             </View>
-            {/* <View></View> */}
-            
             <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
             alignItems: 'center',}} onPress={() => { navigation.navigate('编辑游记', { ...CardData });hideReject(); }}>
               <Text style={{ color: '#007BFF' ,fontSize:18 }}>重新编辑</Text>
@@ -137,6 +108,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
         />
         <View style={styles.textContainer}>
           <Title
+            //超出行数的内容自动缩略 
             numberOfLines={1}
             ellipsizeMode='tail'
             style={styles.title}
@@ -144,6 +116,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
             {title}
           </Title>
           <Paragraph
+            //超出行数的内容自动缩略 
             numberOfLines={3}
             ellipsizeMode='tail'
             style={styles.paragraph}
@@ -153,6 +126,7 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
         </View>
       </View>
       <Card.Actions style={styles.bottomContainer}>
+        {/* 审核状态显示 */}
         {status === 1 && <View style={[styles.statusContainer, { backgroundColor: "rgb(81,178,127)" }]}>
           <Text style={styles.status}>{statusInfo}</Text>
         </View>}
@@ -160,23 +134,22 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
           <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 20,width: 60,height: 30,borderRadius: 8, backgroundColor: "#d32f2f" }}>
             <Text style={styles.status}>{statusInfo}</Text>
-            {/* <Text>{rejectedReason}</Text> */}
           </View>
-          
+          {/* 点击警示符号弹出未通过原因对话框 */}
           <TouchableOpacity style={{marginRight:105}} onPress={showReject}>
               <AntDesign name="warning" size={24} color="red" />
           </TouchableOpacity>
-
         </View>   }
         {status === 2 && <View style={[styles.statusContainer, { backgroundColor: "rgb(255, 204, 0)" }]}>
           <Text style={styles.status}>{statusInfo}</Text>
         </View>}
 
-
         <View style={styles.buttonContainer}>
+          {/* 按钮栏 */}
           <TouchableOpacity style={styles.button} onPress={showDialog}>
             <Text style={styles.buttonText}>删除</Text>
           </TouchableOpacity>
+          
           {status === 1 ?
             <TouchableOpacity style={[styles.button, { borderColor: 'rgb(81,178,127)' }]} onPress={() => { navigation.navigate('Detail', { cardId: id }) }}>
               <Text style={{ color: 'rgb(81,178,127)' }}>详情</Text>
@@ -185,18 +158,17 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
               onPress={() => { navigation.navigate('编辑游记', { ...CardData }) }}>
               <Text style={{ color: '#007BFF' }}>编辑</Text>
             </TouchableOpacity>}
-
         </View>
       </Card.Actions>
     </Card>
   );
 };
 
-// 保留你的样式定义
+
+// 样式表
 const styles = StyleSheet.create({
   card: {
     margin: 10,
-    // marginBottom:5,
     overflow: 'hidden',
     backgroundColor: 'white',
   },
@@ -256,18 +228,16 @@ const styles = StyleSheet.create({
     borderColor: '#007BFF',
   },
   dialogStyle: {
-    backgroundColor: 'white', // 修改对话框的背景色
-    borderRadius: 10, // 设置边角圆滑度
-    padding: 0, // 内部间距
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    padding: 0, 
   },
   dialogTitleStyle: {
-    color: 'black', // 标题文字颜色
-    // textAlign: 'center', // 标题居中
+    color: 'black', 
   },
   dialogContentStyle: {
-    color: 'grey', // 内容文字颜色
-    marginBottom: 10, // 内容与对话框底部的间距
+    color: 'grey', 
+    marginBottom: 10, 
   },
 });
-
 export default MyTravelCard;
