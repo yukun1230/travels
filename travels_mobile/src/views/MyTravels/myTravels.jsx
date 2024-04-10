@@ -153,10 +153,6 @@ export default function MyTravelsScreen() {
       const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
         headers: { 'token': token },
       });
-<<<<<<< HEAD
-      // console.log(response1.data);
-=======
->>>>>>> 6a2c5296ae7702e59a92088c54100c28ee2ef673
       if (response1.data.MyTravels) {
         setMyTravels(response1.data.MyTravels);
       };

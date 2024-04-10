@@ -36,12 +36,7 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
     } else {
         console.log('取消收藏失败', response.data.message);
     };
-<<<<<<< HEAD
-      // console.log(response.data);
-      // 删除成功，调用传入的 fetchTravels 函数刷新列表
-=======
       //删除后自动调用fetchTravels()刷新页面
->>>>>>> 6a2c5296ae7702e59a92088c54100c28ee2ef673
       fetchTravels();
       hideDialog();
     } catch (error) {
