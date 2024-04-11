@@ -111,7 +111,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop:'2%', marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop:'-20%', marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单项 */}
       {userInfo.id ? (
@@ -297,7 +297,7 @@ export default HomeScreen = () => {
       {/* 瀑布流 */}
       <WaterfallFlow
       ref={listRef}
-      style={{ flex: 1, marginTop: 8 }}
+      style={{ flex: 1, marginTop: 0,paddingTop:6 }}
       contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
       ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
       ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
