@@ -95,6 +95,7 @@ const AvatarMenu = () => {
   // 控制下拉菜单显隐
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+  
 
   return (
     <Menu
@@ -111,7 +112,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop:'-20%', marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop:-50, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单项 */}
       {userInfo.id ? (

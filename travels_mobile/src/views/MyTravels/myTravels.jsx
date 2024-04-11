@@ -46,7 +46,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop: "-20%", marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop:-45, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单栏选项根据有无用户信息动态调整 */}
       {userInfo.id ? (
