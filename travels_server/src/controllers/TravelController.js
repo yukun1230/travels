@@ -36,7 +36,7 @@ class TravelController {
       console.log(req.query.page)
       // 这里之后再加个筛选条件，只返回审核通过后的游记
       // const travels = await Travel.find({travelState: 1}, '_id photo title userInfo').skip(page * pageSize).limit(pageSize)
-      const travels = await Travel.find({}, '_id photo title userInfo collectedCount likedCount').sort({'_id':-1}).skip(page * pageSize).limit(pageSize)
+      const travels = await Travel.find({travelState: { $eq: 1 }}, '_id photo title userInfo collectedCount likedCount').sort({'_id':-1}).skip(page * pageSize).limit(pageSize)
       res.send({
         message: "获取游记信息成功",
         travels
@@ -73,7 +73,7 @@ class TravelController {
   // mobile--- 由用户的token获取获取用户发布的游记(用于我的游记), travelState为3的不返回
   async getMyTravels(req, res) {
     try {
-      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $ne: 3 } }, '_id photo title content travelState location rejectedReason').exec();
+      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $ne: 3 } }, '_id photo title content travelState location rejectedReason').sort({travelState: -1}).exec();
       if (MyTravels) {
         res.send({
           message: "获取我的游记成功",
@@ -97,8 +97,10 @@ class TravelController {
           title: req.body.title,
           content: req.body.content,
           location: JSON.parse(req.body.location),
-          photo: [...newPhotoArray.photodata, ...uploadRes]
-        }  // 这里需要拼接一下
+          photo: [...newPhotoArray.photodata, ...uploadRes],
+          travelState: 2, // 游记状态改为待审核
+          rejectedReason: "" // 清空拒绝原因
+        } 
       })
       res.send({ message: "更新成功" });
     } catch (e) {
