@@ -92,7 +92,8 @@ export default LoginScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={styles.loginSection}>
+    <View style={{flex:1,backgroundColor:'white'}}>
+      <View style={styles.loginSection}>
       <Text style={styles.aboveTitle}>旅游日记平台</Text>
       <Text style={styles.loginTitle}>用户登录</Text>
       <FormItem
@@ -160,7 +161,9 @@ export default LoginScreen = ({ navigation }) => {
         <Text style={styles.subButtonText} onPress={handlelogin}>新用户注册</Text>
         <Text style={styles.subButtonText} onPress={handleVisit}>以游客身份访问</Text>
       </View>
+      </View>
     </View>
+    
   )
 }
 

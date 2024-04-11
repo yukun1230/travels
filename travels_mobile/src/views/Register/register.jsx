@@ -128,7 +128,8 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView style={styles.wrapper}>
+    <View style={{flex:1,backgroundColor:'white'}}>
+      <ScrollView style={styles.wrapper}>
       <LoadingOverlay isVisible={isLoading} />
       <TouchableOpacity
         style={{ marginTop: 25 }}
@@ -283,7 +284,9 @@ export default function RegisterScreen() {
         style={styles.register_Button}
         textStyle={{ fontSize: 18, color: "white" }}
       >注册</Button>
-    </ScrollView>
+      </ScrollView>
+    </View>
+    
   );
 }
 
@@ -314,7 +317,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    marginLeft: '10%',
+    marginLeft: '13%',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#B3BAC1',

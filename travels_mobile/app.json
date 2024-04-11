@@ -4,6 +4,9 @@
     "slug": "travels_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
+    "statusBar": {
+      "style": "dark"
+    },
     "icon": "./assets/icon_travels.png",
     "userInterfaceStyle": "light",
     "splash": {
