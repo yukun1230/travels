@@ -128,19 +128,23 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
                   rules={[{ required: true, message: "请输入拒绝原因!" }]}
                 >
                   <Input.TextArea
+                    showCount
                     rows={4}
                     maxLength={200}
                     placeholder="请输入拒绝原因"
+                    allowClear
                   />
                 </Form.Item>
               )}
               <Form.Item>
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                {/* <Flex  gap="small">
+                </Flex> */}
+                <div className="view-actions">
+                  <Button className="back" onClick={onCancel}>
+                    返回
+                  </Button>
                   <Button type="primary" htmlType="submit">
                     提交
-                  </Button>
-                  <Button type="normal" onClick={onCancel}>
-                    返回
                   </Button>
                 </div>
               </Form.Item>

@@ -1,7 +1,7 @@
 import { Form, Button, Radio, DatePicker, Popover, Popconfirm } from "antd";
 import { message,Table, Tag, Space, Input, Image } from "antd";
 import { EditOutlined,DeleteOutlined,EyeOutlined } from "@ant-design/icons";
-import locale from "antd/es/date-picker/locale/zh_CN";
+// import locale from "antd/es/date-picker/locale/zh_CN";
 import img404 from "@/assets/error.png";
 import { useEffect, useState,useRef} from "react";
 import { useSelector } from 'react-redux';
@@ -9,9 +9,11 @@ import "./index.scss";
 import { request } from "@/utils";
 import Detail from "../Detail";
 import dayjs from "dayjs";
+import zhCN from 'antd/lib/locale/zh_CN'; // 引入中文语言包
+import 'dayjs/locale/zh-cn';
+import {ConfigProvider} from 'antd';
 
 const { RangePicker } = DatePicker;
-
 
 const Note = () => {
   // 角色类型
@@ -42,7 +44,6 @@ const Note = () => {
     {
       title: "标题",
       dataIndex: "title",
-      ellipsis: true,
     },
     {
       title: "状态",
@@ -151,6 +152,7 @@ const Note = () => {
   // 游记列表数据管理
   const [noteList, setNoteList] = useState([])
   const [totalCount, setTotalCount] = useState(0)
+  const [loading, setLoading] = useState(false);
   const [isCanDel,setIsCanDel] = useState(false)
   const [dataId,setDataId] =useState(null)
   const [view,setView] =useState(1)
@@ -161,6 +163,7 @@ const Note = () => {
   },[type_id])
   // 获取数据
   useEffect(() => {
+    setLoading(true)
     const initData=()=>{
       request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
         //添加序号
@@ -171,6 +174,7 @@ const Note = () => {
         }
         setNoteList(list)
         setTotalCount(res.quantity)
+        setLoading(false)
       })
     }
     initData()
@@ -235,6 +239,7 @@ const Note = () => {
   return (
     <div ref={divRef}>
       <div style={{display:!isShow? 'block' : 'none'}}>
+        <ConfigProvider locale={zhCN}>
           <Form
           initialValues={{ travelState: "" }}
           className="form-style"
@@ -250,8 +255,7 @@ const Note = () => {
           </Form.Item>
   
           <Form.Item label="日期" name="date">
-            {/* 传入locale属性 控制中文显示*/}
-            <RangePicker locale={locale}></RangePicker>
+             <RangePicker></RangePicker>
           </Form.Item>
           <Form.Item label="标题" name="title">
             <Input
@@ -268,25 +272,24 @@ const Note = () => {
             </Button>
           </Form.Item>
         </Form>
-        <Table
-          rowKey="key"
-          columns={columns}
-          dataSource={noteList}
-          pagination={{
-            page: reqData.page,
-            pageSize: reqData.pageSize,
-            total: totalCount,
-            showSizeChanger:true,
-            locale:{
-              items_per_page: '/页',
-            },
-            showTotal:(total) => `总计${total}条`
-          }}
-          scroll={{
-            y: "80%",
-          }}
-          onChange={handleTableChange}
-        />
+          <Table
+            rowKey="key"
+            columns={columns}
+            dataSource={noteList}
+            pagination={{
+              page: reqData.page,
+              pageSize: reqData.pageSize,
+              total: totalCount,
+              showSizeChanger:true,
+              showTotal:(total) => `总计 ${total} 条`
+            }}
+            scroll={{
+              y: "80%",
+            }}
+            loading={loading}
+            onChange={handleTableChange}
+          />
+        </ConfigProvider>
 
       </div>
       {
