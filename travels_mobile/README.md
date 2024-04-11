@@ -92,4 +92,4 @@
 
 # 项目截图
 
-<img src="assets/我的游记页面.jpg" alt="我的游记页面" style="zoom:25%;" /><img src="assets/编辑发布页.jpg" alt="编辑发布页" style="zoom:25%;" /><img src="assets/详情页.jpg" alt="详情页" style="zoom:25%;" /><img src="assets/首页.jpg" alt="首页" style="zoom:25%;" /><img src="assets/登录页.jpg" alt="登录页" style="zoom:25%;" /><img src="assets/我的收藏页面.jpg" alt="我的收藏页面" style="zoom:25%;" /><img src="assets/注册页.jpg" alt="注册页" style="zoom:25%;" />
+<img src="assets/我的游记页面.jpg" alt="我的游记页面" width="33%" style="zoom:25%;" /><img src="assets/编辑发布页.jpg" alt="编辑发布页" width="33%" style="zoom:25%;" /><img src="assets/详情页.jpg" alt="详情页" width="33%" style="zoom:25%;" /><img src="assets/首页.jpg" alt="首页" width="33%" style="zoom:25%;" /><img src="assets/登录页.jpg" alt="登录页" width="33%" style="zoom:25%;" /><img src="assets/我的收藏页面.jpg" alt="我的收藏页面" width="33%" style="zoom:25%;" /><img src="assets/注册页.jpg" alt="注册页" width="33%" style="zoom:25%;" />
