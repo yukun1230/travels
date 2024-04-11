@@ -6,11 +6,9 @@ import FormItem from './components/formItem';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import '../../util/axios.config';
-import {storeToken, getToken, removeToken} from '../../util/tokenRelated'
-import { useSelector, useDispatch } from 'react-redux'
-import { changePage } from '../../../appSlice';
+import '../../util/axios.config'
+import { getToken } from '../../util/tokenRelated'
+import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
@@ -171,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 15,
     paddingRight: 15,
-    marginTop: 150
+    marginTop: 110
   },
   aboveTitle: {
     textAlign: 'center',

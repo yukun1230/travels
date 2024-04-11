@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, Button } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -46,7 +46,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop: 10, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: "1%", marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单栏选项根据有无用户信息动态调整 */}
       {userInfo.id ? (
@@ -68,6 +68,7 @@ const AvatarMenu = () => {
 const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
   // 我的游记路由
   // 根据条件判断要渲染的内容
+  const [refreshing, setRefreshing] = useState(false);  //下拉刷新
   const content = myTravels.length !== 0 ? (
     // 根据传进来的myTravels数据映射渲染
     myTravels.map((travel) => (
@@ -89,7 +90,14 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 
   return (
     <View style={[styles.scene]}>
-      <ScrollView>
+      <ScrollView refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={fetchTravels}
+          tintColor="#000"
+          colors={["#000"]}
+        />}
+      >
         {content}
       </ScrollView>
     </View>
@@ -99,7 +107,8 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 
 const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
   // 我的收藏路由渲染
-   const content = collectedTravels.length !== 0 ? (
+  const [refreshing, setRefreshing] = useState(false);  //下拉刷新
+  const content = collectedTravels.length !== 0 ? (
     collectedTravels.map((travel) => (
       <MyLikeCard
         key={travel._id}
@@ -117,7 +126,14 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
   );
   return (
     <View style={[styles.scene]}>
-      <ScrollView>
+      <ScrollView refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={fetchTravels}
+          tintColor="#000"
+          colors={["#000"]}
+        />}
+        >
         {content}
       </ScrollView>
     </View>
@@ -255,9 +271,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 16,
     paddingBottom:0,
-    marginTop: 36
+    marginTop: 0
   },
   avatar: {
     width: 36,

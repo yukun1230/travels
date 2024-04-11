@@ -40,7 +40,7 @@
   ![notes.png](image-1.png)
 
 - 游记详情页面
-  ![detail.png](image-2.png)
+  ![detail.png](image-5.png)
 
 - 审核拒绝
   ![reject.png](image-3.png)

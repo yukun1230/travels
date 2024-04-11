@@ -83,14 +83,12 @@ export default function RegisterScreen() {
       for (let i in data) {
         params.append(i, data[i]);
       };
-      console.log(params)
       await axios.post(NGROK_URL + '/users/register', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }
       }).then(
         res => {
-          console.log(res.data);
           setIsLoading(false);
           if (res.data === "注册成功") {
             Toast.show({
@@ -133,7 +131,7 @@ export default function RegisterScreen() {
     <ScrollView style={styles.wrapper}>
       <LoadingOverlay isVisible={isLoading} />
       <TouchableOpacity
-        style={{ marginTop: 65 }}
+        style={{ marginTop: 25 }}
         onPress={() => navigation.navigate('登录界面')}>
         <AntDesign name="left" size={24} color="black" />
       </TouchableOpacity>
@@ -249,7 +247,7 @@ export default function RegisterScreen() {
                 setPasswordValue(text);
                 onChange(text);
               }}
-              placeholder="请再次输入密码              "
+              placeholder="请再次输入密码"
               secureTextEntry={!showPasswordSure}
             />
             <TouchableWithoutFeedback
@@ -316,7 +314,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    marginLeft: 50,
+    marginLeft: '10%',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#B3BAC1',

@@ -111,7 +111,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop: 32, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop:'2%', marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单项 */}
       {userInfo.id ? (
@@ -133,7 +133,7 @@ const AvatarMenu = () => {
 const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 顶部组件;包括头像菜单,搜索框
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 56,height:8 }}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:8 }}>
       <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
         {/* 头像菜单 */}
         <AvatarMenu></AvatarMenu>
@@ -190,6 +190,11 @@ export default HomeScreen = () => {
   const handleSearch = async () => {
     // 搜索操作
     setIsSearching(true);
+    if (searchText.trim() === '') {
+      loadData(true);
+      setIsSearching(false);
+      return;
+    }
     try {
       const response = await axios.get(`${NGROK_URL}/travels/search`, {
         params: {
@@ -285,7 +290,7 @@ export default HomeScreen = () => {
   return (
     <View style={{ flex: 1}}>
       {/* 顶部组件 */}
-      <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch} />
+      <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch}/>
       {/* 瀑布流 */}
       <WaterfallFlow
       ref={listRef}

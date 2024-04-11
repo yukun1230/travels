@@ -11,7 +11,8 @@ import { getToken } from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
-import { Dialog, Portal } from 'react-native-paper';
+import { Dialog, Portal} from 'react-native-paper';
+import moment from 'moment';
 
 
 const DetailScreen = ({ navigation, route }) => {
@@ -41,11 +42,20 @@ const DetailScreen = ({ navigation, route }) => {
     })
       .then(res => {
         // 数据存入状态
+        if(!res.data.travelDetail.likedCount){
+          res.data.travelDetail.likedCount = 0;
+        }
+        if(!res.data.travelDetail.collectedCount){
+          res.data.travelDetail.collectedCount = 0;
+        }
+        const formattedDateString = moment(res.data.travelDetail.createTime).format('发布于YYYY-MM-DD');
+        res.data.travelDetail.formattedDateString = formattedDateString;
         setTravelDetail(res.data.travelDetail);
+        
         // 更新导航栏信息
         navigation.setOptions({
           headerLeft: () => (
-            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10, marginTop: -16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10,marginTop:-16 }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <AntDesign name="left" size={24} color="black" />
               </TouchableOpacity>
@@ -64,8 +74,7 @@ const DetailScreen = ({ navigation, route }) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [cardId, navigation]);
-
+  }, [cardId, navigation]); 
 
 
   const renderPagination = (index, total) => {
@@ -86,7 +95,7 @@ const DetailScreen = ({ navigation, route }) => {
       message: uri,
     }, {
       // Android only:
-      dialogTitle: 'Share React Native website',
+      dialogTitle: '游记分享~',
     })
   }
 
@@ -242,10 +251,10 @@ const DetailScreen = ({ navigation, route }) => {
           <Dialog.Content style={styles.dialogContentStyle}>
             <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10, borderTopColor: 'grey', borderTopWidth: 0.5, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
-            <View style={{ flex: 1, borderRightWidth: 0.5, borderRightColor: 'grey', height: 50, justifyContent: 'center', alignItems: 'center', }}>
-              <TouchableOpacity style={{ width: 150, height: 50, justifyContent: 'center', alignItems: 'center' }} onPress={hideDialog}>
-                <Text style={{ color: 'grey', fontSize: 18 }}>取消</Text>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'grey',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:0.5,borderRightColor:'grey',height:50, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
+                <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>
             </View>
             {/* 取消收藏 */}
@@ -310,6 +319,10 @@ const DetailScreen = ({ navigation, route }) => {
                 {/* 内容 */}
                 <Text style={styles.detailContent}>{travelDetail.content}</Text>
               </View>
+              <View>
+                {/* 时间 */}
+                <Text style={styles.detailTime}>{travelDetail.formattedDateString}</Text>
+              </View>
 
               {/* 留白区域，避免最底部的内容被底部栏挡住 */}
               <View style={{ height: 52 }}></View>
@@ -362,7 +375,7 @@ const styles = StyleSheet.create({
     height: '100%', 
     resizeMode: 'contain', 
   },
-  paginationStyle: {
+  paginationStyle:{
     position: 'absolute',
     top: 10,
     right: 10,
@@ -382,7 +395,7 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 9,
     backgroundColor: 'rgb(243,243,243)',
-    marginRight: 8,
+    marginRight:8,
   },
   locationIcon: {
     width: 18,
@@ -399,28 +412,33 @@ const styles = StyleSheet.create({
     fontSize: 12, 
     fontWeight: 'bold'
   },
-  detailTitle: {
+  detailTitle:{
     marginTop: 8,
     fontSize: 20,
     fontWeight: 'bold',
   },
-  detailContent: {
+  detailContent:{
     marginTop: 12,
-    minHeight: screenHeight - 500,
+    minHeight: screenHeight-500,
     lineHeight: 28,
     fontSize: 15,
   },
-  loading: {
+  detailTime:{
+    marginTop: 12,
+    fontSize: 13,
+    color:'#646464'
+  },
+  loading:{
     marginTop: 50,
     alignSelf: 'center',
     fontSize: 20,
-    height: screenHeight + 100
+    height: screenHeight+100
   },
   footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    position: 'absolute', 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -429,7 +447,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#e1e1e1',
     height: 52,
-
+    
   },
   input: {
     borderWidth: 1,
@@ -443,7 +461,7 @@ const styles = StyleSheet.create({
   footerIcon: {
     marginHorizontal: 10,
     alignItems: 'center',
-
+    
   },
   footerText: {
     fontSize: 12,
