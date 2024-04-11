@@ -4,7 +4,7 @@
     "slug": "travels_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/travel-icon.png",
+    "icon": "./assets/icon_travels.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -21,7 +21,7 @@
     "android": {
       "package": "com.ycy.travel",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon_travels.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
