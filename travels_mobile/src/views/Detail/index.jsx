@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
 import { Dialog, Portal} from 'react-native-paper';
+import moment from 'moment';
 
 
 const DetailScreen = ({ navigation, route }) => {
@@ -35,7 +36,6 @@ const DetailScreen = ({ navigation, route }) => {
   useEffect(() => {
     // 进入页面发请求
     setIsLoading(true);
-    console.log(cardId);
     // 根据卡片id请求后端游记详情数据
     axios.get(`${NGROK_URL}/travels/getDetails`, {
       params: { id: cardId },
@@ -48,7 +48,8 @@ const DetailScreen = ({ navigation, route }) => {
         if(!res.data.travelDetail.collectedCount){
           res.data.travelDetail.collectedCount = 0;
         }
-        console.log(res.data.travelDetail);
+        const formattedDateString = moment(res.data.travelDetail.createTime).format('发布于YYYY-MM-DD');
+        res.data.travelDetail.formattedDateString = formattedDateString;
         setTravelDetail(res.data.travelDetail);
         
         // 更新导航栏信息
@@ -94,7 +95,7 @@ const DetailScreen = ({ navigation, route }) => {
       message: uri,
     }, {
       // Android only:
-      dialogTitle: 'Share React Native website',
+      dialogTitle: '游记分享~',
     })
   }
 
@@ -318,6 +319,10 @@ const DetailScreen = ({ navigation, route }) => {
                 {/* 内容 */}
                 <Text style={styles.detailContent}>{travelDetail.content}</Text>
               </View>
+              <View>
+                {/* 时间 */}
+                <Text style={styles.detailTime}>{travelDetail.formattedDateString}</Text>
+              </View>
 
               {/* 留白区域，避免最底部的内容被底部栏挡住 */}
               <View style={{ height: 52 }}></View>
@@ -417,6 +422,11 @@ const styles = StyleSheet.create({
     minHeight: screenHeight-500,
     lineHeight: 28,
     fontSize: 15,
+  },
+  detailTime:{
+    marginTop: 12,
+    fontSize: 13,
+    color:'#646464'
   },
   loading:{
     marginTop: 50,
