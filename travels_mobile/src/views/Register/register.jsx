@@ -247,7 +247,7 @@ export default function RegisterScreen() {
                 setPasswordValue(text);
                 onChange(text);
               }}
-              placeholder="请再次输入密码              "
+              placeholder="请再次输入密码"
               secureTextEntry={!showPasswordSure}
             />
             <TouchableWithoutFeedback
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    marginLeft: 50,
+    marginLeft: '10%',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#B3BAC1',

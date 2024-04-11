@@ -51,7 +51,6 @@ export default function App() {
           <Stack.Screen name="主界面" component={MainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Detail" component={DetailScreen} options={{
             headerTitle: '',
-  
           }} />
           <Stack.Screen name="编辑游记" component={editTravelScreen}  />
         </Stack.Navigator>
