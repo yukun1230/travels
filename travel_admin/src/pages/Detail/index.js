@@ -8,12 +8,15 @@ import {
   Image,
   Typography,
   Button,
-  Flex
+  Flex,
+  Avatar,
+  Space
 } from "antd";
 import { useEffect, useState } from "react";
 import { request } from "@/utils";
 import classNames from "classnames"
 import "./index.scss";
+import { EnvironmentOutlined } from "@ant-design/icons"
 
 const { Paragraph } = Typography;
 
@@ -97,6 +100,16 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
               <div className="travel-content" dangerouslySetInnerHTML={{ __html: info.content }}></div>
             </blockquote>
           </Paragraph>
+          <Flex gap="large" justify="flex-start" className="info-desc">
+           { info.location && info.location.province !== "undefined" && <Space wrap size={8}>
+              <EnvironmentOutlined />
+              {info.location.province}
+            </Space>}
+            <Space wrap size={8}>
+              <Avatar src={info.userInfo.avatar} />
+              {info.userInfo.nickname}
+            </Space>
+          </Flex>
           {view ? (
             <div className={classNames('view-actions', info.travelState===0 && 'two')}>
               {info.rejectedReason && (
