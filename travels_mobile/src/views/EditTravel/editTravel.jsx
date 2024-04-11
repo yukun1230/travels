@@ -204,7 +204,7 @@ export default editTravelScreen = ({ route }) => {
       console.log(JSON.stringify({photodata: photo}))
       params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
       setIsLoading(true); // 开始加载图标
-      axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
+      await axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }
@@ -232,7 +232,7 @@ export default editTravelScreen = ({ route }) => {
       params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
       setIsLoading(true); // 开始加载图标
       console.log('编辑提交内容',params);
-      axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
+      await axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
         }

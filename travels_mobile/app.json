@@ -4,10 +4,12 @@
     "slug": "travels_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "statusBar": {
-      "style": "dark"
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "translucent": false,
+      "barStyle": "dark-content"
     },
-    "icon": "./assets/icon_travels.png",
+    "icon": "./assets/independent_travel.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -24,7 +26,7 @@
     "android": {
       "package": "com.ycy.travel",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon_travels.png",
+        "foregroundImage": "./assets/independent_travel.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
