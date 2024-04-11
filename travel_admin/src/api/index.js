@@ -1,7 +1,7 @@
 import userData from '@/mock/data.json'
 import { message } from "antd";
 import {getToken} from "@/utils"
-import axios from 'axios';
+import axios from 'axios'
 
 const userList = userData.userInfoList
 

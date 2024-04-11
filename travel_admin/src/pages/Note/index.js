@@ -159,6 +159,7 @@ const Note = () => {
   useEffect(()=>{
       setIsCanDel(type_id===1 ? true:false)
   },[type_id])
+  // 获取数据
   useEffect(() => {
     const initData=()=>{
       request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
@@ -183,6 +184,7 @@ const Note = () => {
       beginDate: date ? date[0].format("YYYY-MM-DD") : "",
       endDate: date ? date[1].format("YYYY-MM-DD") : "",
       title: title, 
+      page: 1
     });
   };
   const divRef=useRef(null)

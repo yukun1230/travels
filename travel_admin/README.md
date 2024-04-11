@@ -34,16 +34,16 @@
 # 项目截图
 
 - 登录页面
-  ![login.png](image.png)
+  ![login.png](image/login.png)
 
 - 游记管理页面
-  ![notes.png](image-1.png)
+  ![notes.png](image/notes.png)
 
 - 游记详情页面
-  ![detail.png](image-5.png)
+  ![detail.png](image/detail.png)
 
 - 审核拒绝
-  ![reject.png](image-3.png)
+  ![reject.png](image/reject.png)
 
 - 审核通过
-  ![approve.png](image-4.png)
+  ![approve.png](image/approve.png)
