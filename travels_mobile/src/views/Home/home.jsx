@@ -133,7 +133,7 @@ const AvatarMenu = () => {
 const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 顶部组件;包括头像菜单,搜索框
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:8 }}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:45 }}>
       <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
         {/* 头像菜单 */}
         <AvatarMenu></AvatarMenu>
@@ -289,12 +289,15 @@ export default HomeScreen = () => {
 
   return (
     <View style={{ flex: 1}}>
-      {/* 顶部组件 */}
-      <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch}/>
+      <View style={{backgroundColor:'white'}}>
+        {/* 顶部组件 */}
+        <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch}/>
+      </View>
+      
       {/* 瀑布流 */}
       <WaterfallFlow
       ref={listRef}
-      style={{ flex: 1, marginTop: 40 }}
+      style={{ flex: 1, marginTop: 8 }}
       contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
       ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
       ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
