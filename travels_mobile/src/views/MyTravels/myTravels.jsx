@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect ,Animated } from '@react-navigation/native';
+import WaterfallFlow from 'react-native-waterfall-flow'
 import { TabView, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
@@ -8,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
 import { getToken, removeToken } from '../../util/tokenRelated';
 import MyTravelCard from './MyTravelCard'    //我的游记卡片组件
-import MyLikeCard from './MyLikeCard';     //我的收藏卡片组件
+// import MyLikeCard from './MyLikeCard';     //我的收藏卡片组件
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
@@ -105,37 +106,82 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 };
 
 
+const Card = ({ item }) => {
+  // 卡片组件
+  //点击卡片跳转详情页并传递卡片的id
+  const navigation = useNavigation();
+  const onPressCard = () => {
+    navigation.navigate('Detail', { cardId: item._id });
+  };
+  return (
+    <View style={{ flex: 1, overflow: 'hidden', borderRadius: 10 }}>
+      <TouchableOpacity
+        style={{ backgroundColor: '#fff', flex: 1 }}
+        activeOpacity={0.5}  // 被触摸操作时的透明度（0-1）
+        onPress={() => {onPressCard(),console.log(item.uri,item.width,item.height);}}   // 跳转详情页
+      >
+        <Image
+          source={{ uri: item.uri }}
+          style={{ width: item.width, height: item.height }}
+        />
+        <View style={{ padding: 10 }}>
+          {/* 标题 */}
+          <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
+          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+            {/* 用户资料 */}
+            <Image
+              source={{ uri: item.avatar }}
+              style={{ width: 20, height: 20, borderRadius: 10 }}
+            />
+            <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+
 const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
   // 我的收藏路由渲染
   const [refreshing, setRefreshing] = useState(false);  //下拉刷新
-  const content = collectedTravels.length !== 0 ? (
-    collectedTravels.map((travel) => (
-      <MyLikeCard
-        key={travel._id}
-        id={travel._id}
-        imageUrl={travel.photo[0].uri}
-        title={travel.title}
-        content={travel.content}
-        userAvatar={travel.userInfo.avatar}
-        nickname={travel.userInfo.nickname}
-        fetchTravels={fetchTravels}
-      />
-    ))
-  ) : (
-    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
-  );
+  const listRef = useRef(null);
   return (
     <View style={[styles.scene]}>
-      <ScrollView refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={fetchTravels}
-          tintColor="#000"
-          colors={["#000"]}
-        />}
-      >
-        {content}
-      </ScrollView>
+      {collectedTravels.length===0 ? 
+         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
+      : 
+        <WaterfallFlow
+        ref={listRef}
+        style={{ flex: 1, marginTop: 0,paddingTop:6 }}
+        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+        ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
+        // ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
+        data={collectedTravels}  //驱动数据
+        numColumns={2}  //列数
+        initialNumToRender={10}
+        scrollEventThrottle={16}
+        refreshing={refreshing}
+        onRefresh={() => fetchTravels()}  //触发刷新
+        renderItem={({ item, index, columnIndex }) => {
+          return (
+            <View
+              style={{
+                // 内边距设置
+                paddingLeft: columnIndex === 0 ? 12 : 6,
+                paddingRight: columnIndex === 0 ? 6 : 12,
+                paddingTop: 6,
+                paddingBottom: 6
+              }}
+            >
+              <Card item={item}/>
+            </View>
+          );
+        }}
+      />
+      }
+
+      
     </View>
   );
 }
@@ -153,9 +199,11 @@ export default function MyTravelsScreen() {
   const [myTravels, setMyTravels] = useState([]);  //存放我的游记数据
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
   const [isLoading, setIsLoading] = useState(true);  //加载态
+  const window = Dimensions.get('window')
 
   const fetchTravels = async () => {
     // 从后端获取我的游记和我的收藏数据存入state状态
+    console.log(1);
     try {
       const token = await getToken();
       if (!token) {
@@ -168,11 +216,29 @@ export default function MyTravelsScreen() {
       const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
         headers: { 'token': token },
       });
+      // console.log(response2.data.result[0].photo);
       if (response1.data.MyTravels) {
         setMyTravels(response1.data.MyTravels);
       };
       if (response2.data.result) {
-        setCollectedTravels(response2.data.result);
+        
+        const formattedData = response2.data.result.map(travel => {
+        // 格式化数据
+        const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+        return {
+          _id: travel._id,
+          uri: firstPhoto.uri,
+          title: travel.title,
+          width: Math.floor(window.width / 2),
+          height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+          avatar: travel.userInfo.avatar,
+          nickname: travel.userInfo.nickname,
+        };
+      });
+      // console.log(formattedData);
+
+      setCollectedTravels(formattedData);
+
       }
       setIsLoading(false);
     } catch (err) {
