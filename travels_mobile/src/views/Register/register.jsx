@@ -6,7 +6,7 @@ import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import {
   Text, View, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
-  Image, ScrollView
+  Image, ImageBackground
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import FormItem from './components/formItem';
@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 const Input = (props) => {
   return (
     <TextInput
@@ -128,165 +129,169 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={{flex:1,backgroundColor:'white'}}>
-      <ScrollView style={styles.wrapper}>
-      <LoadingOverlay isVisible={isLoading} />
-      <TouchableOpacity
-        style={{ marginTop: 25 }}
-        onPress={() => navigation.navigate('登录界面')}>
-        <AntDesign name="left" size={24} color="black" />
-      </TouchableOpacity>
-      <View>
-      </View>
-      <Text style={styles.title}>用户注册</Text>
-      <FormItem
-        required
-        name="username"
-        label="用户名"
-        control={control}
-        errors={errors.username}
-        rules={{
-          required: '不能为空',
-          pattern: {
-            value: /^[a-zA-Z0-9_-]{4,16}$/,
-            message: '4到16位(字母,数字,下划线,减号)',
-          },
-        }}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            value={value}
-            onChangeText={onChange}
-            placeholder="4到16位(字母,数字,下划线,减号)"
-          />
-        )}
-        style={{ marginBottom: 20 }}
-      />
-      <FormItem
-        required
-        name="nickname"
-        label="昵称"
-        control={control}
-        errors={errors.nickname}
-        rules={{
-          required: '不能为空',
-          pattern: {
-            value: /^((?!\\|\/|:|\*|\?|<|>|\||'|%|@|#|&|\$|\^|&|\*).){1,8}$/,
-            message: '1到8位(不包含特殊字符)',
-          },
-        }}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            value={value}
-            onChangeText={onChange}
-            placeholder="1到8位(不包含特殊字符)"
-          />
-        )}
-        style={{ marginBottom: 20 }}
-      />
-      <FormItem
-        required
-        label="密码"
-        control={control}
-        name="password"
-        rules={{
-          required: '不能为空',
-          pattern: {
-            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/,
-            message: '8到16位(大小写字母和数字)',
-          },
-        }}
-        errors={errors.password}
-        render={({ field: { onChange, value } }) => (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Input
-              style={{ flex: 1 }}
-              value={value}
-              onChangeText={(text) => {
-                setPasswordValue(text);
-                onChange(text);
-              }}
-              placeholder="8到16位(大小写字母和数字)"
-              secureTextEntry={!showPassword}
-            />
-            <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
-              {
-                showPassword ?
-                  <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
-                  :
-                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
-              }
-            </TouchableWithoutFeedback>
+    <KeyboardAwareScrollView style={{ flex: 1 }} behavior="padding" showsVerticalScrollIndicator={false}>
+      <ImageBackground source={require("../../../assets/register_background.png")} resizeMode="contain"
+        style={{ flex: 1, height: 850 }}
+      >
+        <View style={styles.wrapper}>
+          <LoadingOverlay isVisible={isLoading} />
+          <TouchableOpacity
+            style={{ marginTop: 25 }}
+            onPress={() => navigation.navigate('登录界面')}>
+            <AntDesign name="left" size={24} color="black" />
+          </TouchableOpacity>
+          <View>
           </View>
-        )}
-        style={{ marginBottom: 20 }}
-      />
-      <FormItem
-        required
-        label="确认密码"
-        control={control}
-        name="passwordsure"
-        rules={{
-          required: '不能为空',
-          validate: {
-            value: (text) => {
-              if (text === passwordValue) {
-                return true
+          <Text style={styles.title}>用户注册</Text>
+          <FormItem
+            required
+            name="username"
+            label="用户名"
+            control={control}
+            errors={errors.username}
+            rules={{
+              required: '不能为空',
+              pattern: {
+                value: /^[a-zA-Z0-9_-]{4,16}$/,
+                message: '4到16位(字母,数字,下划线,减号)',
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                placeholder="4到16位(字母,数字,下划线,减号)"
+              />
+            )}
+            style={{ marginBottom: 20 }}
+          />
+          <FormItem
+            required
+            name="nickname"
+            label="昵称"
+            control={control}
+            errors={errors.nickname}
+            rules={{
+              required: '不能为空',
+              pattern: {
+                value: /^((?!\\|\/|:|\*|\?|<|>|\||'|%|@|#|&|\$|\^|&|\*).){1,8}$/,
+                message: '1到8位(不包含特殊字符)',
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                placeholder="1到8位(不包含特殊字符)"
+              />
+            )}
+            style={{ marginBottom: 20 }}
+          />
+          <FormItem
+            required
+            label="密码"
+            control={control}
+            name="password"
+            rules={{
+              required: '不能为空',
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/,
+                message: '8到16位(大小写字母和数字)',
+              },
+            }}
+            errors={errors.password}
+            render={({ field: { onChange, value } }) => (
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Input
+                  style={{ flex: 1 }}
+                  value={value}
+                  onChangeText={(text) => {
+                    setPasswordValue(text);
+                    onChange(text);
+                  }}
+                  placeholder="8到16位(大小写字母和数字)"
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
+                  {
+                    showPassword ?
+                      <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                      :
+                      <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                  }
+                </TouchableWithoutFeedback>
+              </View>
+            )}
+            style={{ marginBottom: 20 }}
+          />
+          <FormItem
+            required
+            label="确认密码"
+            control={control}
+            name="passwordsure"
+            rules={{
+              required: '不能为空',
+              validate: {
+                value: (text) => {
+                  if (text === passwordValue) {
+                    return true
+                  }
+                  else {
+                    return '两次密码输入需要一致        '
+                  }
+                }
               }
-              else {
-                return '两次密码输入需要一致        '
-              }
-            }
-          }
-        }}
-        errors={errors.passwordsure}
-        render={({ field: { onChange, value } }) => (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Input
-              style={{ flex: 9 }}
-              value={value}
-              onChangeText={(text) => {
-                setPasswordValue(text);
-                onChange(text);
-              }}
-              placeholder="请再次输入密码"
-              secureTextEntry={!showPasswordSure}
-            />
-            <TouchableWithoutFeedback
-              style={{ marginRight: 10, flex: 1 }}
-              onPress={() => { setShowPasswordSure(!showPasswordSure) }}
+            }}
+            errors={errors.passwordsure}
+            render={({ field: { onChange, value } }) => (
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Input
+                  style={{ flex: 9 }}
+                  value={value}
+                  onChangeText={(text) => {
+                    setPasswordValue(text);
+                    onChange(text);
+                  }}
+                  placeholder="请再次输入密码"
+                  secureTextEntry={!showPasswordSure}
+                />
+                <TouchableWithoutFeedback
+                  style={{ marginRight: 10, flex: 1 }}
+                  onPress={() => { setShowPasswordSure(!showPasswordSure) }}
+                >
+                  {
+                    showPasswordSure ?
+                      <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                      :
+                      <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                  }
+                </TouchableWithoutFeedback>
+              </View>
+            )}
+            style={{ marginBottom: 20 }}
+          />
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{
+              fontSize: 20,
+              marginBottom: 5,
+              fontWeight: '700',
+            }}>上传头像</Text>
+            <TouchableOpacity
+              style={styles.avatar_Container}
+              onPress={pickImage}
             >
-              {
-                showPasswordSure ?
-                  <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
-                  :
-                  <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
-              }
-            </TouchableWithoutFeedback>
+              {!image && <Text style={styles.plus_Text}>+</Text>}
+              {image && <Image source={{ uri: image }} style={styles.avatar_image} />}
+            </TouchableOpacity>
           </View>
-        )}
-        style={{ marginBottom: 20 }}
-      />
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={{
-          fontSize: 20,
-          marginBottom: 5,
-          fontWeight: '700',
-        }}>上传头像</Text>
-        <TouchableOpacity
-          style={styles.avatar_Container}
-          onPress={pickImage}
-        >
-          {!image && <Text style={styles.plus_Text}>+</Text>}
-          {image && <Image source={{ uri: image }} style={styles.avatar_image} />}
-        </TouchableOpacity>
-      </View>
-      <Button onPress={handleSubmit(onSubmit)}
-        style={styles.register_Button}
-        textStyle={{ fontSize: 18, color: "white" }}
-      >注册</Button>
-      </ScrollView>
-    </View>
-    
+          <Button onPress={handleSubmit(onSubmit)}
+            style={styles.register_Button}
+            textStyle={{ fontSize: 18, color: "white" }}
+          >注册</Button>
+        </View>
+      </ImageBackground>
+    </KeyboardAwareScrollView>
+
   );
 }
 

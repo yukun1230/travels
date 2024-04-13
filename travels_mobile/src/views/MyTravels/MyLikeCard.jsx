@@ -54,8 +54,8 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
           <Dialog.Content style={styles.dialogContentStyle}>
             <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'grey',borderTopWidth:0.5,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
-            <View style={{flex:1,borderRightWidth:0.5,borderRightColor:'grey',height:50, justifyContent: 'center',alignItems: 'center',}}>
+          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'#D3D3D3',borderTopWidth:1,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
+            <View style={{flex:1,borderRightWidth:1,borderRightColor:'#D3D3D3',height:50, justifyContent: 'center',alignItems: 'center',}}>
               <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
                 <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
               </TouchableOpacity>

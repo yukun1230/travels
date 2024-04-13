@@ -1,5 +1,5 @@
 import WaterfallFlow from 'react-native-waterfall-flow'
-import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, StyleSheet, StatusBar } from 'react-native'
 import Button from 'apsl-react-native-button'
 import { useNavigation } from '@react-navigation/native';
 import { Menu, Divider } from 'react-native-paper';
@@ -7,7 +7,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-import {  getToken, removeToken } from '../../util/tokenRelated'
+import { getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
 import { Entypo } from '@expo/vector-icons';
 
@@ -60,7 +60,7 @@ const AvatarMenu = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = await getToken();
-      setToken(token); 
+      setToken(token);
       if (token) {
         // 由token鉴权请求后端用户信息
         axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
@@ -95,11 +95,11 @@ const AvatarMenu = () => {
   // 控制下拉菜单显隐
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
-  
+
 
   return (
     <Menu
-    // 下拉菜单组件
+      // 下拉菜单组件
       visible={visible}
       onDismiss={closeMenu}
       anchor={
@@ -112,7 +112,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop:-50, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: -50, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单项 */}
       {userInfo.id ? (
@@ -124,7 +124,7 @@ const AvatarMenu = () => {
           <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
         </>
       ) : (
-          <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
+        <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
       )}
     </Menu>
   );
@@ -134,15 +134,15 @@ const AvatarMenu = () => {
 const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 顶部组件;包括头像菜单,搜索框
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:45 }}>
-      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16, height: 45 }}>
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
         {/* 头像菜单 */}
         <AvatarMenu></AvatarMenu>
       </View>
       <View style={{ flex: 3 }}>
         {/* 搜索框 */}
         <TextInput
-          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, paddingLeft: 10, borderRadius: 20, borderColor: "#2196F3",fontSize: 14 }}
+          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, paddingLeft: 10, borderRadius: 20, borderColor: "#2196F3", fontSize: 14 }}
           placeholder="请输入您要搜索的内容"
           onChangeText={searchText => setSearchText(searchText)}
           defaultValue={searchText}
@@ -164,7 +164,7 @@ export default HomeScreen = () => {
   const [data, setData] = useState([]);  //首页瀑布流卡片数据
   const [refreshing, setRefreshing] = useState(false);  //刷新状态控制
   const [noMore, setNoMore] = useState(false);  //没有更多内容状态
-  const [inited, setInited] = useState(false);  
+  const [inited, setInited] = useState(false);
   const page = useRef(0);  //页码
   const pageSize = 6;  //每页的卡片数
   const loading = useRef(false);  //加载状态
@@ -172,7 +172,7 @@ export default HomeScreen = () => {
   const [searchText, setSearchText] = useState('');  //搜索内容
   const [isSearching, setIsSearching] = useState(false);  //搜索状态
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);  // 控制返回顶部按钮
-  
+
   const handleScroll = (event) => {
     // 控制返回顶部按钮显隐
     const scrollY = event.nativeEvent.contentOffset.y;
@@ -225,21 +225,21 @@ export default HomeScreen = () => {
   useEffect(() => {
     // 搜索完毕,顶部下拉刷新,新加载原始数据
     if (!isSearching) {
-      loadData(true); 
+      loadData(true);
     }
   }, [isSearching]);
 
   const loadData = async (isRefreshing = false) => {
-    if (isRefreshing){
+    if (isRefreshing) {
       // 刷新操作时重置页码到0，加载下一页
-      page.current=0;
+      page.current = 0;
       setIsSearching(false);
     }
-    if(isSearching){
+    if (isSearching) {
       // 搜索中直接返回
       return;
     }
-    
+
     // 下一页页码,由nextPage请求后端数据
     const nextPage = isRefreshing ? 1 : page.current + 1;
     if (loading.current && !isRefreshing) {
@@ -272,7 +272,7 @@ export default HomeScreen = () => {
       });
 
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
-      setData(prevData => isRefreshing ? formattedData : [ ...prevData,...formattedData]);
+      setData(prevData => isRefreshing ? formattedData : [...prevData, ...formattedData]);
       if (!isRefreshing) {
         // 如果不是刷新操作，且返回的数据小于pageSize,说明没有更多内容了
         setNoMore(formattedData.length < pageSize);
@@ -289,43 +289,44 @@ export default HomeScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1}}>
-      <View style={{backgroundColor:'white'}}>
+    <View style={{ flex: 1 }}>
+      <StatusBar backgroundColor="white" barStyle='dark-content' />
+      <View style={{ backgroundColor: 'white' }}>
         {/* 顶部组件 */}
-        <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch}/>
+        <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch} />
       </View>
-      
+
       {/* 瀑布流 */}
       <WaterfallFlow
-      ref={listRef}
-      style={{ flex: 1, marginTop: 0,paddingTop:6 }}
-      contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-      ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
-      ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
-      data={data}  //驱动数据
-      numColumns={2}  //列数
-      initialNumToRender={10}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      onEndReached={() => loadData(false)}  //触发加载更多
-      refreshing={refreshing}
-      onRefresh={() => loadData(true)}  //触发刷新
-      onEndReachedThreshold={0}  //底部碰触阈值
-      renderItem={({ item, index, columnIndex }) => {
-        return (
-          <View
-            style={{
-              // 内边距设置
-              paddingLeft: columnIndex === 0 ? 12 : 6,
-              paddingRight: columnIndex === 0 ? 6 : 12,
-              paddingTop: 6,
-              paddingBottom: 6
-            }}
-          >
-            <Card item={item}/>
-          </View>
-        );
-      }}
+        ref={listRef}
+        style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
+        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+        ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
+        ListEmptyComponent={<Empty inited={inited} isSearching={isSearching} />}
+        data={data}  //驱动数据
+        numColumns={2}  //列数
+        initialNumToRender={10}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        onEndReached={() => loadData(false)}  //触发加载更多
+        refreshing={refreshing}
+        onRefresh={() => loadData(true)}  //触发刷新
+        onEndReachedThreshold={0}  //底部碰触阈值
+        renderItem={({ item, index, columnIndex }) => {
+          return (
+            <View
+              style={{
+                // 内边距设置
+                paddingLeft: columnIndex === 0 ? 12 : 6,
+                paddingRight: columnIndex === 0 ? 6 : 12,
+                paddingTop: 6,
+                paddingBottom: 6
+              }}
+            >
+              <Card item={item} />
+            </View>
+          );
+        }}
       />
 
       {
@@ -343,7 +344,7 @@ export default HomeScreen = () => {
   );
 };
 
-const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
+const Footer = ({ noMore, inited, isEmpty, isSearching }) => {
   // 底部组件
   if (!inited || isEmpty) {
     return null;
@@ -351,9 +352,9 @@ const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
   //搜索状态底部显示
   if (isSearching) {
     return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
-      <Text style={{ color: '#999', marginLeft: 8 }}>没有更多内容了~</Text>
-    </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
+        <Text style={{ color: '#999', marginLeft: 8 }}>没有更多内容了~</Text>
+      </View>
     )
   }
   //
@@ -365,13 +366,13 @@ const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
   );
 };
 
-const Empty = ({ inited,isSearching }) => {
+const Empty = ({ inited, isSearching }) => {
   // 空数据底部组件
-  if(isSearching){
+  if (isSearching) {
     return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
-      <Text style={{ color: '#999', marginLeft: 8 }}>抱歉，没有您要找的内容哦~</Text>
-    </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
+        <Text style={{ color: '#999', marginLeft: 8 }}>抱歉，没有您要找的内容哦~</Text>
+      </View>
     )
   }
   return (

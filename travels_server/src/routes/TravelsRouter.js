@@ -63,12 +63,12 @@ TravelsRouter.get('/search', async (req, res) => {
   await Travel.find({
     $or: [
       { "title": myQuery },
-      { "content": myQuery },
       { "userInfo.nickname": myQuery },
       { "location.country": myQuery },
       { "location.province": myQuery },
       { "location.city": myQuery }
-    ]
+    ],
+    travelState: { $eq: 1 }
   }).then((data) => {
     res.send({
       code: 200,
@@ -161,7 +161,7 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
   }
 })
 
-// web---分页获取所有游记信息(用于PC端审核) 
+// web---通过游记(用于PC端审核) 
 TravelsRouter.post('/web/passOneTravel', async (req, res) => {
   try {
     await Travel.findOneAndUpdate({ _id: req.body.id }, { travelState: 1 })

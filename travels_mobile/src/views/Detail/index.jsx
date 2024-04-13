@@ -249,11 +249,6 @@ const DetailScreen = ({ navigation, route }) => {
     }
   };
 
-  // 设置模态框是否展示
-  const checkImage = () => {
-    setShowImage(!showImage);
-  }
-
   return (
     <View style={{ flexDirection: 'column' }}>
       {/* 加载态组件 */}
@@ -265,8 +260,8 @@ const DetailScreen = ({ navigation, route }) => {
           <Dialog.Content style={styles.dialogContentStyle}>
             <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
           </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10, borderTopColor: 'grey', borderTopWidth: 0.5, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
-            <View style={{ flex: 1, borderRightWidth: 0.5, borderRightColor: 'grey', height: 50, justifyContent: 'center', alignItems: 'center', }}>
+          <Dialog.Actions style={{ marginTop: -10, borderTopColor: '#D3D3D3', borderTopWidth: 1, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
+            <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: '#D3D3D3', height: 50, justifyContent: 'center', alignItems: 'center', }}>
               <TouchableOpacity style={{ width: 150, height: 50, justifyContent: 'center', alignItems: 'center' }} onPress={hideDialog}>
                 <Text style={{ color: 'grey', fontSize: 18 }}>取消</Text>
               </TouchableOpacity>
@@ -295,14 +290,14 @@ const DetailScreen = ({ navigation, route }) => {
               >
                 {travelDetail.photo.map((photo, index) => (
                   <View style={styles.slide} key={index} >
-                    <TouchableOpacity onPress={checkImage} style={styles.image_contain} activeOpacity={1}>
+                    <TouchableOpacity onPress={()=>setShowImage(!showImage)} style={styles.image_contain} activeOpacity={1}>
                       <Image source={{ uri: photo.url }} style={styles.image} />
                     </TouchableOpacity>
                   </View>
                 ))}
               </Swiper>
               <Modal visible={showImage} transparent={false} >
-                <ImageViewer imageUrls={photoDetail} onClick={checkImage} saveToLocalByLongPress={false}/>
+                <ImageViewer imageUrls={photoDetail} onClick={()=>setShowImage(!showImage)} saveToLocalByLongPress={false} />
               </Modal>
             </View>
 

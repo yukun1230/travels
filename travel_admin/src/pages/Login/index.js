@@ -6,8 +6,8 @@ import { fetchLogin } from "@/store/modules/user";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   // 参数values为表单输入数据
   const onFinish = async (values) => {
     await dispatch(fetchLogin(values))

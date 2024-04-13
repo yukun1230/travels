@@ -1,8 +1,6 @@
 # 项目介绍
 
-这部分是旅游日记平台后端的相关内容，
-
-
+这部分是旅游日记平台的后端服务系统模块。主要介绍采用一些技术栈以及相关的接口说明，以及项目启动方式和运行说明。
 
 # 项目技术栈
 
@@ -19,7 +17,7 @@
 
 ### [post] `users/login`  
 
-移动端的登录接口，使用了`bcrypt`模块的`compare`方法来比较用户输入的密码和数据库中存储的加密密码是否匹配，如果密码匹配，则生成一个JSON Web Token (JWT)。该令牌包含用户的ID，并使用密钥`SECRET`进行签名。然后将令牌设置到响应头的`Authorization`字段中，并返回一个JSON对象，包含成功登录的消息和用户信息。
+移动端的登录接口，使用了`bcrypt`模块的`compare`方法来比较用户输入的密码和数据库中存储的加密密码是否匹配，如果密码匹配，则生成一个`JSON Web Token (JWT)`。该令牌包含用户的ID，并使用密钥`SECRET`进行签名。然后将令牌设置到响应头的`Authorization`字段中，并返回一个JSON对象，包含成功登录的消息和用户信息。
 
 ```javascript
 UsersRouter.post('/login', async (req, res) => {
@@ -58,7 +56,7 @@ UsersRouter.post('/login', async (req, res) => {
 
 ### 一个中间件—`auth`，用于验证token有效性
 
-一个中间件，用于验证`token`的有效性。如果验证`token`成功，则将用户信息添加到请求对象中，并调用`next()`函数，以便后续的中间件或路由处理器可以访问用户信息。如果验证失败或发生异常，则直接调用`next()`函数，以便继续执行下一个中间件或路由处理器，但在这种情况下，请求对象中将不包含用户信息。
+当请求资源需要验证用户的时候，需要加入中间件auth，用于验证`token`的有效性。如果验证`token`成功，则将用户信息添加到请求对象中，并调用`next()`函数，以便后续的中间件或路由处理器可以访问用户信息。如果验证失败或发生异常，则直接调用`next()`函数，以便继续执行下一个中间件或路由处理器，但在这种情况下，请求对象中将不包含用户信息。
 
 中间件相关代码如下：
 
@@ -137,21 +135,110 @@ function uploadAvatar(req, res) {
 }
 ```
 
-## 游记相关
+## 游记相关(移动端)
 
 ### [get]`travels/getTravels`
 
+这是一个用于移动端首页游记展示的接口，分页获取部分游记信息，如游记id、游记标题、游记封面（默认首张图片）、游记发布者的信息等，这部分也做了一个筛选展示，即仅返回审核通过的游记信息。
+
 ### [get]`travels/getDetails`
+
+通过读取查询字符串，获得游记的id，利用这个id从数据库中取出对应的游记信息并进行返回。
 
 ### [post]`travels/deleteOneTravel`
 
+由游记id逻辑删除某条游记（请求头需要带上用户的token，并且用中间件`auth`进行token验证），即设置`travelState`字段的值为3，用户只能删除自己的游记。
+
 ### [get]`travels/getMyTravels`
+
+由用户的token获取用户发布的游记(用于我的游记页面)， `travelState`为3的不返回。
 
 ### [get]`travels/getCollectedTravels`
 
+通过token获取用户收藏的游记信息
 
+### [post]`travels/upload`
+
+游记上传接口，利用`multer`中间件进行多文件上传，上传的内容包括：游记图片+游记标题+游记内容+地点信息
+
+### [post]`travels/updateOneTravel`
+
+游记更新接口，用于编辑页面。
+
+### [get]`travels/search`
+
+用于首页搜索游记，利用简单的正则进行字段匹配，匹配源有游记标题、用户昵称、地点位置。
+
+### [post]`travels/collectTravel`
+
+对游记进行收藏操作的接口，这里主要完成两个步骤，其一，通过token获取用户信息，然后利用获取到的用户id进行`findOneAndUpdate`操作，在相关用户的`document`中添加`collectTravels`字段，字段的值为一个数组，数组中保存的是用户收藏的游记的id。其二，操作对应id的游记`document`，添加字段`collectedCount`每次调用这个接口，该字段都会自增。
+
+### [post]`travels/UndoCollectTravel`
+
+对游记进行取消收藏的操作，主要是对于``travels/collectTravel`接口的反操作，不详细赘述了。
+
+### [post]`travels/likeTravel`
+
+与游记收藏接口的原理一样，差别只在于操作的字段，由`collectTravels`和`collectedCount`变为`likeTravels`和`likedCount`。
+
+### [post]`travels/UndoLikeTravel`
+
+对游记进行取消收藏的操作，主要是对于`travels/likeTravel`接口的反操作，不详细赘述了。
+
+## 游记相关(web审核端)
+
+### [get]`/web/getTravels`
+
+不做详细阐述，直接贴代码：
+
+```javascript
+TravelsRouter.get('/web/getTravels', async (req, res) => {
+  try {
+    const page = req.query.page - 1;
+    const pageSize = req.query.pageSize;
+    const beginDate = req.query.beginDate;
+    const endDate = req.query.endDate;
+    const title = req.query.title;
+    const travelState = req.query.travelState;
+    let findCon = { travelState: { $ne: 3 } };
+    if (title) {
+      findCon.title = new RegExp(title, 'i');
+    }
+    if (beginDate) { //endDate
+      findCon.createTime = { $lte: new Date(endDate), $gte: new Date(beginDate) };
+    }
+    if (travelState) {
+      findCon.travelState = { $ne: 3, $eq: travelState };
+    }
+    const travels = await Travel.find(findCon, '_id photo title content travelState userInfo createTime rejectedReason')
+      .sort({ travelState: -1, _id: -1 })
+      .skip(page * pageSize).limit(pageSize)
+    res.send({
+      message: "获取游记信息成功",
+      quantity: await Travel.countDocuments(findCon),
+      travels
+    })
+  } catch (e) {
+    console.log(e)
+  }
+})
+```
+
+### [post]`/web/passOneTravel`
+
+通过请求体中的游记id，执行`findOneAndUpdate`操作，把`travelState`字段的值设置为1。
+
+### [post]`/web/rejectOneTravel`
+
+拒绝游记，同时给游记信息添加上`rejectedReason`字段，字段的值为拒绝理由。
+
+### [post]`/web/deleteOneTravel`
+
+删除游记，这里为逻辑删除，即将`travelState`字段的值设置为3。
 
 # 项目启动
+
+前提：电脑上需要安装`mongodb`数据库。
 
 1. 进入项目目录`cd travels_server`
 2. 安装依赖`npm install`

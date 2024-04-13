@@ -2,7 +2,7 @@
 const express = require('express');
 var UsersRouter = express.Router();
 const { User } = require('../model/User');
-const bcypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const app = express();
 const SECRET = 'yukun';
@@ -24,7 +24,7 @@ UsersRouter.post('/login', async (req, res) => {
       message: "用户名不存在"
     })
   } else {
-    bcypt.compare(
+    bcrypt.compare(
       req.body.password,
       user.password,
       (err, isValid) => {
