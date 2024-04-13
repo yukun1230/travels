@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
 import DetailScreen from './src/views/Detail'
 import editTravelScreen from './src/views/EditTravel/editTravel'
+import EditUserInfoScreen from './src/views/EditUserInfo';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
@@ -53,6 +54,9 @@ export default function App() {
             headerTitle: '',
           }} />
           <Stack.Screen name="编辑游记" component={editTravelScreen}  />
+          <Stack.Screen name="修改用户信息" component={EditUserInfoScreen} options={{
+          headerTitleAlign:'center'
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast config={toastConfig} />

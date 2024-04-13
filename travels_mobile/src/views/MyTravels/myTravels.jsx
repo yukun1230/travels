@@ -53,7 +53,7 @@ const AvatarMenu = () => {
         <>
           <Menu.Item title="逛一逛" leadingIcon="home-outline" onPress={() => { navigation.navigate('首页'); closeMenu(); }} />
           <Divider />
-          <Menu.Item title="写游记" leadingIcon="square-edit-outline" onPress={() => { navigation.navigate('游记发布'); closeMenu(); }} />
+          <Menu.Item title="修改信息" leadingIcon="account-details-outline" onPress={() => { navigation.navigate('修改用户信息'); closeMenu(); }} />
           <Divider />
           <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
         </>
