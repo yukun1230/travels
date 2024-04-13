@@ -12,7 +12,7 @@ import MyLikeCard from './MyLikeCard';     //我的收藏卡片组件
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
-import LoadingOverlay from '../../components/LoadingOverlay'; 
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 
 const AvatarMenu = () => {
@@ -39,14 +39,14 @@ const AvatarMenu = () => {
       anchor={
         <TouchableOpacity onPress={openMenu}>
           <Image
-          // 没有头像设置一个默认头像
+            // 没有头像设置一个默认头像
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
             style={{ width: 36, height: 36, borderRadius: 18 }}
           />
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop:-45, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: -45, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单栏选项根据有无用户信息动态调整 */}
       {userInfo.id ? (
@@ -133,14 +133,13 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
           tintColor="#000"
           colors={["#000"]}
         />}
-        >
+      >
         {content}
       </ScrollView>
     </View>
   );
 }
-  
- 
+
 const initialLayout = { width: Dimensions.get('window').width };  //选项卡配置
 
 export default function MyTravelsScreen() {
@@ -194,32 +193,33 @@ export default function MyTravelsScreen() {
     // 选项卡组件渲染
     switch (route.key) {
       case 'first':
-        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading}/>;
+        return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       case 'second':
         return <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       default:
         return null;
     }
   };
-  
+
   const renderTabBar = props => (
     // 选项栏配置
     <TabBar
       {...props}
-      activeColor="rgb(34,150,243)" 
-      inactiveColor="gray" 
-      indicatorStyle={{ backgroundColor: "rgb(34,150,243)",
-        width: '5%',  
-        marginLeft: '16.5%', 
-     }} 
+      activeColor="rgb(34,150,243)"
+      inactiveColor="gray"
+      indicatorStyle={{
+        backgroundColor: "rgb(34,150,243)",
+        width: '5%',
+        marginLeft: '16.5%',
+      }}
       style={{
-        backgroundColor: 'white', 
-        borderBottomWidth: 0.1, 
-        borderColor: 'grey', 
+        backgroundColor: 'white',
+        borderBottomWidth: 0.1,
+        borderColor: 'grey',
 
       }}
       labelStyle={{
-        fontWeight: 'bold' 
+        fontWeight: 'bold'
       }}
     />
   );
@@ -237,25 +237,25 @@ export default function MyTravelsScreen() {
         </View>
         <TouchableOpacity
           // 新增按钮
-          style={{flexDirection: 'row',alignItems: 'center'}}
+          style={{ flexDirection: 'row', alignItems: 'center' }}
           onPress={() => navigation.navigate('游记发布')}>
           <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
       </View>
       {/* 根据是否登录判断是否渲染选项卡组件 */}
-      {userInfo.id ? 
-      <TabView
-        // 选项卡组件
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={initialLayout}
-        style={styles.tabView}
-        renderTabBar={renderTabBar}
-      />: 
-      // 未登录显示组件
-      <UnLoginScreen></UnLoginScreen>}
+      {userInfo.id ?
+        <TabView
+          // 选项卡组件
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={initialLayout}
+          style={styles.tabView}
+          renderTabBar={renderTabBar}
+        /> :
+        <UnLoginScreen></UnLoginScreen>// 未登录显示组件
+      }
     </View>
   );
 }
@@ -267,12 +267,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   header: {
-    
+
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    paddingBottom:0,
+    paddingBottom: 0,
     marginTop: 0
   },
   avatar: {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   nickname: {
-    marginLeft:12,
+    marginLeft: 12,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
-  userInfo:{
+  userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },

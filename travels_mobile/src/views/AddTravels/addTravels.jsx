@@ -125,9 +125,9 @@ export default addTravelsScreen = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     reset(); // 重置
-  },[isSubmitSuccessful])
+  }, [isSubmitSuccessful])
 
   // 删除照片操作
   const deletePhoto = async (uri) => {
@@ -146,6 +146,7 @@ export default addTravelsScreen = () => {
   // 提交表单
   const onSubmit = async (data) => {
     if (file.length > 0) {  // 如果文件存在
+      setIsLoading(true); // 开始加载图标
       let params = new FormData();
       for (let item of file) params.append('file', item);// 添加游记的图片
       for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
@@ -158,7 +159,6 @@ export default addTravelsScreen = () => {
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       params.append("collectedCount", 0);
       params.append("likedCount", 0);
-      setIsLoading(true); // 取消加载图标
       await axios.post(NGROK_URL + '/travels/upload', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
@@ -264,7 +264,7 @@ export default addTravelsScreen = () => {
                 </View>
               )}
             />
-            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop:20 }}>
+            <TouchableOpacity onPress={() => setFold(!fold)} style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: 20 }}>
               <View style={styles.locationIcon}>
                 <AntDesign name="enviroment" size={18} color="white" />
               </View>
@@ -316,7 +316,7 @@ export default addTravelsScreen = () => {
               </View>
             </Card>}
             <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>发布</Button>
+              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)} disable={isLoading ? "true" : "false"}>发布</Button>
             </View>
           </View>
         </View>}
