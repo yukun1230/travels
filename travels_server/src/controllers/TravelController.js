@@ -73,7 +73,7 @@ class TravelController {
   // mobile--- 由用户的token获取获取用户发布的游记(用于我的游记), travelState为3的不返回
   async getMyTravels(req, res) {
     try {
-      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $ne: 3 } }, '_id photo title content travelState location rejectedReason').sort({travelState: -1}).exec();
+      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $nin: [3,4] }}, '_id photo title content travelState location rejectedReason').sort({travelState: -1}).exec();
       if (MyTravels) {
         res.send({
           message: "获取我的游记成功",

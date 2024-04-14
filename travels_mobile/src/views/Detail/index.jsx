@@ -185,7 +185,7 @@ const DetailScreen = ({ navigation, route }) => {
       // 关闭对话框
       hideDialog()
     } catch (error) {
-      console.error('点赞请求失败:', error);
+      console.error('收藏请求失败:', error);
     }
   }
 
