@@ -10,17 +10,21 @@ import { NGROK_URL } from '../../config/ngrok'
 import { getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
 import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 const window = Dimensions.get('window')
 
 
 const Card = ({ item }) => {
-  // 卡片组件
-  //点击卡片跳转详情页并传递卡片的id
+  const userInfo = useSelector(state => state.user);
   const navigation = useNavigation();
   const onPressCard = () => {
     navigation.navigate('Detail', { cardId: item._id });
   };
+  let collected =userInfo.collectTravels? userInfo.collectTravels.includes(item._id):false;
+  let collectedCount=item.collectedCount;
+
   return (
     <View style={{ flex: 1, overflow: 'hidden', borderRadius: 10 }}>
       <TouchableOpacity
@@ -35,14 +39,32 @@ const Card = ({ item }) => {
         <View style={{ padding: 10 }}>
           {/* 标题 */}
           <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
-          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
-            {/* 用户资料 */}
-            <Image
-              source={{ uri: item.avatar }}
-              style={{ width: 20, height: 20, borderRadius: 10 }}
-            />
-            <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
+          
+          
+          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {/* 用户资料 */}
+              <Image
+                source={{ uri: item.avatar }}
+                style={{ width: 20, height: 20, borderRadius: 10 }}
+              />
+              <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity onPress={()=>console.log(userInfo.collectTravels,item._id,collected)}>
+                {collected ?  <AntDesign style={{marginRight:3,marginTop:2}} name="heart" size={16} color="red" /> : <AntDesign style={{marginRight:3,marginTop:2}} name="hearto" size={16} color="black" /> }
+              </TouchableOpacity>
+              
+              <Text>
+                {collectedCount}
+              </Text>
+            </View>
+            
+
           </View>
+          
+
+
         </View>
       </TouchableOpacity>
     </View>
@@ -54,36 +76,11 @@ const AvatarMenu = () => {
   // 顶部头像菜单组件
   const navigation = useNavigation();
   const [visible, setVisible] = useState(false); //控制头像下拉菜单显隐
-  const dispatch = useDispatch();
+  const dispatch =useDispatch();
+
+  
   const userInfo = useSelector(state => state.user);  //redux获取用户数据
-  const [token, setToken] = useState(null);  //token鉴权
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = await getToken();
-      setToken(token);
-      if (token) {
-        // 由token鉴权请求后端用户信息
-        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
-          .then(res => {
-            const { avatar, nickname, _id, collectTravels, likeTravels } = res.data;
-            const uniqueCollectTravels = [...new Set(collectTravels)];
-            const uniqueLikeTravels = [...new Set(likeTravels)];
-            // 使用 dispatch 将用户信息保存到 Redux
-            dispatch(setUser({
-              avatar: avatar,
-              nickname: nickname,
-              id: _id,
-              collectTravels: uniqueCollectTravels,
-              likeTravels: uniqueLikeTravels
-            }));
-          })
-          .catch(err => {
-            console.error(err);
-          });
-      }
-    };
-    fetchUserInfo();
-  }, [dispatch]); // 添加dispatch到依赖项列表，保证稳定性
+  
 
   const onLogout = () => {
     // 退出登录函数
@@ -172,6 +169,39 @@ export default HomeScreen = () => {
   const [searchText, setSearchText] = useState('');  //搜索内容
   const [isSearching, setIsSearching] = useState(false);  //搜索状态
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);  // 控制返回顶部按钮
+  const [token, setToken] = useState(null); 
+  const dispatch = useDispatch(); 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = await getToken();
+      setToken(token);
+      if (token) {
+        // 由token鉴权请求后端用户信息
+        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
+          .then(res => {
+            const { avatar, nickname, _id, collectTravels, likeTravels } = res.data;
+            const uniqueCollectTravels = [...new Set(collectTravels)];
+            const uniqueLikeTravels = [...new Set(likeTravels)];
+            // 使用 dispatch 将用户信息保存到 Redux
+            dispatch(setUser({
+              avatar: avatar,
+              nickname: nickname,
+              id: _id,
+              collectTravels: uniqueCollectTravels,
+              likeTravels: uniqueLikeTravels
+            }));
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+    };
+    fetchUserInfo();
+  }, [dispatch]);
+
+
+
+  const userInfo = useSelector(state => state.user); 
 
   const handleScroll = (event) => {
     // 控制返回顶部按钮显隐
@@ -217,6 +247,7 @@ export default HomeScreen = () => {
         };
       });
       setData(formattedData);  //存入data
+      // console.log(data);
     } catch (error) {
       console.error("搜索请求失败:", error);
     }
@@ -268,8 +299,10 @@ export default HomeScreen = () => {
           height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
           avatar: travel.userInfo.avatar,
           nickname: travel.userInfo.nickname,
+          collectedCount: travel.collectedCount,
         };
       });
+      // console.log(formattedData);
 
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
       setData(prevData => isRefreshing ? formattedData : [...prevData, ...formattedData]);
@@ -323,7 +356,7 @@ export default HomeScreen = () => {
                 paddingBottom: 6
               }}
             >
-              <Card item={item} />
+              <Card item={item}/>
             </View>
           );
         }}

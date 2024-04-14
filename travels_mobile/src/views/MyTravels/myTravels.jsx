@@ -156,7 +156,6 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
         style={{ flex: 1, marginTop: 0,paddingTop:6 }}
         contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
         ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
-        // ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
         data={collectedTravels}  //驱动数据
         numColumns={2}  //列数
         initialNumToRender={10}
@@ -180,11 +179,52 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
         }}
       />
       }
-
-      
     </View>
   );
 }
+
+
+const ThirdRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
+  // 我的收藏路由渲染
+  const [refreshing, setRefreshing] = useState(false);  //下拉刷新
+  const listRef = useRef(null);
+  return (
+    <View style={[styles.scene]}>
+      {collectedTravels.length===0 ? 
+         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
+      : 
+        <WaterfallFlow
+        ref={listRef}
+        style={{ flex: 1, marginTop: 0,paddingTop:6 }}
+        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+        ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
+        data={collectedTravels}  //驱动数据
+        numColumns={2}  //列数
+        initialNumToRender={10}
+        scrollEventThrottle={16}
+        refreshing={refreshing}
+        onRefresh={() => fetchTravels()}  //触发刷新
+        renderItem={({ item, index, columnIndex }) => {
+          return (
+            <View
+              style={{
+                // 内边距设置
+                paddingLeft: columnIndex === 0 ? 12 : 6,
+                paddingRight: columnIndex === 0 ? 6 : 12,
+                paddingTop: 6,
+                paddingBottom: 6
+              }}
+            >
+              <Card item={item}/>
+            </View>
+          );
+        }}
+      />
+      }
+    </View>
+  );
+}
+
 
 const initialLayout = { width: Dimensions.get('window').width };  //选项卡配置
 
@@ -195,6 +235,8 @@ export default function MyTravelsScreen() {
   const [routes] = useState([
     { key: 'first', title: '我的游记' },
     { key: 'second', title: '我的收藏' },
+    { key: 'third', title: '我的点赞' },
+    { key: 'fourth', title: '我的草稿' },
   ]);
   const [myTravels, setMyTravels] = useState([]);  //存放我的游记数据
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
@@ -222,7 +264,7 @@ export default function MyTravelsScreen() {
       };
       if (response2.data.result) {
         
-        const formattedData = response2.data.result.map(travel => {
+        const formattedCollectedData = response2.data.result.map(travel => {
         // 格式化数据
         const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
         return {
@@ -237,7 +279,7 @@ export default function MyTravelsScreen() {
       });
       // console.log(formattedData);
 
-      setCollectedTravels(formattedData);
+      setCollectedTravels(formattedCollectedData);
 
       }
       setIsLoading(false);
@@ -262,6 +304,8 @@ export default function MyTravelsScreen() {
         return <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       case 'second':
         return <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
+      case 'third':
+        return <ThirdRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       default:
         return null;
     }
@@ -275,8 +319,8 @@ export default function MyTravelsScreen() {
       inactiveColor="gray"
       indicatorStyle={{
         backgroundColor: "rgb(34,150,243)",
-        width: '5%',
-        marginLeft: '16.5%',
+        width: '10%',
+        marginLeft: '5.5%',
       }}
       style={{
         backgroundColor: 'white',
