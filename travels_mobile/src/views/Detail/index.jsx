@@ -11,10 +11,10 @@ import { getToken } from '../../util/tokenRelated'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
-import { Dialog, Portal } from 'react-native-paper';
 import moment from 'moment';
 import { Modal } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import MyDialog from '../../components/myDialog';
 
 const DetailScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();  //redux状态修改
@@ -253,30 +253,16 @@ const DetailScreen = ({ navigation, route }) => {
     <View style={{ flexDirection: 'column' }}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      <Portal >
-        {/* 删除对话框 */}
-        <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
-          <Dialog.Title style={styles.dialogTitleStyle}>取消收藏</Dialog.Title>
-          <Dialog.Content style={styles.dialogContentStyle}>
-            <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10, borderTopColor: '#D3D3D3', borderTopWidth: 1, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
-            <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: '#D3D3D3', height: 50, justifyContent: 'center', alignItems: 'center', }}>
-              <TouchableOpacity style={{ width: 150, height: 50, justifyContent: 'center', alignItems: 'center' }} onPress={hideDialog}>
-                <Text style={{ color: 'grey', fontSize: 18 }}>取消</Text>
-              </TouchableOpacity>
-            </View>
-            {/* 取消收藏 */}
-            <TouchableOpacity style={{
-              flex: 1, height: 50, justifyContent: 'center',
-              alignItems: 'center',
-            }} onPress={() => cancelCollected(cardId)}>
-              <Text style={{ color: '#d32f2f', fontSize: 18 }}>确定</Text>
-            </TouchableOpacity>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-
+      <MyDialog 
+        visible = {visible}
+        onDismiss = {hideDialog}
+        titleText = "取消收藏"
+        dialogText = "您确定不再收藏这篇游记吗？"
+        cancelText = "取消"
+        confirmText = "确认"
+        handleCancel = {hideDialog}
+        handleConfirm = {() => cancelCollected(cardId)}
+      />
       <ScrollView>
         {/* 滚动视图 */}
         {travelDetail ? (
@@ -485,18 +471,6 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-  },
-  dialogStyle: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 0,
-  },
-  dialogTitleStyle: {
-    color: 'black',
-  },
-  dialogContentStyle: {
-    color: 'grey',
-    marginBottom: 10,
   },
 })
 

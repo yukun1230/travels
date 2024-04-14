@@ -7,7 +7,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
-
+import MyDialog from '../../components/myDialog';
 
 const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchTravels }) => {
   const navigation = useNavigation();
@@ -47,26 +47,15 @@ const MyLikeCard = ({ id, imageUrl, title, content, userAvatar, nickname, fetchT
 
   return (
     <Card style={styles.card}>
-      <Portal >
-        {/* 取消收藏对话框 */}
-        <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
-          <Dialog.Title style={styles.dialogTitleStyle}>取消收藏</Dialog.Title>
-          <Dialog.Content style={styles.dialogContentStyle}>
-            <Text style={{ fontSize: 16 }}>您确定不再收藏这篇游记吗？</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10,borderTopColor:'#D3D3D3',borderTopWidth:1,flexDirection:'row',paddingBottom: 0,paddingHorizontal: 0,height:50}}>
-            <View style={{flex:1,borderRightWidth:1,borderRightColor:'#D3D3D3',height:50, justifyContent: 'center',alignItems: 'center',}}>
-              <TouchableOpacity style={{width:150,height:50, justifyContent: 'center',alignItems: 'center'}} onPress={hideDialog}>
-                <Text style={{ color: 'grey',fontSize:18 }}>取消</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={{flex:1,height:50,justifyContent: 'center',
-            alignItems: 'center',}} onPress={handleCancelCollect}>
-              <Text style={{ color: '#d32f2f',fontSize:18 }}>确认</Text>
-            </TouchableOpacity>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <MyDialog 
+        visible={visible}
+        onDismiss={hideDialog}
+        handleCancel={handleCancelCollect}
+        titleText="取消收藏"
+        dialogText="您确定不再收藏这篇游记吗？"
+        cancelText="取消"
+        confirmText="确认"
+      />
       <View style={styles.topContainer}>
         <Image
           source={{ uri: imageUrl }}

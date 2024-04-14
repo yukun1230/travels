@@ -24,6 +24,7 @@ import placeList from '../AddTravels/placeList';
 import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import MyDialog from '../../components/myDialog';
 
 export default editTravelScreen = ({ route }) => {
   const [image, setImage] = useState([]); // 数组来保存图片uri

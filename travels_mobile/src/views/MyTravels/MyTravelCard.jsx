@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Card, Title, Paragraph, Dialog, Portal } from 'react-native-paper';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { getToken } from '../../util/tokenRelated';
 import axios from 'axios';
-import { NGROK_URL } from '../../config/ngrok'
+import { NGROK_URL } from '../../config/ngrok';
 import { AntDesign } from '@expo/vector-icons';
+import MyDialog from '../../components/myDialog';
 
 const MyTravelCard = ({ id, photo, title, content, status, location, rejectedReason, fetchTravels }) => {
   const navigation = useNavigation();
@@ -56,50 +57,26 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
 
   return (
     <Card style={styles.card}>
-      <Portal >
-        {/* 删除对话框 */}
-        <Dialog visible={visible} onDismiss={hideDialog} style={styles.dialogStyle}>
-          <Dialog.Title style={styles.dialogTitleStyle}>删除确认</Dialog.Title>
-          <Dialog.Content style={styles.dialogContentStyle}>
-            <Text style={{ fontSize: 16 }}>您确定要删除这篇游记吗？</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10, borderTopColor: 'grey', borderTopWidth: 0.5, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
-            <View style={{ flex: 1, borderRightWidth: 0.5, borderRightColor: 'grey', height: 50, justifyContent: 'center', alignItems: 'center', }}>
-              <TouchableOpacity style={{ width: 150, height: 50, justifyContent: 'center', alignItems: 'center' }} onPress={hideDialog}>
-                <Text style={{ color: 'grey', fontSize: 18 }}>取消</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={{
-              flex: 1, height: 50, justifyContent: 'center',
-              alignItems: 'center',
-            }} onPress={handleDelete}>
-              <Text style={{ color: '#d32f2f', fontSize: 18 }}>确认</Text>
-            </TouchableOpacity>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <Portal >
-        {/* 审核未通过对话框*/}
-        <Dialog visible={rejectVisible} onDismiss={hideReject} style={styles.dialogStyle}>
-          <Dialog.Title style={styles.dialogTitleStyle}>未通过审核</Dialog.Title>
-          <Dialog.Content style={styles.dialogContentStyle}>
-            <Text style={{ fontSize: 16 }}>原因: {rejectedReason}</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={{ marginTop: -10, borderTopColor: 'grey', borderTopWidth: 0.5, flexDirection: 'row', paddingBottom: 0, paddingHorizontal: 0, height: 50 }}>
-            <View style={{ flex: 1, borderRightWidth: 0.5, borderRightColor: 'grey', height: 50, justifyContent: 'center', alignItems: 'center', }}>
-              <TouchableOpacity style={{ width: 150, height: 50, justifyContent: 'center', alignItems: 'center' }} onPress={hideReject}>
-                <Text style={{ color: 'grey', fontSize: 18 }}>取消</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={{
-              flex: 1, height: 50, justifyContent: 'center',
-              alignItems: 'center',
-            }} onPress={() => { navigation.navigate('编辑游记', { ...CardData }); hideReject(); }}>
-              <Text style={{ color: '#007BFF', fontSize: 18 }}>重新编辑</Text>
-            </TouchableOpacity>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <MyDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        titleText="删除确认"
+        dialogText="您确定要删除这篇游记吗？"
+        cancelText="取消"
+        confirmText="确认"
+        handleCancel={hideDialog}
+        handleConfirm={handleDelete}
+      />
+      <MyDialog
+        visible={rejectVisible}
+        onDismiss={hideReject}
+        titleText="未通过审核"
+        dialogText={`原因: ${rejectedReason}`}
+        cancelText="取消"
+        confirmText="重新编辑"
+        handleCancel={hideReject}
+        handleConfirm={() => { navigation.navigate('编辑游记', { ...CardData }); hideReject(); }}
+      />
       <View style={styles.topContainer}>
         <Image
           source={{ uri: photo[0].uri }}

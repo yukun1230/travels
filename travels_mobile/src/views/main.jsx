@@ -18,7 +18,7 @@ export default function MainScreen() {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === '游记发布') {
             iconName = focused ? 'add' : 'add-outline';
-          } else if (route.name === '我的游记') {
+          } else if (route.name === '我的') {
             iconName = focused ? 'person' : 'person-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -34,7 +34,7 @@ export default function MainScreen() {
       <Tab.Screen name="游记发布" component={AddTravelsScreen} options={{
         
       }} />
-      <Tab.Screen name="我的游记" component={MyTravelsScreen} options={{
+      <Tab.Screen name="我的" component={MyTravelsScreen} options={{
         headerShown: false,
       }} />
     </Tab.Navigator>

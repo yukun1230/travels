@@ -22,11 +22,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { Picker } from '@react-native-picker/picker';
 import placeList from './placeList';
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-
+import MyDialog from '../../components/myDialog';
+import Toast from 'react-native-toast-message';
 export default addTravelsScreen = () => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
   const [file, setFile] = useState([]); // 数组用于传到后端
@@ -37,12 +37,15 @@ export default addTravelsScreen = () => {
   const [selectedValues, setSelectedValues] = useState([]);  // 选择的数组
   const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
   const [filteredCities, setFilteredCities] = useState([]);  // 城市
+  const [visible, setVisible] = useState(false);  //取消对话框显隐
+  const [isSubmitPhoto, setIsSubmitPhoto] = useState(false);
   const navigation = useNavigation();
   const userInfo = useSelector(state => state.user); // 获取保存的用户信息
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitSuccessful },
   } = useForm({
     defaultValues: {
@@ -50,6 +53,10 @@ export default addTravelsScreen = () => {
       content: ''
     },
   });
+
+  // 控制对话框显隐
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
 
 
   const handleCountryChange = (countryName, index) => {
@@ -127,7 +134,8 @@ export default addTravelsScreen = () => {
 
   useEffect(() => {
     reset(); // 重置
-  }, [isSubmitSuccessful])
+    setHeight(0);
+  }, [isSubmitSuccessful]&&[isSubmitPhoto])
 
   // 删除照片操作
   const deletePhoto = async (uri) => {
@@ -156,7 +164,7 @@ export default addTravelsScreen = () => {
       params.append("country", selectedValues[0]); // 添加位置信息(国家)
       params.append("province", selectedValues[1]); // 添加位置信息(省份)
       params.append("city", selectedValues[2]); // 添加位置信息(城市)
-      params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
+      params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除，4为草稿
       params.append("collectedCount", 0);
       params.append("likedCount", 0);
       await axios.post(NGROK_URL + '/travels/upload', params, {
@@ -179,15 +187,84 @@ export default addTravelsScreen = () => {
       setSelectedValues([]); // 地点清空
       setImage([]); // 回显清空
       setDimension([]); // 图片尺寸清空
-      navigation.navigate("我的游记")
+      setIsSubmitPhoto(!isSubmitPhoto);
+      navigation.navigate("我的")
     } else {
       Alert.alert("您还没有上传图片，请上传图片后再发布");
     }
   };
 
+  const onDraftSubmit = async (data) => {
+    if (file.length > 0) {
+      setIsLoading(true); // 开始加载图标
+      let params = new FormData();
+      for (let item of file) params.append('file', item);// 添加游记的图片
+      for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
+      for (let i = 0; i < dimension.length; i++)  // 添加图片信息
+        params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`);
+      for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
+      params.append("country", selectedValues[0]); // 添加位置信息(国家)
+      params.append("province", selectedValues[1]); // 添加位置信息(省份)
+      params.append("city", selectedValues[2]); // 添加位置信息(城市)
+      params.append("travelState", 4);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除，4为草稿
+      params.append("collectedCount", 0);
+      params.append("likedCount", 0);
+      await axios.post(NGROK_URL + '/travels/upload', params, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
+        }
+      }).then(
+        res => {
+          console.log(res.data);
+          Alert.alert("草稿保存成功");
+          setIsLoading(false);
+        }
+      ).catch(
+        err => {
+          console.log(err);
+          setIsLoading(false);
+        }
+      )
+      setFile([]);  //文件清空
+      setSelectedValues([]); // 地点清空
+      setImage([]); // 回显清空
+      setDimension([]); // 图片尺寸清空
+      setIsSubmitPhoto(!isSubmitPhoto); 
+      navigation.navigate("我的")
+    }
+    else {
+      Alert.alert("您还没有上传图片，请上传图片后再保存草稿");
+    }
+  }
+
   return (
     <>
       {!userInfo.id && <UnLoginScreen />}
+      <MyDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        titleText="存草稿"
+        dialogText="您确定要将这篇游记存草稿？"
+        cancelText="取消"
+        confirmText="确认"
+        handleCancel={hideDialog}
+        handleConfirm={() => {
+          if (!watch("title") || !watch("content")) {
+            Toast.show({
+              type: 'error',
+              text1: "标题和内容不能为空",
+              position: 'top',
+              autoHide: true,
+              visibilityTime: 1500,
+            })
+            hideDialog();
+          } else {
+            handleSubmit(onDraftSubmit)();
+            hideDialog();
+          }
+        }
+        }
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         {userInfo.id && <View style={styles.aboveAll}>
           <LoadingOverlay isVisible={isLoading} />
@@ -315,8 +392,17 @@ export default addTravelsScreen = () => {
                 </Picker>
               </View>
             </Card>}
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)} disable={isLoading ? "true" : "false"}>发布</Button>
+            <View style={{ flexDirection: "row", marginTop: 80 }}>
+              <TouchableOpacity style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}
+                disable={isLoading ? "true" : "false"}
+                // onPress={handleSubmit(onDraftSubmit)}
+                onPress={showDialog}
+              >
+                <Ionicons name="file-tray-full-outline" size={26} />
+                <Text style={{ fontSize: 11 }}>存草稿</Text>
+              </TouchableOpacity>
+              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={
+                handleSubmit(onSubmit)} disable={isLoading ? "true" : "false"}>发布</Button>
             </View>
           </View>
         </View>}
@@ -349,9 +435,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     marginLeft: 10,
     marginRight: 10,
-    marginTop: 60,
-    height: 35,
-    borderRadius: 10,
+    height: 40,
+    borderRadius: 20,
     borderColor: "#2196F3"
   },
   subButton: {
