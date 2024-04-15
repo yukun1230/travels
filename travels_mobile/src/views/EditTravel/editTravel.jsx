@@ -9,7 +9,6 @@ import {
   Image
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
 import React, { useEffect, useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
@@ -17,14 +16,13 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok';
 import '../../util/axios.config';  // 拦截器相关
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { Picker } from '@react-native-picker/picker';
 import placeList from '../AddTravels/placeList';
 import { AntDesign } from '@expo/vector-icons';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import MyDialog from '../../components/myDialog';
 
 export default editTravelScreen = ({ route }) => {
   const [image, setImage] = useState([]); // 数组来保存图片uri
@@ -275,9 +273,7 @@ export default editTravelScreen = ({ route }) => {
               </View>
             ))}
             <View style={styles.icon}>
-              <TouchableOpacity  //添加游记的图标
-                onPress={pickImage}
-              >
+              <TouchableOpacity onPress={pickImage}>
                 <Text style={styles.plus_Text}>+</Text>
               </TouchableOpacity>
             </View>
@@ -396,19 +392,6 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     marginTop: 20
   },
-  aboveTitle: {
-    textAlign: 'center',
-    fontSize: 50,
-    color: THEME_LABEL
-  },
-  loginTitle: {
-    fontSize: 28,
-    fontWeight: '500',
-    color: THEME_LABEL,
-    textAlign: 'center',
-    marginTop: 32,
-    marginBottom: 32
-  },
   submit_Button: {
     flex: 1,
     backgroundColor: '#2196F3',
@@ -418,17 +401,6 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 10,
     borderColor: "#2196F3"
-  },
-  subButton: {
-    marginTop: 15,
-    marginRight: 15,
-    marginLeft: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  subButtonText: {
-    color: "#1500EF",
-    fontSize: 14,
   },
   titleInput: {
     flex: 1,

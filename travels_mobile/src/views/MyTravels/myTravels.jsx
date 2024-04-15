@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect ,Animated } from '@react-navigation/native';
 import WaterfallFlow from 'react-native-waterfall-flow'
@@ -9,7 +9,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
 import { getToken, removeToken } from '../../util/tokenRelated';
 import MyTravelCard from './MyTravelCard'    //我的游记卡片组件
-// import MyLikeCard from './MyLikeCard';     //我的收藏卡片组件
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
@@ -377,18 +376,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   header: {
-
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
     paddingBottom: 0,
     marginTop: 0
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
   },
   nickname: {
     marginLeft: 12,
@@ -401,7 +394,6 @@ const styles = StyleSheet.create({
   },
   tabView: {
     flex: 1,
-
   },
   userInfo: {
     flexDirection: 'row',

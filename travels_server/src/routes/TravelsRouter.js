@@ -10,12 +10,13 @@ const travelController = require('../controllers/TravelController')
 // mobile---一个中间件,用于验证token
 const auth = async (req, res, next) => {
   try {
-    console.log(req.headers.token)
+    // console.log(req.headers.token)
     const { id } = jwt.verify(req.headers.token, SECRET);  // 这个操作需要时间
     req.user = await User.findById(id, { username: 1, avatar: 1, nickname: 1 });
     next();
   } catch (e) {
-    next();
+    return res.send({message:"token过期了~"});
+    // next();
   }
 }
 

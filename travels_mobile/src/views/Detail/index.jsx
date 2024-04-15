@@ -5,9 +5,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import { NGROK_URL } from '../../config/ngrok'
+import { NGROK_URL } from '../../config/ngrok';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { getToken } from '../../util/tokenRelated'
+import { getToken } from '../../util/tokenRelated';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
 import Toast from 'react-native-toast-message';
@@ -27,7 +27,7 @@ const DetailScreen = ({ navigation, route }) => {
   const [photoDetail, setPhoteDtail] = useState([]);
   const [isRequesting, setIsRequesting] = useState(false);  //请求状态控制,防止多次点赞收藏请求
   const [visible, setVisible] = useState(false);  //取消收藏对话框显隐
-  const [showImage, setShowImage] = useState(false)
+  const [showImage, setShowImage] = useState(false);
 
   // 控制对话框显隐
   const showDialog = () => setVisible(true);
@@ -35,7 +35,6 @@ const DetailScreen = ({ navigation, route }) => {
     setIsRequesting(false);
     setVisible(false)
   };
-
 
   useEffect(() => {
     // 进入页面发请求
@@ -65,15 +64,15 @@ const DetailScreen = ({ navigation, route }) => {
         setTravelDetail(res.data.travelDetail);
         navigation.setOptions({
           headerLeft: () => (
-            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10, marginTop: -16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10, marginLeft: -15 }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <AntDesign name="left" size={24} color="black" />
               </TouchableOpacity>
               <Image
                 source={{ uri: res.data.travelDetail.userInfo.avatar }}
-                style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 15 }}
+                style={{ width: 38, height: 38, borderRadius: 19, marginLeft: 15 }}
               />
-              <Text style={{ fontSize: 18, marginLeft: 15 }}>{res.data.travelDetail.userInfo.nickname}</Text>
+              <Text style={{ fontSize: 18, marginLeft: 12 }}>{res.data.travelDetail.userInfo.nickname}</Text>
             </View>
           ),
         });
@@ -100,7 +99,7 @@ const DetailScreen = ({ navigation, route }) => {
 
   const handleShare = () => {
     // 分享功能
-    const uri = userInfo.nickname + '给你分享了一篇游记,快来看看吧~    ' + 'http://5fvskc9y2ble.xiaomiqiu.com/public/share/index.html?id=' + cardId;
+    const uri = `【${userInfo.nickname}】给您分享了一篇游记,快来看看吧~\n http://5fvskc9y2ble.xiaomiqiu.com/public/share/index.html?id=${cardId}`;
     Share.share({
       message: uri,
     }, {
@@ -253,15 +252,15 @@ const DetailScreen = ({ navigation, route }) => {
     <View style={{ flexDirection: 'column' }}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      <MyDialog 
-        visible = {visible}
-        onDismiss = {hideDialog}
-        titleText = "取消收藏"
-        dialogText = "您确定不再收藏这篇游记吗？"
-        cancelText = "取消"
-        confirmText = "确认"
-        handleCancel = {hideDialog}
-        handleConfirm = {() => cancelCollected(cardId)}
+      <MyDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        titleText="取消收藏"
+        dialogText="您确定不再收藏这篇游记吗？"
+        cancelText="取消"
+        confirmText="确认"
+        handleCancel={hideDialog}
+        handleConfirm={() => cancelCollected(cardId)}
       />
       <ScrollView>
         {/* 滚动视图 */}
@@ -276,14 +275,14 @@ const DetailScreen = ({ navigation, route }) => {
               >
                 {travelDetail.photo.map((photo, index) => (
                   <View style={styles.slide} key={index} >
-                    <TouchableOpacity onPress={()=>setShowImage(!showImage)} style={styles.image_contain} activeOpacity={1}>
+                    <TouchableOpacity onPress={() => setShowImage(!showImage)} style={styles.image_contain} activeOpacity={1}>
                       <Image source={{ uri: photo.url }} style={styles.image} />
                     </TouchableOpacity>
                   </View>
                 ))}
               </Swiper>
               <Modal visible={showImage} transparent={false} >
-                <ImageViewer imageUrls={photoDetail} onClick={()=>setShowImage(!showImage)} saveToLocalByLongPress={false} />
+                <ImageViewer imageUrls={photoDetail} onClick={() => setShowImage(!showImage)} saveToLocalByLongPress={false} />
               </Modal>
             </View>
 

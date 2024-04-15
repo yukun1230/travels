@@ -41,9 +41,6 @@ export default EditUserInfoScreen = () => {
           />
         </TouchableOpacity>
 
-        
-        
-
       </View>
 
       <View style={{marginTop:'8%'}}>

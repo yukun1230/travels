@@ -3,19 +3,15 @@ const mongoose = require('../db/mongodb')
 // 建立游记表(结构)
 const TravelScheme = new mongoose.Schema({
   photo: [{ // 游记照片
-    uri: String, 
+    uri: String,
     height: Number,
     width: Number
   }],
-  title: {  // 游记标题
-    type: String,
-    required: true,
-    unique: true
-  },
+  title: String, // 游记标题
   content: {  // 游记内容
     type: String,
     required: true
-  }, 
+  },
   location: {
     country: String,
     province: String,
