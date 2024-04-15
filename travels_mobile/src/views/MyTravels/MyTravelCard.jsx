@@ -18,6 +18,8 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
     statusInfo = '未通过';
   } else if (status === 2) {
     statusInfo = '待审核';
+  } else if (status === 4) {
+    statusInfo = '待发布';
   }
   // 卡片数据
   const CardData = {
@@ -120,6 +122,10 @@ const MyTravelCard = ({ id, photo, title, content, status, location, rejectedRea
             </View>}
 
           {status === 2 && <View style={[styles.statusContainer, { backgroundColor: "rgb(255, 204, 0)" }]}>
+            <Text style={styles.status}>{statusInfo}</Text>
+          </View>}
+
+          {status === 4 && <View style={[styles.statusContainer, { backgroundColor: "grey" }]}>
             <Text style={styles.status}>{statusInfo}</Text>
           </View>}
         </View>
