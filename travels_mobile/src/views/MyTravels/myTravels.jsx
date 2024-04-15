@@ -183,21 +183,21 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
 }
 
 
-const ThirdRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
+const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
   // 我的收藏路由渲染
   const [refreshing, setRefreshing] = useState(false);  //下拉刷新
   const listRef = useRef(null);
   return (
     <View style={[styles.scene]}>
-      {collectedTravels.length===0 ? 
-         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
+      {likedTravels.length===0 ? 
+         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有点赞过游记哦~</Text></View>
       : 
         <WaterfallFlow
         ref={listRef}
         style={{ flex: 1, marginTop: 0,paddingTop:6 }}
         contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
         ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
-        data={collectedTravels}  //驱动数据
+        data={likedTravels}  //驱动数据
         numColumns={2}  //列数
         initialNumToRender={10}
         scrollEventThrottle={16}
@@ -224,6 +224,45 @@ const ThirdRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
   );
 }
 
+const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
+  // 我的游记路由
+  // 根据条件判断要渲染的内容
+  const [refreshing, setRefreshing] = useState(false);  //下拉刷新
+  const content = draftTravels.length !== 0 ? (
+    // 根据传进来的myTravels数据映射渲染
+    draftTravels.map((travel) => (
+      <MyTravelCard
+        key={travel._id}
+        id={travel._id}
+        photo={travel.photo}
+        title={travel.title}
+        content={travel.content}
+        status={travel.travelState}
+        location={travel.location ? travel.location : {}}
+        rejectedReason={travel.rejectedReason ? travel.rejectedReason : ''}
+        fetchTravels={fetchTravels}
+      />
+    ))
+  ) : (
+    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有发布过游记哦，快去发布一篇吧~</Text></View>
+  );
+
+  return (
+    <View style={[styles.scene]}>
+      <ScrollView refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={fetchTravels}
+          tintColor="#000"
+          colors={["#000"]}
+        />}
+      >
+        {content}
+      </ScrollView>
+    </View>
+  );
+};
+
 
 const initialLayout = { width: Dimensions.get('window').width };  //选项卡配置
 
@@ -239,6 +278,8 @@ export default function MyTravelsScreen() {
   ]);
   const [myTravels, setMyTravels] = useState([]);  //存放我的游记数据
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
+  const [likedTravels, setlikedTravels] = useState([]);  //存放我的点赞数据
+  const [draftTravels, setDraftTravels] = useState([]);  //存放我的草稿数据
   const [isLoading, setIsLoading] = useState(true);  //加载态
   const window = Dimensions.get('window')
 
@@ -257,7 +298,14 @@ export default function MyTravelsScreen() {
       const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
         headers: { 'token': token },
       });
-      // console.log(response2.data.result[0].photo);
+      const response3 = await axios.get(`${NGROK_URL}/travels/getlikedTravels`, {
+        headers: { 'token': token },
+      });
+      const response4 = await axios.get(`${NGROK_URL}/travels/getDraftTravels`, {
+        headers: { 'token': token },
+      });
+      console.log('草稿',response4.data);
+      console.log('游记',response1.data);
       if (response1.data.MyTravels) {
         setMyTravels(response1.data.MyTravels);
       };
@@ -265,22 +313,42 @@ export default function MyTravelsScreen() {
         
         const formattedCollectedData = response2.data.result.map(travel => {
         // 格式化数据
-        const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
-        return {
-          _id: travel._id,
-          uri: firstPhoto.uri,
-          title: travel.title,
-          width: Math.floor(window.width / 2),
-          height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
-          avatar: travel.userInfo.avatar,
-          nickname: travel.userInfo.nickname,
-        };
-      });
-      // console.log(formattedData);
-
-      setCollectedTravels(formattedCollectedData);
-
+          const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+          return {
+            _id: travel._id,
+            uri: firstPhoto.uri,
+            title: travel.title,
+            width: Math.floor(window.width / 2),
+            height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+            avatar: travel.userInfo.avatar,
+            nickname: travel.userInfo.nickname,
+          };
+        });
+        // console.log(formattedData);
+        setCollectedTravels(formattedCollectedData);
       }
+      if (response3.data.result) {
+        const formattedlikedData = response3.data.result.map(travel => {
+        // 格式化数据
+          const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+          return {
+            _id: travel._id,
+            uri: firstPhoto.uri,
+            title: travel.title,
+            width: Math.floor(window.width / 2),
+            height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+            avatar: travel.userInfo.avatar,
+            nickname: travel.userInfo.nickname,
+          };
+        });
+        // console.log(formattedData);
+        setlikedTravels(formattedlikedData);
+      }
+
+      if (response4.data.MyTravels) {
+        setDraftTravels(response4.data.MyTravels);
+      };
+
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -304,7 +372,9 @@ export default function MyTravelsScreen() {
       case 'second':
         return <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       case 'third':
-        return <ThirdRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
+        return <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
+      case 'fourth':
+        return <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />;
       default:
         return null;
     }
