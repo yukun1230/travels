@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity
 import { useNavigation, useFocusEffect, Animated } from '@react-navigation/native';
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { TabView, TabBar } from 'react-native-tab-view';
+
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -92,17 +93,9 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 
   return (
     <View style={[styles.scene]}>
-      <ScrollView refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={fetchTravels}
-          tintColor="#000"
-          colors={["#000"]}
-        />}
-        nestedScrollEnabled={true}
-      >
+      
         {content}
-      </ScrollView>
+
     </View>
   );
 };
@@ -155,6 +148,7 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
         :
         <WaterfallFlow
           ref={listRef}
+          nestedScrollEnabled={true}
           style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
           contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
           ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
@@ -197,6 +191,7 @@ const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
         :
         <WaterfallFlow
           ref={listRef}
+          nestedScrollEnabled={true}
           style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
           contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
           ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
@@ -252,17 +247,9 @@ const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
 
   return (
     <View style={[styles.scene]}>
-      <ScrollView refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={fetchTravels}
-          tintColor="#000"
-          colors={["#000"]}
-        />}
-        nestedScrollEnabled={true}
-      >
+      
         {content}
-      </ScrollView>
+
     </View>
   );
 };
@@ -295,6 +282,7 @@ export default function MyTravelsScreen() {
         setIsLoading(false);
         return
       }
+      
       const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
         headers: { 'token': token },
       });
@@ -359,6 +347,106 @@ export default function MyTravelsScreen() {
     }
   };
 
+// const fetchTravels = async () => {
+//     // 从后端获取我的游记和我的收藏数据存入state状态
+//     // console.log('路由',index);
+//     try {
+//       const token = await getToken();
+//       if (!token) {
+//         setIsLoading(false);
+//         return
+//       }
+      
+//       if(index===0){
+//         const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+//         headers: { 'token': token },
+//       });
+//       console.log(index);
+//       if (response1.data.MyTravels) {
+//         setMyTravels(response1.data.MyTravels);
+//       };
+//       }
+
+//       if(index===1){
+//         const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
+//         headers: { 'token': token },
+//       });
+//       console.log(index);
+//        if (response2.data.result) {
+        
+//         const formattedCollectedData = response2.data.result.map(travel => {
+//         // 格式化数据
+//           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+//           return {
+//             _id: travel._id,
+//             uri: firstPhoto.uri,
+//             title: travel.title,
+//             width: Math.floor(window.width / 2),
+//             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+//             avatar: travel.userInfo.avatar,
+//             nickname: travel.userInfo.nickname,
+//           };
+//         });
+//         // console.log(formattedData);
+//         setCollectedTravels(formattedCollectedData);
+//       }
+//     }
+
+//     if(index===2){
+// const response3 = await axios.get(`${NGROK_URL}/travels/getlikedTravels`, {
+//         headers: { 'token': token },
+//       });
+//       console.log(index);
+// if (response3.data.result) {
+//         const formattedlikedData = response3.data.result.map(travel => {
+//         // 格式化数据
+//           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+//           return {
+//             _id: travel._id,
+//             uri: firstPhoto.uri,
+//             title: travel.title,
+//             width: Math.floor(window.width / 2),
+//             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+//             avatar: travel.userInfo.avatar,
+//             nickname: travel.userInfo.nickname,
+//           };
+//         });
+//         // console.log(formattedData);
+//         setlikedTravels(formattedlikedData);
+//       }
+//     }
+
+//     if(index===4){
+// const response4 = await axios.get(`${NGROK_URL}/travels/getDraftTravels`, {
+//         headers: { 'token': token },
+//       });
+//       console.log(index);
+//       if (response4.data.MyTravels) {
+//         setDraftTravels(response4.data.MyTravels);
+//       };
+//     }
+      
+      
+      
+      
+//       // console.log('草稿',response4.data);
+//       // console.log('游记',response1.data);
+
+     
+      
+
+      
+
+//       setIsLoading(false);
+//     } catch (err) {
+//       setIsLoading(false);
+//       console.error(err);
+//     }
+//   };
+
+
+
+
   useFocusEffect(
     // 获取路由焦点自动调用fetchTravels更新状态数据
     useCallback(() => {
@@ -409,11 +497,25 @@ export default function MyTravelsScreen() {
   );
 
   const MyHeader = () => {
-    return <View style={{
-      height: 200,
-      width: '100%',
-      backgroundColor: '#2196f3',
-    }} />
+    return (
+    <View>
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <AvatarMenu></AvatarMenu>
+          <Text style={styles.nickname}>{userInfo.nickname}</Text>
+        </View>
+        <TouchableOpacity
+          // 新增按钮
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          onPress={() => navigation.navigate('游记发布')}>
+          <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
+          <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
+        </TouchableOpacity>
+        
+      </View>
+      <View style={{height:50,backgroundColor:'pink'}}><Text>个人信息</Text></View>
+    </View>)
+    
   }
 
   return (
@@ -434,16 +536,17 @@ export default function MyTravelsScreen() {
         </TouchableOpacity>
       </View>
       {/* 根据是否登录判断是否渲染选项卡组件 */}
-      <Tabs.Container renderHeader={MyHeader}>
-        <Tabs.Tab name="A">
+      <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
+        <Tabs.Tab name="我的游记">
           <Tabs.ScrollView>
-            <View style={[styles.box, styles.boxA]} />
-            <View style={[styles.box, styles.boxB]} />
+            <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        <Tabs.Tab name="B">
-          <View style={[styles.box, styles.boxA]} />
-          <View style={[styles.box, styles.boxB]} />
+        <Tabs.Tab name="我的收藏">
+          <Tabs.ScrollView>
+            <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+          </Tabs.ScrollView>
+          
           {/* {userInfo.id ?
             <TabView
               // 选项卡组件
@@ -457,6 +560,17 @@ export default function MyTravelsScreen() {
             <UnLoginScreen></UnLoginScreen>// 未登录显示组件
           } */}
         </Tabs.Tab>
+        <Tabs.Tab name="我的点赞">
+          <Tabs.ScrollView>
+            <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+        <Tabs.Tab name="我的草稿">
+          <Tabs.ScrollView>
+            <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+
       </Tabs.Container>
     </View>
   );

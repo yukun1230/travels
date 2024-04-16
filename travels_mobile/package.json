@@ -41,7 +41,7 @@
     "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal-dropdown": "^1.0.2",
-    "react-native-pager-view": "6.2.3",
+    "react-native-pager-view": "^6.3.0",
     "react-native-paper": "^5.12.3",
     "react-native-reanimated": "3.6.2",
     "react-native-safe-area-context": "4.8.2",
