@@ -23,6 +23,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     select: false
   },
+  gender: String,
+  introduction: String,
   createTime: {
     type: Date,
     default: Date.now

@@ -420,7 +420,7 @@ export default function MyTravelsScreen() {
     <View style={styles.container}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      {/* <View style={styles.header}>
+      <View style={styles.header}>
         <View style={styles.userInfo}>
           <AvatarMenu></AvatarMenu>
           <Text style={styles.nickname}>{userInfo.nickname}</Text>
@@ -432,7 +432,7 @@ export default function MyTravelsScreen() {
           <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
-      </View> */}
+      </View>
       {/* 根据是否登录判断是否渲染选项卡组件 */}
       <Tabs.Container renderHeader={MyHeader}>
         <Tabs.Tab name="A">

@@ -61,15 +61,19 @@ const auth = async (req, res, next) => {
 
 UsersRouter.get('/getUserInfo', auth, async (req, res) => {
   if (!!req.user) {
-    const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels').exec()
+    const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels gender introduction').exec()
     res.send(userInfo);
   } else {
     res.send({ message: 'token无效' })
   }
 })
 
-//测试接口，用于上传头像
+// 测试接口，用于上传头像
 UsersRouter.post('/upload/avatar', userController.upload)
+
+// 用于更新用户信息
+UsersRouter.post('/update', userController.update)
+
 // 注册接口
 UsersRouter.post('/register', userController.register)
 

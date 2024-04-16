@@ -9,7 +9,6 @@ import {
   Image
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
 import React, { useEffect, useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
@@ -417,19 +416,6 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     marginTop: 20
   },
-  aboveTitle: {
-    textAlign: 'center',
-    fontSize: 50,
-    color: THEME_LABEL
-  },
-  loginTitle: {
-    fontSize: 28,
-    fontWeight: '500',
-    color: THEME_LABEL,
-    textAlign: 'center',
-    marginTop: 32,
-    marginBottom: 32
-  },
   submit_Button: {
     flex: 1,
     backgroundColor: '#2196F3',
@@ -438,17 +424,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderColor: "#2196F3"
-  },
-  subButton: {
-    marginTop: 15,
-    marginRight: 15,
-    marginLeft: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  subButtonText: {
-    color: "#1500EF",
-    fontSize: 14,
   },
   titleInput: {
     flex: 1,

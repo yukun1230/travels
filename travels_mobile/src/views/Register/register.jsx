@@ -46,7 +46,7 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(0)
   const [showPasswordSure, setShowPasswordSure] = useState(0);
   const [image, setImage] = useState(null);
-  const [file, setFile] = useState({ file: null })
+  const [file, setFile] = useState({ file: null });
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
