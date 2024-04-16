@@ -3469,11 +3469,7 @@ deprecated-react-native-prop-types@^5.0.0:
 
 dequal@2.0.3:
   version "2.0.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.3.tgz#2644214f1997d39ed0ee0ece72335490a7ac67be"
-=======
   resolved "https://registry.npmmirror.com/dequal/-/dequal-2.0.3.tgz#2644214f1997d39ed0ee0ece72335490a7ac67be"
->>>>>>> 27f14be0971a1cb55ff35d6ee5e96839713a249e
   integrity sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==
 
 destroy@1.2.0:
@@ -6270,11 +6266,7 @@ react-native-autocomplete-select@^1.0.0:
 
 react-native-collapsible-tab-view@^7.0.1:
   version "7.0.1"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/react-native-collapsible-tab-view/-/react-native-collapsible-tab-view-7.0.1.tgz#8a62439bf65f99e627358dbaf6eac3dc95589fd2"
-=======
   resolved "https://registry.npmmirror.com/react-native-collapsible-tab-view/-/react-native-collapsible-tab-view-7.0.1.tgz#8a62439bf65f99e627358dbaf6eac3dc95589fd2"
->>>>>>> 27f14be0971a1cb55ff35d6ee5e96839713a249e
   integrity sha512-vAYG8vnu59fnnaqd59Vr1kNZ+VViMVnGvfoBB0SGgp0PXsMgBSax+9AavM/DZUjSpycfkA7teZx9XtYdt2ytSA==
   dependencies:
     use-deep-compare "^1.1.0"
@@ -7594,11 +7586,7 @@ url-join@4.0.0:
 
 use-deep-compare@^1.1.0:
   version "1.2.1"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/use-deep-compare/-/use-deep-compare-1.2.1.tgz#076c9865868d98509e619206e27bc8eff0b8ed7c"
-=======
   resolved "https://registry.npmmirror.com/use-deep-compare/-/use-deep-compare-1.2.1.tgz#076c9865868d98509e619206e27bc8eff0b8ed7c"
->>>>>>> 27f14be0971a1cb55ff35d6ee5e96839713a249e
   integrity sha512-JTnOZAr0fq1ix6CQ4XANoWIh03xAiMFlP/lVAYDdAOZwur6nqBSdATn1/Q9PLIGIW+C7xmFZBCcaA4KLDcQJtg==
   dependencies:
     dequal "2.0.3"
