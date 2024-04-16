@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
-import { useNavigation, useFocusEffect ,Animated } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, Animated } from '@react-navigation/native';
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { TabView, TabBar } from 'react-native-tab-view';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -13,7 +13,9 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
 import LoadingOverlay from '../../components/LoadingOverlay';
+import { Tabs } from 'react-native-collapsible-tab-view'
 
+const HEADER_HEIGHT = 250
 
 const AvatarMenu = () => {
   // 头像菜单组件
@@ -97,6 +99,7 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
           tintColor="#000"
           colors={["#000"]}
         />}
+        nestedScrollEnabled={true}
       >
         {content}
       </ScrollView>
@@ -117,7 +120,7 @@ const Card = ({ item }) => {
       <TouchableOpacity
         style={{ backgroundColor: '#fff', flex: 1 }}
         activeOpacity={0.5}  // 被触摸操作时的透明度（0-1）
-        onPress={() => {onPressCard(),console.log(item.uri,item.width,item.height);}}   // 跳转详情页
+        onPress={() => onPressCard()}   // 跳转详情页
       >
         <Image
           source={{ uri: item.uri }}
@@ -147,36 +150,36 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
   const listRef = useRef(null);
   return (
     <View style={[styles.scene]}>
-      {collectedTravels.length===0 ? 
-         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
-      : 
+      {collectedTravels.length === 0 ?
+        <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有收藏任何游记哦，快去收藏一篇吧~</Text></View>
+        :
         <WaterfallFlow
-        ref={listRef}
-        style={{ flex: 1, marginTop: 0,paddingTop:6 }}
-        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-        ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
-        data={collectedTravels}  //驱动数据
-        numColumns={2}  //列数
-        initialNumToRender={10}
-        scrollEventThrottle={16}
-        refreshing={refreshing}
-        onRefresh={() => fetchTravels()}  //触发刷新
-        renderItem={({ item, index, columnIndex }) => {
-          return (
-            <View
-              style={{
-                // 内边距设置
-                paddingLeft: columnIndex === 0 ? 12 : 6,
-                paddingRight: columnIndex === 0 ? 6 : 12,
-                paddingTop: 6,
-                paddingBottom: 6
-              }}
-            >
-              <Card item={item}/>
-            </View>
-          );
-        }}
-      />
+          ref={listRef}
+          style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
+          contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+          ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
+          data={collectedTravels}  //驱动数据
+          numColumns={2}  //列数
+          initialNumToRender={10}
+          scrollEventThrottle={16}
+          refreshing={refreshing}
+          onRefresh={() => fetchTravels()}  //触发刷新
+          renderItem={({ item, index, columnIndex }) => {
+            return (
+              <View
+                style={{
+                  // 内边距设置
+                  paddingLeft: columnIndex === 0 ? 12 : 6,
+                  paddingRight: columnIndex === 0 ? 6 : 12,
+                  paddingTop: 6,
+                  paddingBottom: 6
+                }}
+              >
+                <Card item={item} />
+              </View>
+            );
+          }}
+        />
       }
     </View>
   );
@@ -189,36 +192,36 @@ const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
   const listRef = useRef(null);
   return (
     <View style={[styles.scene]}>
-      {likedTravels.length===0 ? 
-         <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有点赞过游记哦~</Text></View>
-      : 
+      {likedTravels.length === 0 ?
+        <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有点赞过游记哦~</Text></View>
+        :
         <WaterfallFlow
-        ref={listRef}
-        style={{ flex: 1, marginTop: 0,paddingTop:6 }}
-        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-        ListFooterComponent={<View style={{ paddingBottom:10,alignSelf:'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
-        data={likedTravels}  //驱动数据
-        numColumns={2}  //列数
-        initialNumToRender={10}
-        scrollEventThrottle={16}
-        refreshing={refreshing}
-        onRefresh={() => fetchTravels()}  //触发刷新
-        renderItem={({ item, index, columnIndex }) => {
-          return (
-            <View
-              style={{
-                // 内边距设置
-                paddingLeft: columnIndex === 0 ? 12 : 6,
-                paddingRight: columnIndex === 0 ? 6 : 12,
-                paddingTop: 6,
-                paddingBottom: 6
-              }}
-            >
-              <Card item={item}/>
-            </View>
-          );
-        }}
-      />
+          ref={listRef}
+          style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
+          contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+          ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
+          data={likedTravels}  //驱动数据
+          numColumns={2}  //列数
+          initialNumToRender={10}
+          scrollEventThrottle={16}
+          refreshing={refreshing}
+          onRefresh={() => fetchTravels()}  //触发刷新
+          renderItem={({ item, index, columnIndex }) => {
+            return (
+              <View
+                style={{
+                  // 内边距设置
+                  paddingLeft: columnIndex === 0 ? 12 : 6,
+                  paddingRight: columnIndex === 0 ? 6 : 12,
+                  paddingTop: 6,
+                  paddingBottom: 6
+                }}
+              >
+                <Card item={item} />
+              </View>
+            );
+          }}
+        />
       }
     </View>
   );
@@ -256,6 +259,7 @@ const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
           tintColor="#000"
           colors={["#000"]}
         />}
+        nestedScrollEnabled={true}
       >
         {content}
       </ScrollView>
@@ -271,10 +275,10 @@ export default function MyTravelsScreen() {
   const navigation = useNavigation();
   const [index, setIndex] = useState(0);  //选项卡路由跳转
   const [routes] = useState([
-    { key: 'first', title: '我的游记' },
-    { key: 'second', title: '我的收藏' },
-    { key: 'third', title: '我的点赞' },
-    { key: 'fourth', title: '我的草稿' },
+    { key: 'first', title: '游记' },
+    { key: 'second', title: '收藏' },
+    { key: 'third', title: '点赞' },
+    { key: 'fourth', title: '草稿' },
   ]);
   const [myTravels, setMyTravels] = useState([]);  //存放我的游记数据
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
@@ -284,8 +288,7 @@ export default function MyTravelsScreen() {
   const window = Dimensions.get('window')
 
   const fetchTravels = async () => {
-    // 从后端获取我的游记和我的收藏数据存入state状态
-    console.log(1);
+    // console.log(1);// 从后端获取我的游记和我的收藏数据存入state状态
     try {
       const token = await getToken();
       if (!token) {
@@ -304,15 +307,15 @@ export default function MyTravelsScreen() {
       const response4 = await axios.get(`${NGROK_URL}/travels/getDraftTravels`, {
         headers: { 'token': token },
       });
-      console.log('草稿',response4.data);
-      console.log('游记',response1.data);
+      // console.log('草稿',response4.data);
+      // console.log('游记',response1.data);
       if (response1.data.MyTravels) {
         setMyTravels(response1.data.MyTravels);
       };
       if (response2.data.result) {
-        
+
         const formattedCollectedData = response2.data.result.map(travel => {
-        // 格式化数据
+          // 格式化数据
           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
           return {
             _id: travel._id,
@@ -329,7 +332,7 @@ export default function MyTravelsScreen() {
       }
       if (response3.data.result) {
         const formattedlikedData = response3.data.result.map(travel => {
-        // 格式化数据
+          // 格式化数据
           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
           return {
             _id: travel._id,
@@ -388,28 +391,36 @@ export default function MyTravelsScreen() {
       inactiveColor="gray"
       indicatorStyle={{
         backgroundColor: "rgb(34,150,243)",
-        width: '10%',
+        width: '8%',
         marginLeft: '5.5%',
       }}
       style={{
         backgroundColor: 'white',
-        borderBottomWidth: 0.1,
         borderColor: 'grey',
-
+        marginTop: 20,
+        borderTopEndRadius: 10,
+        borderTopStartRadius: 10
       }}
       labelStyle={{
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        width: 30
       }}
     />
   );
 
+  const MyHeader = () => {
+    return <View style={{
+      height: 200,
+      width: '100%',
+      backgroundColor: '#2196f3',
+    }} />
+  }
 
   return (
     <View style={styles.container}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      <View style={styles.header}>
-        {/* 头部组件 */}
+      {/* <View style={styles.header}>
         <View style={styles.userInfo}>
           <AvatarMenu></AvatarMenu>
           <Text style={styles.nickname}>{userInfo.nickname}</Text>
@@ -421,20 +432,32 @@ export default function MyTravelsScreen() {
           <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       {/* 根据是否登录判断是否渲染选项卡组件 */}
-      {userInfo.id ?
-        <TabView
-          // 选项卡组件
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={initialLayout}
-          style={styles.tabView}
-          renderTabBar={renderTabBar}
-        /> :
-        <UnLoginScreen></UnLoginScreen>// 未登录显示组件
-      }
+      <Tabs.Container renderHeader={MyHeader}>
+        <Tabs.Tab name="A">
+          <Tabs.ScrollView>
+            <View style={[styles.box, styles.boxA]} />
+            <View style={[styles.box, styles.boxB]} />
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+        <Tabs.Tab name="B">
+          <View style={[styles.box, styles.boxA]} />
+          <View style={[styles.box, styles.boxB]} />
+          {/* {userInfo.id ?
+            <TabView
+              // 选项卡组件
+              navigationState={{ index, routes }}
+              renderScene={renderScene}
+              onIndexChange={setIndex}
+              initialLayout={initialLayout}
+              style={styles.tabView}
+              renderTabBar={renderTabBar}
+            /> :
+            <UnLoginScreen></UnLoginScreen>// 未登录显示组件
+          } */}
+        </Tabs.Tab>
+      </Tabs.Container>
     </View>
   );
 }
@@ -468,5 +491,15 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  box: {
+    height: 800,
+    width: '100%',
+  },
+  boxA: {
+    backgroundColor: 'green',
+  },
+  boxB: {
+    backgroundColor: 'blue',
   },
 });
