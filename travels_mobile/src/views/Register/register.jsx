@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Button from 'apsl-react-native-button'
-import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
-import { NGROK_URL } from '../../config/ngrok'
+import Button from 'apsl-react-native-button';
+import { NGROK_URL } from '../../config/ngrok';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import {
@@ -304,7 +303,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '500',
-    color: THEME_LABEL,
+    color: '#56688a',
     textAlign: 'center',
     marginTop: 10,
     marginBottom: 20
