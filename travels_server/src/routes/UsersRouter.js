@@ -61,7 +61,7 @@ const auth = async (req, res, next) => {
 
 UsersRouter.get('/getUserInfo', auth, async (req, res) => {
   if (!!req.user) {
-    const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels gender introduction').exec()
+    const userInfo = await User.findById(req.user._id, '_id username nickname avatar collectTravels likeTravels gender introduction').exec()
     res.send(userInfo);
   } else {
     res.send({ message: 'token无效' })

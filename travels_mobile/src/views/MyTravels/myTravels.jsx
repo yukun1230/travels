@@ -14,9 +14,7 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { Tabs } from 'react-native-collapsible-tab-view'
-
-const HEADER_HEIGHT = 250
+import { Tabs } from 'react-native-collapsible-tab-view';
 
 const AvatarMenu = () => {
   // 头像菜单组件
@@ -93,8 +91,8 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 
   return (
     <View style={[styles.scene]}>
-      
-        {content}
+
+      {content}
 
     </View>
   );
@@ -148,7 +146,7 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
         :
         <WaterfallFlow
           ref={listRef}
-          nestedScrollEnabled={true}
+          // nestedScrollEnabled={true}
           style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
           contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
           ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
@@ -181,7 +179,7 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
 
 
 const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
-  // 我的收藏路由渲染
+  // 我的点赞路由渲染
   const [refreshing, setRefreshing] = useState(false);  //下拉刷新
   const listRef = useRef(null);
   return (
@@ -191,7 +189,7 @@ const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
         :
         <WaterfallFlow
           ref={listRef}
-          nestedScrollEnabled={true}
+          // nestedScrollEnabled={true}
           style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
           contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
           ListFooterComponent={<View style={{ paddingBottom: 10, alignSelf: 'center' }}><Text style={{ fontSize: 14 }}>没有更多内容了~</Text></View>}
@@ -223,7 +221,7 @@ const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
 }
 
 const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
-  // 我的游记路由
+  // 我的草稿
   // 根据条件判断要渲染的内容
   const [refreshing, setRefreshing] = useState(false);  //下拉刷新
   const content = draftTravels.length !== 0 ? (
@@ -247,8 +245,8 @@ const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
 
   return (
     <View style={[styles.scene]}>
-      
-        {content}
+
+      {content}
 
     </View>
   );
@@ -282,7 +280,7 @@ export default function MyTravelsScreen() {
         setIsLoading(false);
         return
       }
-      
+
       const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
         headers: { 'token': token },
       });
@@ -347,102 +345,96 @@ export default function MyTravelsScreen() {
     }
   };
 
-// const fetchTravels = async () => {
-//     // 从后端获取我的游记和我的收藏数据存入state状态
-//     // console.log('路由',index);
-//     try {
-//       const token = await getToken();
-//       if (!token) {
-//         setIsLoading(false);
-//         return
-//       }
-      
-//       if(index===0){
-//         const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
-//         headers: { 'token': token },
-//       });
-//       console.log(index);
-//       if (response1.data.MyTravels) {
-//         setMyTravels(response1.data.MyTravels);
-//       };
-//       }
+  // const fetchTravels = async () => {
+  //     // 从后端获取我的游记和我的收藏数据存入state状态
+  //     // console.log('路由',index);
+  //     try {
+  //       const token = await getToken();
+  //       if (!token) {
+  //         setIsLoading(false);
+  //         return
+  //       }
 
-//       if(index===1){
-//         const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
-//         headers: { 'token': token },
-//       });
-//       console.log(index);
-//        if (response2.data.result) {
-        
-//         const formattedCollectedData = response2.data.result.map(travel => {
-//         // 格式化数据
-//           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
-//           return {
-//             _id: travel._id,
-//             uri: firstPhoto.uri,
-//             title: travel.title,
-//             width: Math.floor(window.width / 2),
-//             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
-//             avatar: travel.userInfo.avatar,
-//             nickname: travel.userInfo.nickname,
-//           };
-//         });
-//         // console.log(formattedData);
-//         setCollectedTravels(formattedCollectedData);
-//       }
-//     }
+  //       if(index===0){
+  //         const response1 = await axios.get(`${NGROK_URL}/travels/getMyTravels`, {
+  //         headers: { 'token': token },
+  //       });
+  //       console.log(index);
+  //       if (response1.data.MyTravels) {
+  //         setMyTravels(response1.data.MyTravels);
+  //       };
+  //       }
 
-//     if(index===2){
-// const response3 = await axios.get(`${NGROK_URL}/travels/getlikedTravels`, {
-//         headers: { 'token': token },
-//       });
-//       console.log(index);
-// if (response3.data.result) {
-//         const formattedlikedData = response3.data.result.map(travel => {
-//         // 格式化数据
-//           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
-//           return {
-//             _id: travel._id,
-//             uri: firstPhoto.uri,
-//             title: travel.title,
-//             width: Math.floor(window.width / 2),
-//             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
-//             avatar: travel.userInfo.avatar,
-//             nickname: travel.userInfo.nickname,
-//           };
-//         });
-//         // console.log(formattedData);
-//         setlikedTravels(formattedlikedData);
-//       }
-//     }
+  //       if(index===1){
+  //         const response2 = await axios.get(`${NGROK_URL}/travels/getCollectedTravels`, {
+  //         headers: { 'token': token },
+  //       });
+  //       console.log(index);
+  //        if (response2.data.result) {
 
-//     if(index===4){
-// const response4 = await axios.get(`${NGROK_URL}/travels/getDraftTravels`, {
-//         headers: { 'token': token },
-//       });
-//       console.log(index);
-//       if (response4.data.MyTravels) {
-//         setDraftTravels(response4.data.MyTravels);
-//       };
-//     }
-      
-      
-      
-      
-//       // console.log('草稿',response4.data);
-//       // console.log('游记',response1.data);
+  //         const formattedCollectedData = response2.data.result.map(travel => {
+  //         // 格式化数据
+  //           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+  //           return {
+  //             _id: travel._id,
+  //             uri: firstPhoto.uri,
+  //             title: travel.title,
+  //             width: Math.floor(window.width / 2),
+  //             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+  //             avatar: travel.userInfo.avatar,
+  //             nickname: travel.userInfo.nickname,
+  //           };
+  //         });
+  //         // console.log(formattedData);
+  //         setCollectedTravels(formattedCollectedData);
+  //       }
+  //     }
 
-     
-      
+  //     if(index===2){
+  // const response3 = await axios.get(`${NGROK_URL}/travels/getlikedTravels`, {
+  //         headers: { 'token': token },
+  //       });
+  //       console.log(index);
+  // if (response3.data.result) {
+  //         const formattedlikedData = response3.data.result.map(travel => {
+  //         // 格式化数据
+  //           const firstPhoto = travel.photo[0] ? travel.photo[0] : { uri: '', width: 0, height: 0 };
+  //           return {
+  //             _id: travel._id,
+  //             uri: firstPhoto.uri,
+  //             title: travel.title,
+  //             width: Math.floor(window.width / 2),
+  //             height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
+  //             avatar: travel.userInfo.avatar,
+  //             nickname: travel.userInfo.nickname,
+  //           };
+  //         });
+  //         // console.log(formattedData);
+  //         setlikedTravels(formattedlikedData);
+  //       }
+  //     }
 
-      
+  //     if(index===4){
+  // const response4 = await axios.get(`${NGROK_URL}/travels/getDraftTravels`, {
+  //         headers: { 'token': token },
+  //       });
+  //       console.log(index);
+  //       if (response4.data.MyTravels) {
+  //         setDraftTravels(response4.data.MyTravels);
+  //       };
+  //     }
 
-//       setIsLoading(false);
-//     } catch (err) {
-//       setIsLoading(false);
-//       console.error(err);
-//     }
-//   };
+
+  //       // console.log('草稿',response4.data);
+  //       // console.log('游记',response1.data);
+
+
+  //       setIsLoading(false);
+  //     } catch (err) {
+  //       setIsLoading(false);
+  //       console.error(err);
+  //     }
+  //   };
 
 
 
@@ -498,31 +490,31 @@ export default function MyTravelsScreen() {
 
   const MyHeader = () => {
     return (
-    <View>
-      <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <AvatarMenu></AvatarMenu>
-          <Text style={styles.nickname}>{userInfo.nickname}</Text>
+      <View>
+        <View style={styles.header}>
+          <View style={styles.userInfo}>
+            <AvatarMenu></AvatarMenu>
+            <Text style={styles.nickname}>{userInfo.nickname}</Text>
+          </View>
+          <TouchableOpacity
+            // 新增按钮
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={() => navigation.navigate('游记发布')}>
+            <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
+            <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
+          </TouchableOpacity>
+
         </View>
-        <TouchableOpacity
-          // 新增按钮
-          style={{ flexDirection: 'row', alignItems: 'center' }}
-          onPress={() => navigation.navigate('游记发布')}>
-          <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
-          <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
-        </TouchableOpacity>
-        
-      </View>
-      <View style={{height:50,backgroundColor:'pink'}}><Text>个人信息</Text></View>
-    </View>)
-    
+        <View style={{ height: 50, backgroundColor: 'pink' }}><Text>个人信息</Text></View>
+      </View>)
+
   }
 
   return (
     <View style={styles.container}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.userInfo}>
           <AvatarMenu></AvatarMenu>
           <Text style={styles.nickname}>{userInfo.nickname}</Text>
@@ -534,7 +526,7 @@ export default function MyTravelsScreen() {
           <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       {/* 根据是否登录判断是否渲染选项卡组件 */}
       <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
         <Tabs.Tab name="我的游记">
@@ -542,12 +534,12 @@ export default function MyTravelsScreen() {
             <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        <Tabs.Tab name="我的收藏">
+        {/* <Tabs.Tab name="我的收藏">
           <Tabs.ScrollView>
             <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
-          
-          {/* {userInfo.id ?
+        </Tabs.Tab> */}
+        {/* {userInfo.id ?
             <TabView
               // 选项卡组件
               navigationState={{ index, routes }}
@@ -559,12 +551,12 @@ export default function MyTravelsScreen() {
             /> :
             <UnLoginScreen></UnLoginScreen>// 未登录显示组件
           } */}
-        </Tabs.Tab>
-        <Tabs.Tab name="我的点赞">
+
+        {/* <Tabs.Tab name="我的点赞">
           <Tabs.ScrollView>
             <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
-        </Tabs.Tab>
+        </Tabs.Tab> */}
         <Tabs.Tab name="我的草稿">
           <Tabs.ScrollView>
             <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />

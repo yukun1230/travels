@@ -94,7 +94,7 @@ export default EditUserInfoScreen = () => {
         Alert.alert(res.data.message);
         dispatch((setUser({
           ...userInfo,
-          avatar: file.file !== null ? file.file.uri : data.avatar,
+          avatar: file.file !== null ? file.file.uri : userInfo.avatar,
           nickname: data.nickname,
           gender: selected,
           introduction : data.introduction,
