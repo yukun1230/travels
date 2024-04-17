@@ -66,7 +66,7 @@ export default EditUserInfoScreen = () => {
     }
   };
   useEffect(() => {
-    console.log(userInfo)
+    // console.log(userInfo)
     setSelected(userInfo.gender ? userInfo.gender : "未选")
   }, [])
 
@@ -76,14 +76,14 @@ export default EditUserInfoScreen = () => {
     if (file.file !== null) {
       data = { ...file, ...data }
     }
-    console.log(data)
+    // console.log(data)
     for (let i in data) {
       params.append(i, data[i]);
     };
     params.append("gender", selected);
     params.append("id", userInfo.id);
     params.append("avatar", userInfo.avatar)
-    console.log(params);
+    // console.log(params);
     // setIsLoading(false);
     await axios.post(NGROK_URL + '/users/update', params, {
       headers: {

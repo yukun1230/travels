@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl,ImageBackground } from 'react-native';
 import { useNavigation, useFocusEffect, Animated } from '@react-navigation/native';
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { TabView, TabBar } from 'react-native-tab-view';
@@ -14,7 +14,10 @@ import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
 import UnLoginScreen from '../../components/unLogin';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { Tabs } from 'react-native-collapsible-tab-view';
+import { Tabs } from 'react-native-collapsible-tab-view'
+import { Foundation } from '@expo/vector-icons';
+
+const HEADER_HEIGHT = 250
 
 const AvatarMenu = () => {
   // 头像菜单组件
@@ -22,7 +25,6 @@ const AvatarMenu = () => {
   const [visible, setVisible] = useState(false);  //下拉菜单显隐
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);  //redux获取用户数据
-
   const onLogout = () => {
     // 退出登录
     removeToken();  //清楚Token
@@ -32,17 +34,18 @@ const AvatarMenu = () => {
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+  useEffect(()=>console.log(userInfo),[])
 
   return (
     <Menu
       visible={visible}
       onDismiss={closeMenu}
       anchor={
-        <TouchableOpacity onPress={openMenu}>
+        <TouchableOpacity onPress={()=>{openMenu(),console.log(userInfo)}}>
           <Image
             // 没有头像设置一个默认头像
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
-            style={{ width: 36, height: 36, borderRadius: 18 }}
+            style={{ width: 76, height: 76, borderRadius: 38 }}
           />
         </TouchableOpacity>
       }
@@ -489,25 +492,45 @@ export default function MyTravelsScreen() {
   );
 
   const MyHeader = () => {
+    const userInfo = useSelector(state => state.user); 
+    // useEffect(()=>{console.log(userInfo)},[]);
     return (
-      <View>
+    <View >
+      <ImageBackground source={require("../../../assets/login.png")} 
+        style={{ flex: 1}}
+      >
         <View style={styles.header}>
-          <View style={styles.userInfo}>
-            <AvatarMenu></AvatarMenu>
-            <Text style={styles.nickname}>{userInfo.nickname}</Text>
+        <View style={styles.userInfo}>
+          <AvatarMenu></AvatarMenu>
+          <View style={{marginLeft:12}}>
+            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+              <Text style={styles.nickname}>{userInfo.nickname}</Text>
+              <View style={{marginLeft:8}}>
+                {userInfo.gender==='男' && <Foundation name="male-symbol" size={28} color="#4169E1" />}
+                {userInfo.gender==='女' && <Foundation name="female-symbol" size={28} color="#FF69B4" />}
+              </View>
+            </View>
+            <Text style={{marginTop:10,fontSize:14}}>用户名：{userInfo.username}</Text>
+
           </View>
-          <TouchableOpacity
-            // 新增按钮
-            style={{ flexDirection: 'row', alignItems: 'center' }}
-            onPress={() => navigation.navigate('游记发布')}>
-            <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
-          </TouchableOpacity>
-
+          
+          
         </View>
-        <View style={{ height: 50, backgroundColor: 'pink' }}><Text>个人信息</Text></View>
-      </View>)
-
+        <TouchableOpacity
+          // 新增按钮
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          onPress={() => navigation.navigate('游记发布')}>
+          <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
+          <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
+        </TouchableOpacity>
+        
+      </View>
+      <View style={{paddingHorizontal:20,paddingVertical:10}}><Text style={{fontSize:20}}>{userInfo.introduction}</Text></View>
+      </ImageBackground>
+      
+      
+    </View>)
+    
   }
 
   return (
@@ -528,42 +551,45 @@ export default function MyTravelsScreen() {
         </TouchableOpacity>
       </View> */}
       {/* 根据是否登录判断是否渲染选项卡组件 */}
-      <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
-        <Tabs.Tab name="我的游记">
+      {userInfo.id ?
+            // <TabView
+            //   // 选项卡组件
+            //   navigationState={{ index, routes }}
+            //   renderScene={renderScene}
+            //   onIndexChange={setIndex}
+            //   initialLayout={initialLayout}
+            //   style={styles.tabView}
+            //   renderTabBar={renderTabBar}
+            // /> 
+            <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
+        <Tabs.Tab name={'A'} label={'我的游记'}>
           <Tabs.ScrollView>
             <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        {/* <Tabs.Tab name="我的收藏">
+        <Tabs.Tab name={'B'} label={'我的收藏'}>
           <Tabs.ScrollView>
             <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
-        </Tabs.Tab> */}
-        {/* {userInfo.id ?
-            <TabView
-              // 选项卡组件
-              navigationState={{ index, routes }}
-              renderScene={renderScene}
-              onIndexChange={setIndex}
-              initialLayout={initialLayout}
-              style={styles.tabView}
-              renderTabBar={renderTabBar}
-            /> :
-            <UnLoginScreen></UnLoginScreen>// 未登录显示组件
-          } */}
-
-        {/* <Tabs.Tab name="我的点赞">
+          
+          
+        </Tabs.Tab>
+        <Tabs.Tab name={'C'} label={'我的点赞'}>
           <Tabs.ScrollView>
             <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
-        </Tabs.Tab> */}
-        <Tabs.Tab name="我的草稿">
+        </Tabs.Tab>
+        <Tabs.Tab name={'D'} label={'我的草稿'}>
           <Tabs.ScrollView>
             <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
 
-      </Tabs.Container>
+            </Tabs.Container>
+            :
+            <UnLoginScreen></UnLoginScreen>// 未登录显示组件
+          }
+      
     </View>
   );
 }
@@ -583,8 +609,7 @@ const styles = StyleSheet.create({
     marginTop: 0
   },
   nickname: {
-    marginLeft: 12,
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   scene: {
