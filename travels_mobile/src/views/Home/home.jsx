@@ -281,12 +281,14 @@ export default HomeScreen = () => {
         // 由token鉴权请求后端用户信息
         axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
           .then(res => {
-            const { avatar, nickname, _id,gender, introduction, collectTravels, likeTravels } = res.data;
+            const { avatar, nickname, _id,gender, introduction, collectTravels, likeTravels, username} = res.data;
             // const uniqueCollectTravels = [...new Set(collectTravels)];
             // const uniqueLikeTravels = [...new Set(likeTravels)];
+            console.log('shouye',res.data);
             dispatch(setUser({// 使用 dispatch 将用户信息保存到 Redux
               avatar: avatar,
               nickname: nickname,
+              username: username,
               id: _id,
               gender: gender,
               introduction : introduction,
