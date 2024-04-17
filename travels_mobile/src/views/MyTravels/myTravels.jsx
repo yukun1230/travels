@@ -522,7 +522,7 @@ export default function MyTravelsScreen() {
     <View style={styles.container}>
       {/* 加载态组件 */}
       <LoadingOverlay isVisible={isLoading} />
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.userInfo}>
           <AvatarMenu></AvatarMenu>
           <Text style={styles.nickname}>{userInfo.nickname}</Text>
@@ -534,15 +534,15 @@ export default function MyTravelsScreen() {
           <FontAwesome6 name="add" size={24} color="rgb(34,150,243)" />
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "rgb(34,150,243)", marginLeft: 8 }}>新增</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       {/* 根据是否登录判断是否渲染选项卡组件 */}
       <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
-        <Tabs.Tab name="我的游记">
+        <Tabs.Tab name={'A'} label={'我的游记'}>
           <Tabs.ScrollView>
             <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        <Tabs.Tab name="我的收藏">
+        <Tabs.Tab name={'B'} label={'我的收藏'}>
           <Tabs.ScrollView>
             <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
@@ -560,12 +560,12 @@ export default function MyTravelsScreen() {
             <UnLoginScreen></UnLoginScreen>// 未登录显示组件
           } */}
         </Tabs.Tab>
-        <Tabs.Tab name="我的点赞">
+        <Tabs.Tab name={'C'} label={'我的点赞'}>
           <Tabs.ScrollView>
             <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        <Tabs.Tab name="我的草稿">
+        <Tabs.Tab name={'D'} label={'我的草稿'}>
           <Tabs.ScrollView>
             <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
