@@ -7,7 +7,6 @@ import {
   GlobalError,
   FieldPath
 } from 'react-hook-form'
-import { useEffect, useState } from 'react';
 import { TextStyle, View, Text, ViewStyle } from 'react-native'
 
 type FormItemProps<T extends FieldValues, TName extends FieldPath<T>> = {

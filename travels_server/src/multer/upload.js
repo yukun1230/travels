@@ -52,6 +52,27 @@ function uploadAvatar(req, res) {
     )
   })
 }
+// 封装上传单图片的接口
+function updateAvatar(req, res) {
+  let returnData = "";
+  return new Promise((resolve, reject) => {
+    singleUploadMiddleware.single('file')(req, res, function (err) {  // 单文件
+      if (err) {
+        console.log("图片上传出错了");
+        reject(err) // 传递的图片格式错误或者超出文件限制大小，就会reject出去
+      } else {
+        console.log("图片上传成功");
+        // hanldeImgDelAndRename(req.body.username, req.file.filename, handlePath('../../public/avatarUploads')); // 对图片进行去重删除和重命名
+        if (!!req.file) {
+          const img = req.file.filename.split('.') // 拼接成完整的服务器静态资源图片路径
+          returnData = BaseURL + imgPath_avatar + img[0] + '.' + img[1]
+        }
+        resolve(returnData)
+      }
+    }
+    )
+  })
+}
 // async function uploadAvatar(req, res) {
 //   await new Promise((resolve, reject) => {// 单文件上传
 //     if (err) {
@@ -93,4 +114,4 @@ function uploadMultiPhoto(req, res) {
   })
 }
 
-module.exports = { uploadAvatar, uploadMultiPhoto }
+module.exports = { uploadAvatar, uploadMultiPhoto, updateAvatar }

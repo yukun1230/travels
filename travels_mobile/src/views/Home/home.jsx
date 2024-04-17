@@ -1,5 +1,5 @@
 import WaterfallFlow from 'react-native-waterfall-flow'
-import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Dimensions, Image, Animated, TextInput, ActivityIndicator, Text, Platform, TouchableOpacity, StyleSheet, StatusBar } from 'react-native'
 import Button from 'apsl-react-native-button'
 import { useNavigation } from '@react-navigation/native';
 import { Menu, Divider } from 'react-native-paper';
@@ -7,22 +7,129 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-import {  getToken, removeToken } from '../../util/tokenRelated'
+import { getToken, removeToken } from '../../util/tokenRelated'
 import { setUser, clearUser } from '../../redux/userSlice';
 import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
+import MyDialog from '../../components/myDialog';
 
 const window = Dimensions.get('window')
-
-
 const Card = ({ item }) => {
-  // 卡片组件
-  //点击卡片跳转详情页并传递卡片的id
+  const dispatch = useDispatch();  //redux状态修改
+  const userInfo = useSelector(state => state.user);
   const navigation = useNavigation();
   const onPressCard = () => {
     navigation.navigate('Detail', { cardId: item._id });
   };
+  const cardId = item._id;
+  const [visible, setVisible] = useState(false);  //取消收藏对话框显隐
+  const [isRequesting, setIsRequesting] = useState(false);  //请求状态控制,防止多次点赞收藏请求
+  const [collectedCount, setCollectedCount] = useState(0);
+  const [collected, setCollected] = useState(false)
+
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
+
+  useEffect(() => {
+    setCollectedCount(item.collectedCount)
+    setCollected(userInfo.collectTravels ? userInfo.collectTravels.includes(item._id) : false)
+  }, [userInfo.collectTravels, item._id])
+
+
+
+  useEffect(() => {
+    setCollectedCount(item.collectedCount);
+  }, [item.collectedCount]); // 添加依赖项
+
+  const handleCollect = async (cardId) => {// 处理收藏逻辑
+    try {
+      if (!userInfo.id) {
+        // 未登录提醒
+        Toast.show({
+          type: 'error',
+          text1: '您还没有登录哦~',
+          position: 'top',
+          autoHide: true,
+          visibilityTime: 1000,
+        })
+        return;
+      }
+      // 请求中则直接返回,防止多次点击请求
+      if (isRequesting) {
+        return;
+      }
+      // 开始请求
+      setIsRequesting(true);
+      const token = await getToken();
+      if (!token) {
+        console.log('无Token，需要登录');
+        return;
+      }
+      if (!collected) {
+        // 如果是未收藏状态
+        const response = await axios.post(`${NGROK_URL}/travels/collectTravel`, { travelId: cardId }, { headers: { 'token': token } });
+        setIsRequesting(false);
+        if (response.data.message === '收藏成功') {
+          setCollected(true); // 更新状态
+          
+          // setTravelDetail((prevDetail) => ({
+          //   ...prevDetail,
+          //   collectedCount: prevDetail.collectedCount + 1,
+          // }));
+          // 更新用户redux收藏游记信息
+          dispatch(setUser({
+            ...userInfo,
+            collectTravels: [...userInfo.collectTravels, cardId],
+          }));
+          setCollectedCount(collectedCount + 1)
+        } else {
+          console.log('收藏失败', response.data.message);
+        }
+      } else {
+        // 打开取消收藏对话框
+        showDialog()
+      }
+    } catch (error) {
+      console.error('收藏请求失败:', error);
+    }
+  };
+
+  const cancelCollected = async (cardId) => {// 取消收藏逻辑
+    setIsRequesting(true);
+    const token = await getToken();
+    try {
+      const response = await axios.post(`${NGROK_URL}/travels/UndoCollectTravel`, { travelId: cardId }, { headers: { 'token': token } });
+      setIsRequesting(false);
+      if (response.data.message === '取消收藏成功') {
+        setCollected(false); // 更新状态
+        dispatch(setUser({
+          ...userInfo,
+          collectTravels: userInfo.collectTravels.filter(item => item !== cardId),
+        }));
+        setCollectedCount(collectedCount - 1)
+      } else {
+        console.log('取消收藏失败', response.data.message);
+      };
+      // 关闭对话框
+      hideDialog();
+    } catch (error) {
+      console.error('点赞请求失败:', error);
+    }
+  }
+
   return (
     <View style={{ flex: 1, overflow: 'hidden', borderRadius: 10 }}>
+      <MyDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        titleText="取消收藏"
+        dialogText="您确定不再收藏这篇游记吗？"
+        cancelText="取消"
+        confirmText="确认"
+        handleCancel={hideDialog}
+        handleConfirm={() => cancelCollected(cardId)}
+      />
       <TouchableOpacity
         style={{ backgroundColor: '#fff', flex: 1 }}
         activeOpacity={0.5}  // 被触摸操作时的透明度（0-1）
@@ -32,10 +139,13 @@ const Card = ({ item }) => {
           source={{ uri: item.uri, width: item.width, height: item.height }}
           resizeMode="cover"  // resizeMode设置图片的覆盖模式
         />
-        <View style={{ padding: 10 }}>
-          {/* 标题 */}
-          <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
-          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+      </TouchableOpacity>
+      <View style={{ padding: 10 }}>
+        {/* 标题 */}
+        <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
+
+        <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {/* 用户资料 */}
             <Image
               source={{ uri: item.avatar }}
@@ -43,8 +153,22 @@ const Card = ({ item }) => {
             />
             <Text style={{ fontSize: 12, marginLeft: 5 }}>{item.nickname}</Text>
           </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={
+                () => handleCollect(cardId)
+                //   () => {
+                //   console.log(userInfo.collectTravels, item._id, collected)
+                // }
+              }>
+              {collected ? <AntDesign style={{ marginRight: 3, marginTop: 2 }} name="heart" size={16} color="red" /> : <AntDesign style={{ marginRight: 3, marginTop: 2 }} name="hearto" size={16} color="black" />}
+            </TouchableOpacity>
+            <Text>
+              {collectedCount}
+            </Text>
+          </View>
         </View>
-      </TouchableOpacity>
+      </View>
     </View>
   )
 }
@@ -55,35 +179,10 @@ const AvatarMenu = () => {
   const navigation = useNavigation();
   const [visible, setVisible] = useState(false); //控制头像下拉菜单显隐
   const dispatch = useDispatch();
+
+
   const userInfo = useSelector(state => state.user);  //redux获取用户数据
-  const [token, setToken] = useState(null);  //token鉴权
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = await getToken();
-      setToken(token); 
-      if (token) {
-        // 由token鉴权请求后端用户信息
-        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
-          .then(res => {
-            const { avatar, nickname, _id, collectTravels, likeTravels } = res.data;
-            const uniqueCollectTravels = [...new Set(collectTravels)];
-            const uniqueLikeTravels = [...new Set(likeTravels)];
-            // 使用 dispatch 将用户信息保存到 Redux
-            dispatch(setUser({
-              avatar: avatar,
-              nickname: nickname,
-              id: _id,
-              collectTravels: uniqueCollectTravels,
-              likeTravels: uniqueLikeTravels
-            }));
-          })
-          .catch(err => {
-            console.error(err);
-          });
-      }
-    };
-    fetchUserInfo();
-  }, [dispatch]); // 添加dispatch到依赖项列表，保证稳定性
+
 
   const onLogout = () => {
     // 退出登录函数
@@ -96,9 +195,10 @@ const AvatarMenu = () => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
+
   return (
     <Menu
-    // 下拉菜单组件
+      // 下拉菜单组件
       visible={visible}
       onDismiss={closeMenu}
       anchor={
@@ -111,7 +211,7 @@ const AvatarMenu = () => {
         </TouchableOpacity>
       }
       anchorPosition={'bottom'}
-      contentStyle={{ marginTop:'-20%', marginLeft: 3, backgroundColor: '#fff', width: 140 }}
+      contentStyle={{ marginTop: -50, marginLeft: 3, backgroundColor: '#fff', width: 140 }}
     >
       {/* 菜单项 */}
       {userInfo.id ? (
@@ -123,7 +223,7 @@ const AvatarMenu = () => {
           <Menu.Item title="退出登录" leadingIcon="logout" onPress={onLogout} />
         </>
       ) : (
-          <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
+        <Menu.Item title="登录" leadingIcon="login" onPress={() => navigation.navigate("登录界面")} />
       )}
     </Menu>
   );
@@ -133,15 +233,15 @@ const AvatarMenu = () => {
 const Header = ({ searchText, setSearchText, handleSearch }) => {
   // 顶部组件;包括头像菜单,搜索框
   return (
-    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16,height:45 }}>
-      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+    <View style={{ flexDirection: "row", marginRight: 16, marginTop: 16, height: 45 }}>
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
         {/* 头像菜单 */}
         <AvatarMenu></AvatarMenu>
       </View>
       <View style={{ flex: 3 }}>
         {/* 搜索框 */}
         <TextInput
-          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, paddingLeft: 10, borderRadius: 20, borderColor: "#2196F3",fontSize: 14 }}
+          style={{ height: 35, width: 260, borderColor: 'gray', borderWidth: 1, paddingLeft: 10, borderRadius: 20, borderColor: "#2196F3", fontSize: 14 }}
           placeholder="请输入您要搜索的内容"
           onChangeText={searchText => setSearchText(searchText)}
           defaultValue={searchText}
@@ -163,7 +263,7 @@ export default HomeScreen = () => {
   const [data, setData] = useState([]);  //首页瀑布流卡片数据
   const [refreshing, setRefreshing] = useState(false);  //刷新状态控制
   const [noMore, setNoMore] = useState(false);  //没有更多内容状态
-  const [inited, setInited] = useState(false);  
+  const [inited, setInited] = useState(false);
   const page = useRef(0);  //页码
   const pageSize = 6;  //每页的卡片数
   const loading = useRef(false);  //加载状态
@@ -171,7 +271,40 @@ export default HomeScreen = () => {
   const [searchText, setSearchText] = useState('');  //搜索内容
   const [isSearching, setIsSearching] = useState(false);  //搜索状态
   const [showScrollToTopButton, setShowScrollToTopButton] = useState(false);  // 控制返回顶部按钮
-  
+  const [token, setToken] = useState(null);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = await getToken();
+      setToken(token);
+      if (token) {
+        // 由token鉴权请求后端用户信息
+        axios.get(NGROK_URL + '/users/getUserInfo', { headers: { 'token': token } })
+          .then(res => {
+            const { avatar, nickname, _id,gender, introduction, collectTravels, likeTravels, username} = res.data;
+            // const uniqueCollectTravels = [...new Set(collectTravels)];
+            // const uniqueLikeTravels = [...new Set(likeTravels)];
+            console.log('shouye',res.data);
+            dispatch(setUser({// 使用 dispatch 将用户信息保存到 Redux
+              avatar: avatar,
+              nickname: nickname,
+              username: username,
+              id: _id,
+              gender: gender,
+              introduction : introduction,
+              collectTravels: collectTravels,
+              likeTravels: likeTravels
+            }));
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+    };
+    fetchUserInfo();
+  }, [dispatch]);
+
+
   const handleScroll = (event) => {
     // 控制返回顶部按钮显隐
     const scrollY = event.nativeEvent.contentOffset.y;
@@ -216,6 +349,7 @@ export default HomeScreen = () => {
         };
       });
       setData(formattedData);  //存入data
+      // console.log(data);
     } catch (error) {
       console.error("搜索请求失败:", error);
     }
@@ -224,21 +358,21 @@ export default HomeScreen = () => {
   useEffect(() => {
     // 搜索完毕,顶部下拉刷新,新加载原始数据
     if (!isSearching) {
-      loadData(true); 
+      loadData(true);
     }
   }, [isSearching]);
 
   const loadData = async (isRefreshing = false) => {
-    if (isRefreshing){
+    if (isRefreshing) {
       // 刷新操作时重置页码到0，加载下一页
-      page.current=0;
+      page.current = 0;
       setIsSearching(false);
     }
-    if(isSearching){
+    if (isSearching) {
       // 搜索中直接返回
       return;
     }
-    
+
     // 下一页页码,由nextPage请求后端数据
     const nextPage = isRefreshing ? 1 : page.current + 1;
     if (loading.current && !isRefreshing) {
@@ -267,11 +401,13 @@ export default HomeScreen = () => {
           height: Math.floor(firstPhoto.height / firstPhoto.width * Math.floor(window.width / 2)),
           avatar: travel.userInfo.avatar,
           nickname: travel.userInfo.nickname,
+          collectedCount: travel.collectedCount,
         };
       });
+      // console.log(formattedData);
 
       // 如果是刷新操作，则使用新数据替换旧数据；否则，追加到现有数据之后
-      setData(prevData => isRefreshing ? formattedData : [ ...prevData,...formattedData]);
+      setData(prevData => isRefreshing ? formattedData : [...prevData, ...formattedData]);
       if (!isRefreshing) {
         // 如果不是刷新操作，且返回的数据小于pageSize,说明没有更多内容了
         setNoMore(formattedData.length < pageSize);
@@ -288,43 +424,44 @@ export default HomeScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1}}>
-      <View style={{backgroundColor:'white'}}>
+    <View style={{ flex: 1 }}>
+      <StatusBar backgroundColor="white" barStyle='dark-content' />
+      <View style={{ backgroundColor: 'white' }}>
         {/* 顶部组件 */}
-        <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch}/>
+        <Header searchText={searchText} setSearchText={setSearchText} handleSearch={handleSearch} />
       </View>
-      
+
       {/* 瀑布流 */}
       <WaterfallFlow
-      ref={listRef}
-      style={{ flex: 1, marginTop: 0,paddingTop:6 }}
-      contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
-      ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
-      ListEmptyComponent={<Empty inited={inited} isSearching={isSearching}/>}
-      data={data}  //驱动数据
-      numColumns={2}  //列数
-      initialNumToRender={10}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      onEndReached={() => loadData(false)}  //触发加载更多
-      refreshing={refreshing}
-      onRefresh={() => loadData(true)}  //触发刷新
-      onEndReachedThreshold={0}  //底部碰触阈值
-      renderItem={({ item, index, columnIndex }) => {
-        return (
-          <View
-            style={{
-              // 内边距设置
-              paddingLeft: columnIndex === 0 ? 12 : 6,
-              paddingRight: columnIndex === 0 ? 6 : 12,
-              paddingTop: 6,
-              paddingBottom: 6
-            }}
-          >
-            <Card item={item}/>
-          </View>
-        );
-      }}
+        ref={listRef}
+        style={{ flex: 1, marginTop: 0, paddingTop: 6 }}
+        contentContainerStyle={{ backgroundColor: 'rgb(243,243,243)' }}
+        ListFooterComponent={<Footer noMore={noMore} inited={inited} isEmpty={data.length === 0} isSearching={isSearching} />}
+        ListEmptyComponent={<Empty inited={inited} isSearching={isSearching} />}
+        data={data}  //驱动数据
+        numColumns={2}  //列数
+        initialNumToRender={10}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        onEndReached={() => loadData(false)}  //触发加载更多
+        refreshing={refreshing}
+        onRefresh={() => loadData(true)}  //触发刷新
+        onEndReachedThreshold={0}  //底部碰触阈值
+        renderItem={({ item, index, columnIndex }) => {
+          return (
+            <View index={index}
+              style={{
+                // 内边距设置
+                paddingLeft: columnIndex === 0 ? 12 : 6,
+                paddingRight: columnIndex === 0 ? 6 : 12,
+                paddingTop: 6,
+                paddingBottom: 6
+              }}
+            >
+              <Card item={item} />
+            </View>
+          );
+        }}
       />
 
       {
@@ -342,7 +479,7 @@ export default HomeScreen = () => {
   );
 };
 
-const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
+const Footer = ({ noMore, inited, isEmpty, isSearching }) => {
   // 底部组件
   if (!inited || isEmpty) {
     return null;
@@ -350,9 +487,9 @@ const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
   //搜索状态底部显示
   if (isSearching) {
     return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
-      <Text style={{ color: '#999', marginLeft: 8 }}>没有更多内容了~</Text>
-    </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 60 }}>
+        <Text style={{ color: '#999', marginLeft: 8 }}>没有更多内容了~</Text>
+      </View>
     )
   }
   //
@@ -364,13 +501,13 @@ const Footer = ({ noMore, inited, isEmpty,isSearching }) => {
   );
 };
 
-const Empty = ({ inited,isSearching }) => {
+const Empty = ({ inited, isSearching }) => {
   // 空数据底部组件
-  if(isSearching){
+  if (isSearching) {
     return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
-      <Text style={{ color: '#999', marginLeft: 8 }}>抱歉，没有您要找的内容哦~</Text>
-    </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 300 }}>
+        <Text style={{ color: '#999', marginLeft: 8 }}>抱歉，没有您要找的内容哦~</Text>
+      </View>
     )
   }
   return (

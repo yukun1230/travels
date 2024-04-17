@@ -1,4 +1,4 @@
-import { AuditOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UnorderedListOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Popconfirm } from 'antd';
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -9,14 +9,14 @@ import { useEffect } from 'react';
 const { Header, Sider } = Layout;
 const items = [
   {
-    label: '游记管理',
+    label: '游记列表',
     key: '/',
-    icon: <AuditOutlined />,
+    icon: <UnorderedListOutlined />,
   }
   // ,{
   //   label: '数据面板',
   //   key: 'home',
-  //   icon: <HomeOutlined />,
+  //   icon: <PieChartOutlined />,
   // }
 ]
 

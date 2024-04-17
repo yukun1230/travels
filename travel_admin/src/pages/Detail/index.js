@@ -42,20 +42,20 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
   };
   // 审核提交
   const onFinish = (values) => {
-    console.log(values);
+    // console.log(values);
     let remark = values.remark;
     const req = {
       id: info._id,
       reason: remark,
     };
-    let url = "travels/web/passOneTravel";
+    let url = "travels/web/passOneTravel"
     if (radioValue === 1) {
-      url = "travels/web/rejectOneTravel";
+      url = "travels/web/rejectOneTravel"
     }
     request.post(url, req).then((res) => {
-      onSubmit();
-    });
-  };
+      onSubmit()
+    })
+  }
   return (
     <div>
       <Breadcrumb
@@ -150,8 +150,6 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
                 </Form.Item>
               )}
               <Form.Item>
-                {/* <Flex  gap="small">
-                </Flex> */}
                 <div className="view-actions">
                   <Button className="back" onClick={onCancel}>
                     返回

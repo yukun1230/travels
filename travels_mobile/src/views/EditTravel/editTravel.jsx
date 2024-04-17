@@ -9,7 +9,6 @@ import {
   Image
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { THEME_BACKGROUND, THEME_LABEL, THEME_TEXT } from '../../assets/CSS/color';
 import React, { useEffect, useState } from 'react';
 import Button from 'apsl-react-native-button';
 import FormItem from './components/formItem';
@@ -17,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok';
 import '../../util/axios.config';  // 拦截器相关
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { Picker } from '@react-native-picker/picker';
 import placeList from '../AddTravels/placeList';
@@ -32,7 +31,7 @@ export default editTravelScreen = ({ route }) => {
   const [isLoading, setIsLoading] = useState(false);  // 用于设置加载moadl是否展示
   const [height, setHeight] = useState(0);  // 关于输入文本框高度的选项
   const [fold, setFold] = useState(true)  // 地点选择卡片是否折叠，默认折叠
-  const [selectedValues, setSelectedValues] = useState([" "," "," "]);  // 选择的数组
+  const [selectedValues, setSelectedValues] = useState([" ", " ", " "]);  // 选择的数组
   const [filteredProvinces, setFilteredProvinces] = useState([]);  // 省份
   const [filteredCities, setFilteredCities] = useState([]);  // 城市
   const [photo, setPhoto] = useState([]); // 用于保存photo信息
@@ -192,18 +191,17 @@ export default editTravelScreen = ({ route }) => {
   // 提交表单(更新游记)
   const onSubmit = async (data) => {
     if (file.length > 0) {  // 如果文件存在(即有新添加的图片)
+      setIsLoading(true); // 开始加载图标 
       let params = new FormData();
       for (let item of file) params.append('file', item);// 添加游记的图片
       for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
       for (let i = 0; i < dimension.length; i++)  // 添加图片信息
         params.append(dimension[i].name, `${dimension[i].width}/${dimension[i].height}`);
       for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
-      params.append("location", JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}));
+      params.append("location", JSON.stringify({ country: selectedValues[0], province: selectedValues[1], city: selectedValues[2] }));
       params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       params.append('id', CardData.id) // 添加游记id
-      console.log(JSON.stringify({photodata: photo}))
-      params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
-      setIsLoading(true); // 开始加载图标
+      params.append("photo", JSON.stringify({ photodata: photo }));  // 添加回显的photo
       await axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
@@ -220,18 +218,18 @@ export default editTravelScreen = ({ route }) => {
           setIsLoading(false);
         }
       )
-    } else if (photo.length > 0) {
+    } else if (photo.length > 0) {  // 没有新添加的图片
+      setIsLoading(true); // 开始加载图标
       let params = new FormData();
       for (let i in data) params.append(i, data[i]); // 添加游记的标题和内容
       for (let i in userInfo) params.append(i, userInfo[i]); // 添加用户信息
-      console.log(JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}))
-      params.append("location", JSON.stringify({country: selectedValues[0], province: selectedValues[1], city: selectedValues[2]}))
-      params.append("travelState", 2);// 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
+      console.log(JSON.stringify({ country: selectedValues[0], province: selectedValues[1], city: selectedValues[2] }))
+      params.append("location", JSON.stringify({ country: selectedValues[0], province: selectedValues[1], city: selectedValues[2] }))
+      params.append("travelState", 2); // 添加游记的审核状态 0审核未通过，1审核通过，2未审核，3被删除
       params.append('id', CardData.id) // 添加游记id
       // photo是数组，{photodata: photo}转成对象，然后再用Json.stringify
-      params.append("photo", JSON.stringify({photodata: photo}));  // 添加回显的photo
-      setIsLoading(true); // 开始加载图标
-      console.log('编辑提交内容',params);
+      params.append("photo", JSON.stringify({ photodata: photo }));  // 添加回显的photo
+      console.log('编辑提交内容', params);
       await axios.post(NGROK_URL + '/travels/updateOneTravel', params, {
         headers: {
           'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传
@@ -275,9 +273,7 @@ export default editTravelScreen = ({ route }) => {
               </View>
             ))}
             <View style={styles.icon}>
-              <TouchableOpacity  //添加游记的图标
-                onPress={pickImage}
-              >
+              <TouchableOpacity onPress={pickImage}>
                 <Text style={styles.plus_Text}>+</Text>
               </TouchableOpacity>
             </View>
@@ -381,7 +377,7 @@ export default editTravelScreen = ({ route }) => {
               </View>
             </Card>}
             <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)}>提交修改</Button>
+              <Button style={styles.submit_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleSubmit(onSubmit)} disable={isLoading ? "true" : "false"}>提交修改</Button>
             </View>
           </View>
         </View>
@@ -396,19 +392,6 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     marginTop: 20
   },
-  aboveTitle: {
-    textAlign: 'center',
-    fontSize: 50,
-    color: THEME_LABEL
-  },
-  loginTitle: {
-    fontSize: 28,
-    fontWeight: '500',
-    color: THEME_LABEL,
-    textAlign: 'center',
-    marginTop: 32,
-    marginBottom: 32
-  },
   submit_Button: {
     flex: 1,
     backgroundColor: '#2196F3',
@@ -418,17 +401,6 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 10,
     borderColor: "#2196F3"
-  },
-  subButton: {
-    marginTop: 15,
-    marginRight: 15,
-    marginLeft: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  subButtonText: {
-    color: "#1500EF",
-    fontSize: 14,
   },
   titleInput: {
     flex: 1,

@@ -10,12 +10,13 @@ const travelController = require('../controllers/TravelController')
 // mobile---一个中间件,用于验证token
 const auth = async (req, res, next) => {
   try {
-    console.log(req.headers.token)
+    // console.log(req.headers.token)
     const { id } = jwt.verify(req.headers.token, SECRET);  // 这个操作需要时间
     req.user = await User.findById(id, { username: 1, avatar: 1, nickname: 1 });
     next();
   } catch (e) {
-    next();
+    return res.send({message:"token过期了~"});
+    // next();
   }
 }
 
@@ -34,7 +35,7 @@ TravelsRouter.get('/getMyTravels', auth, travelController.getMyTravels);
 // mobile---通过token获取用户收藏的游记信息
 TravelsRouter.get('/getCollectedTravels', auth, async (req, res) => {
   const result = [];
-  const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels').exec()
+  const userInfo = await User.findById(req.user._id, 'collectTravels').exec()
   if (userInfo.collectTravels) {
     for (let i = 0; i < userInfo.collectTravels.length; i++) {
       result.unshift(await Travel.findById(userInfo.collectTravels[i], '_id photo title content userInfo'))
@@ -50,6 +51,43 @@ TravelsRouter.get('/getCollectedTravels', auth, async (req, res) => {
   }
 });
 
+// mobile---通过token获取用户点赞的游记信息
+TravelsRouter.get('/getlikedTravels', auth, async (req, res) => {
+  const result = [];
+  const userInfo = await User.findById(req.user._id, 'likeTravels').exec()
+  if (userInfo.likeTravels) {
+    for (let i = 0; i < userInfo.likeTravels.length; i++) {
+      result.unshift(await Travel.findById(userInfo.likeTravels[i], '_id photo title content userInfo'))
+    }
+    res.send({
+      message: "获取成功",
+      result: result
+    })
+  } else {
+    res.send({
+      message: "没有点赞的游记"
+    })
+  }
+});
+
+// mobile---通过token获取用户存于草稿箱的游记信息
+TravelsRouter.get('/getDraftTravels', auth, async (req, res) => {
+  try {
+    const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $eq: 4 } }, '_id photo title content travelState location').sort({travelState: -1}).exec();
+    if (MyTravels) {
+      res.send({
+        message: "获取我的游记成功",
+        MyTravels
+      })
+    } else {
+      res.send({
+        message: "未获取到游记",
+      })
+    }
+  } catch(e) {
+    res.send(e)
+  }
+})
 
 // mobile---游记上传接口
 TravelsRouter.post('/upload', travelController.upload);
@@ -63,12 +101,12 @@ TravelsRouter.get('/search', async (req, res) => {
   await Travel.find({
     $or: [
       { "title": myQuery },
-      { "content": myQuery },
       { "userInfo.nickname": myQuery },
       { "location.country": myQuery },
       { "location.province": myQuery },
       { "location.city": myQuery }
-    ]
+    ],
+    travelState: { $eq: 1 }
   }).then((data) => {
     res.send({
       code: 200,
@@ -137,7 +175,7 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
     const endDate = req.query.endDate;
     const title = req.query.title;
     const travelState = req.query.travelState;
-    let findCon = { travelState: { $ne: 3 } };
+    let findCon = { travelState: { $nin: [3,4] } };
     if (title) {
       findCon.title = new RegExp(title, 'i');
     }
@@ -145,9 +183,9 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
       findCon.createTime = { $lte: new Date(endDate), $gte: new Date(beginDate) };
     }
     if (travelState) {
-      findCon.travelState = { $ne: 3, $eq: travelState };
+      findCon.travelState = { $nin: [3,4], $eq: travelState };
     }
-    // const customOrder = [2, 0, 1];// 2是待审核，0是拒绝，1是通过
+    // const customOrder = [2, 0, 1];// 2是待审核，0是拒绝，1是通过,3是被删除，4是草稿
     const travels = await Travel.find(findCon, '_id photo title content travelState userInfo createTime rejectedReason')
       .sort({ travelState: -1, _id: -1 })
       .skip(page * pageSize).limit(pageSize)
@@ -161,7 +199,7 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
   }
 })
 
-// web---分页获取所有游记信息(用于PC端审核) 
+// web---通过游记(用于PC端审核) 
 TravelsRouter.post('/web/passOneTravel', async (req, res) => {
   try {
     await Travel.findOneAndUpdate({ _id: req.body.id }, { travelState: 1 })

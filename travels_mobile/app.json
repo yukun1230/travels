@@ -9,10 +9,10 @@
       "translucent": false,
       "barStyle": "dark-content"
     },
-    "icon": "./assets/independent_travel.png",
+    "icon": "./assets/my_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/my_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -26,7 +26,7 @@
     "android": {
       "package": "com.ycy.travel",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/independent_travel.png",
+        "foregroundImage": "./assets/my_icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [

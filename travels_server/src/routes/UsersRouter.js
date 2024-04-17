@@ -2,7 +2,7 @@
 const express = require('express');
 var UsersRouter = express.Router();
 const { User } = require('../model/User');
-const bcypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const app = express();
 const SECRET = 'yukun';
@@ -24,7 +24,7 @@ UsersRouter.post('/login', async (req, res) => {
       message: "用户名不存在"
     })
   } else {
-    bcypt.compare(
+    bcrypt.compare(
       req.body.password,
       user.password,
       (err, isValid) => {
@@ -61,15 +61,19 @@ const auth = async (req, res, next) => {
 
 UsersRouter.get('/getUserInfo', auth, async (req, res) => {
   if (!!req.user) {
-    const userInfo = await User.findById(req.user._id, '_id nickname avatar collectTravels likeTravels').exec()
+    const userInfo = await User.findById(req.user._id, '_id username nickname avatar collectTravels likeTravels gender introduction').exec()
     res.send(userInfo);
   } else {
     res.send({ message: 'token无效' })
   }
 })
 
-//测试接口，用于上传头像
+// 测试接口，用于上传头像
 UsersRouter.post('/upload/avatar', userController.upload)
+
+// 用于更新用户信息
+UsersRouter.post('/update', userController.update)
+
 // 注册接口
 UsersRouter.post('/register', userController.register)
 
