@@ -243,7 +243,7 @@ const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
       />
     ))
   ) : (
-    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您还没有发布过游记哦，快去发布一篇吧~</Text></View>
+    !isLoading && <View style={{ padding: 20 }}><Text style={{ fontSize: 18 }}>您的草稿箱是空的哦~</Text></View>
   );
 
   return (
@@ -273,7 +273,8 @@ export default function MyTravelsScreen() {
   const [likedTravels, setlikedTravels] = useState([]);  //存放我的点赞数据
   const [draftTravels, setDraftTravels] = useState([]);  //存放我的草稿数据
   const [isLoading, setIsLoading] = useState(true);  //加载态
-  const window = Dimensions.get('window')
+  const window = Dimensions.get('window');
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchTravels = async () => {
     // console.log(1);// 从后端获取我的游记和我的收藏数据存入state状态
@@ -568,28 +569,42 @@ export default function MyTravelsScreen() {
             //   renderTabBar={renderTabBar}
             // /> 
             <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
-        <Tabs.Tab name={'A'} label={'我的游记'}>
-          <Tabs.ScrollView>
-            <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-          </Tabs.ScrollView>
-        </Tabs.Tab>
-        <Tabs.Tab name={'B'} label={'我的收藏'}>
-          <Tabs.ScrollView>
-            <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+            <Tabs.Tab name={'A'} label={'我的游记'}>
+              <Tabs.ScrollView refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={fetchTravels}
+                tintColor="#000"
+                colors={["#000"]}
+              />}
+              >
+                <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+              </Tabs.ScrollView>
+            </Tabs.Tab>
+            <Tabs.Tab name={'B'} label={'我的收藏'}>
+              <Tabs.ScrollView>
+                <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
           </Tabs.ScrollView>
           
           
-        </Tabs.Tab>
-        <Tabs.Tab name={'C'} label={'我的点赞'}>
-          <Tabs.ScrollView>
-            <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-          </Tabs.ScrollView>
-        </Tabs.Tab>
-        <Tabs.Tab name={'D'} label={'我的草稿'}>
-          <Tabs.ScrollView>
-            <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-          </Tabs.ScrollView>
-        </Tabs.Tab>
+            </Tabs.Tab>
+            <Tabs.Tab name={'C'} label={'我的点赞'}>
+              <Tabs.ScrollView>
+                <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+              </Tabs.ScrollView>
+            </Tabs.Tab>
+            <Tabs.Tab name={'D'} label={'我的草稿'}>
+              <Tabs.ScrollView 
+              refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={fetchTravels}
+                tintColor="#000"
+                colors={["#000"]}
+              />}>
+                <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
+              </Tabs.ScrollView>
+            </Tabs.Tab>
 
             </Tabs.Container>
             :
