@@ -140,7 +140,7 @@ const Card = ({ item }) => {
           resizeMode="cover"  // resizeMode设置图片的覆盖模式
         />
       </TouchableOpacity>
-      <View style={{ padding: 10 }}>
+      <View style={{ padding: 10,backgroundColor:'white' }}>
         {/* 标题 */}
         <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{item.title}</Text>
 
