@@ -20,7 +20,6 @@ const UnLoginScreen = () => {
         </TouchableOpacity>
       </Card>
     </View>
-
   )
 }
 
