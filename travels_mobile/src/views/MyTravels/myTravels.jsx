@@ -257,9 +257,9 @@ export default function MyTravelsScreen() {
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
   const [likedTravels, setlikedTravels] = useState([]);  //存放我的点赞数据
   const [draftTravels, setDraftTravels] = useState([]);  //存放我的草稿数据
-  const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(true);  //加载态
-  const window = Dimensions.get('window')
+  const window = Dimensions.get('window');
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchTravels = async () => {
     try {
