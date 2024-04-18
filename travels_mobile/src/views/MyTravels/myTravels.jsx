@@ -257,7 +257,6 @@ export default function MyTravelsScreen() {
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
   const [likedTravels, setlikedTravels] = useState([]);  //存放我的点赞数据
   const [draftTravels, setDraftTravels] = useState([]);  //存放我的草稿数据
-  const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(true);  //加载态
   const window = Dimensions.get('window');
   const [refreshing, setRefreshing] = useState(false);
@@ -377,61 +376,6 @@ export default function MyTravelsScreen() {
     <View style={styles.container}>
       <LoadingOverlay isVisible={isLoading} />
       {/* 根据是否登录判断是否渲染选项卡组件 */}
-<<<<<<< HEAD
-      {userInfo.id ?
-            // <TabView
-            //   // 选项卡组件
-            //   navigationState={{ index, routes }}
-            //   renderScene={renderScene}
-            //   onIndexChange={setIndex}
-            //   initialLayout={initialLayout}
-            //   style={styles.tabView}
-            //   renderTabBar={renderTabBar}
-            // /> 
-            <Tabs.Container renderHeader={MyHeader} activeColor='blue'>
-            <Tabs.Tab name={'A'} label={'我的游记'}>
-              <Tabs.ScrollView refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={fetchTravels}
-                tintColor="#000"
-                colors={["#000"]}
-              />}
-              >
-                <FirstRoute myTravels={myTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-              </Tabs.ScrollView>
-            </Tabs.Tab>
-            <Tabs.Tab name={'B'} label={'我的收藏'}>
-              <Tabs.ScrollView>
-                <SecondRoute collectedTravels={collectedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-          </Tabs.ScrollView>
-          
-          
-            </Tabs.Tab>
-            <Tabs.Tab name={'C'} label={'我的点赞'}>
-              <Tabs.ScrollView>
-                <ThirdRoute likedTravels={likedTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-              </Tabs.ScrollView>
-            </Tabs.Tab>
-            <Tabs.Tab name={'D'} label={'我的草稿'}>
-              <Tabs.ScrollView 
-              refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={fetchTravels}
-                tintColor="#000"
-                colors={["#000"]}
-              />}>
-                <FourthRoute draftTravels={draftTravels} fetchTravels={fetchTravels} isLoading={isLoading} />
-              </Tabs.ScrollView>
-            </Tabs.Tab>
-
-            </Tabs.Container>
-            :
-            <UnLoginScreen></UnLoginScreen>// 未登录显示组件
-          }
-      
-=======
       <Tabs.Container renderHeader={MyHeader} activeColor='blue' >
         <Tabs.Tab name={'A'} label={'游记'} >
           <Tabs.ScrollView refreshControl={
@@ -466,7 +410,6 @@ export default function MyTravelsScreen() {
           </Tabs.ScrollView>
         </Tabs.Tab>
       </Tabs.Container>
->>>>>>> f89088f14106a26636d1701996bffcf8f8ff52a1
     </View>
   );
 }
