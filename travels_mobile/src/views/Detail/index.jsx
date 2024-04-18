@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions, Share } from 'react-native';
-import Swiper from 'react-native-swiper'
+import PagerView from 'react-native-pager-view';
 import { AntDesign } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -28,6 +28,7 @@ const DetailScreen = ({ navigation, route }) => {
   const [isRequesting, setIsRequesting] = useState(false);  //请求状态控制,防止多次点赞收藏请求
   const [visible, setVisible] = useState(false);  //取消收藏对话框显隐
   const [showImage, setShowImage] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // 控制对话框显隐
   const showDialog = () => setVisible(true);
@@ -84,18 +85,6 @@ const DetailScreen = ({ navigation, route }) => {
         setIsLoading(false);
       });
   }, [cardId, navigation]);
-
-
-  const renderPagination = (index, total) => {
-    // 轮播图分页器
-    return (
-      <View style={styles.paginationStyle}>
-        <Text style={{ color: 'white' }}>
-          <Text>{index + 1}</Text>/{total}
-        </Text>
-      </View>
-    )
-  }
 
   const handleShare = () => {
     // 分享功能
@@ -266,23 +255,44 @@ const DetailScreen = ({ navigation, route }) => {
         {/* 滚动视图 */}
         {travelDetail ? (
           <>
-            <View style={{ height: 400, backgroundColor: "rgb(243,243,243)", flex: 1 }}>
-              <Swiper
-                // 轮播图组件
+            <View style={{ height: 500, backgroundColor: "rgb(243,243,243)" }}>
+              <PagerView
                 style={styles.wrapper}
-                // autoplay={true}
-                renderPagination={renderPagination}
+                initialPage={0}
+                scrollEnabled={true}
+                onPageSelected={event => setCurrentIndex(event.nativeEvent.position)}
               >
                 {travelDetail.photo.map((photo, index) => (
-                  <View style={styles.slide} key={index} >
-                    <TouchableOpacity onPress={() => setShowImage(!showImage)} style={styles.image_contain} activeOpacity={1}>
+                  <View style={styles.slide} key={index}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        // console.log(index)
+                        setShowImage(true)
+                      }}
+                      style={styles.image_contain}
+                      activeOpacity={1}
+                      disabled={showImage}
+                    >
                       <Image source={{ uri: photo.url }} style={styles.image} />
                     </TouchableOpacity>
                   </View>
                 ))}
-              </Swiper>
-              <Modal visible={showImage} transparent={false} >
-                <ImageViewer imageUrls={photoDetail} onClick={() => setShowImage(!showImage)} saveToLocalByLongPress={false} />
+              </PagerView>
+              <View style={styles.paginationStyle}>
+                <Text style={{ color: 'white' }}>
+                  <Text>{currentIndex + 1}</Text>/{travelDetail.photo.length}
+                </Text>
+              </View>
+              <Modal
+                visible={showImage}
+                transparent={true}
+              >
+                <ImageViewer
+                  index={currentIndex}
+                  imageUrls={travelDetail.photo.map(photo => ({ url: photo.url }))}
+                  onClick={() => setShowImage(false)}
+                  saveToLocalByLongPress={false}
+                />
               </Modal>
             </View>
 
@@ -311,7 +321,6 @@ const DetailScreen = ({ navigation, route }) => {
                   </View>}
                 </View>
               }
-
               <View>
                 {/* 标题 */}
                 <Text style={styles.detailTitle}>{travelDetail.title}</Text>
@@ -361,7 +370,9 @@ const DetailScreen = ({ navigation, route }) => {
 const screenHeight = Dimensions.get('window').height;
 // 样式表
 const styles = StyleSheet.create({
-  wrapper: {},
+  wrapper: {
+    flex: 1
+  },
   slide: {
     flex: 1,
     justifyContent: 'center',
