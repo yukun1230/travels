@@ -394,7 +394,6 @@ export default addTravelsScreen = () => {
             <View style={{ flexDirection: "row", marginTop: 80 }}>
               <TouchableOpacity style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}
                 disable={isLoading ? "true" : "false"}
-                // onPress={handleSubmit(onDraftSubmit)}
                 onPress={showDialog}
               >
                 <Ionicons name="file-tray-full-outline" size={26} />

@@ -6,9 +6,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from './src/views/Register/register'
-import DetailScreen from './src/views/Detail'
+import DetailScreen from './src/views/Detail/detail'
 import editTravelScreen from './src/views/EditTravel/editTravel'
-import EditUserInfoScreen from './src/views/EditUserInfo';
+import EditUserInfoScreen from './src/views/EditUserInfo/editUserInfo';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();

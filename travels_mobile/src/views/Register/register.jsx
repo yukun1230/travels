@@ -15,6 +15,7 @@ import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 const Input = (props) => {
   return (
     <TextInput
@@ -29,6 +30,13 @@ const Input = (props) => {
 };
 
 export default function RegisterScreen() {
+  const [passwordValue, setPasswordValue] = useState('');
+  const [showPassword, setShowPassword] = useState(0)
+  const [showPasswordSure, setShowPasswordSure] = useState(0);
+  const [image, setImage] = useState(null);
+  const [file, setFile] = useState({ file: null });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -41,14 +49,6 @@ export default function RegisterScreen() {
       passwordsure: '',
     },
   });
-
-  const [passwordValue, setPasswordValue] = useState('');
-  const [showPassword, setShowPassword] = useState(0)
-  const [showPasswordSure, setShowPasswordSure] = useState(0);
-  const [image, setImage] = useState(null);
-  const [file, setFile] = useState({ file: null });
-  const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation();
 
   // 选取图片
   const pickImage = async () => {

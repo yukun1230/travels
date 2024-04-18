@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { getToken } from '../../util/tokenRelated';
+import { getToken } from '../../../util/tokenRelated';
 import axios from 'axios';
-import { NGROK_URL } from '../../config/ngrok';
+import { NGROK_URL } from '../../../config/ngrok';
 import { AntDesign } from '@expo/vector-icons';
-import MyDialog from '../../components/myDialog';
+import MyDialog from '../../../components/myDialog';
 
 const MyTravelCard = ({ id, photo, title, content, status, location, rejectedReason, fetchTravels }) => {
   const navigation = useNavigation();

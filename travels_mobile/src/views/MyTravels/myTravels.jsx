@@ -1,15 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView, Image, TouchableOpacity, RefreshControl, ImageBackground } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, Image, TouchableOpacity, RefreshControl, ImageBackground } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import WaterfallFlow from 'react-native-waterfall-flow'
 import { Menu, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
 import { getToken, removeToken } from '../../util/tokenRelated';
-import MyTravelCard from './MyTravelCard'    //我的游记卡片组件
+import MyTravelCard from './components/myTravelCard'    //我的游记卡片组件
 import axios from 'axios';
 import { NGROK_URL } from '../../config/ngrok'
-import UnLoginScreen from '../../components/unLogin';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { Tabs } from 'react-native-collapsible-tab-view'
 import { Foundation } from '@expo/vector-icons';
@@ -98,7 +97,7 @@ const FirstRoute = ({ myTravels, fetchTravels, isLoading }) => {
 
 const Card = ({ item }) => {
   // 卡片组件
-  //点击卡片跳转详情页并传递卡片的id
+  // 点击卡片跳转详情页并传递卡片的id
   const navigation = useNavigation();
   const onPressCard = () => {
     navigation.navigate('Detail', { cardId: item._id });
@@ -178,7 +177,7 @@ const SecondRoute = ({ collectedTravels, fetchTravels, isLoading }) => {
 
 const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
   // 我的点赞路由渲染
-  const [refreshing, setRefreshing] = useState(false);  //下拉刷新
+  const [refreshing] = useState(false);  //下拉刷新
   const listRef = useRef(null);
   return (
     <View style={[styles.scene]}>
@@ -220,10 +219,7 @@ const ThirdRoute = ({ likedTravels, fetchTravels, isLoading }) => {
 }
 
 const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
-  const userInfo = useSelector(state => state.user);  //redux获取用户信息
   // 我的草稿
-  // 根据条件判断要渲染的内容
-  // const [refreshing, setRefreshing] = useState(false);  //下拉刷新
   const content = draftTravels.length !== 0 ? (
     // 根据传进来的myTravels数据映射渲染
     draftTravels.map((travel) => (
@@ -251,7 +247,6 @@ const FourthRoute = ({ draftTravels, fetchTravels, isLoading }) => {
 
 
 export default function MyTravelsScreen() {
-  const userInfo = useSelector(state => state.user);  //redux获取用户信息
   const navigation = useNavigation();
   const [myTravels, setMyTravels] = useState([]);  //存放我的游记数据
   const [collectedTravels, setCollectedTravels] = useState([]);  //存放我的收藏数据
@@ -259,7 +254,7 @@ export default function MyTravelsScreen() {
   const [draftTravels, setDraftTravels] = useState([]);  //存放我的草稿数据
   const [isLoading, setIsLoading] = useState(true);  //加载态
   const window = Dimensions.get('window');
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
 
   const fetchTravels = async () => {
     try {

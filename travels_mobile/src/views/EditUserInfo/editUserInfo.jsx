@@ -35,7 +35,6 @@ export default EditUserInfoScreen = () => {
     control,
     handleSubmit,
     formState: { errors },
-    setValue
   } = useForm({
     defaultValues: {
       nickname: userInfo.nickname,
@@ -66,7 +65,6 @@ export default EditUserInfoScreen = () => {
     }
   };
   useEffect(() => {
-    // console.log(userInfo)
     setSelected(userInfo.gender ? userInfo.gender : "未选")
   }, [])
 
@@ -76,15 +74,12 @@ export default EditUserInfoScreen = () => {
     if (file.file !== null) {
       data = { ...file, ...data }
     }
-    // console.log(data)
     for (let i in data) {
       params.append(i, data[i]);
     };
     params.append("gender", selected);
     params.append("id", userInfo.id);
     params.append("avatar", userInfo.avatar)
-    // console.log(params);
-    // setIsLoading(false);
     await axios.post(NGROK_URL + '/users/update', params, {
       headers: {
         'Content-Type': 'multipart/form-data' // 告诉后端，有文件上传

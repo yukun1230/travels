@@ -58,19 +58,6 @@ const FormItem = <T extends FieldValues, TName extends FieldPath<T>>(
             </View>
           )}
         </View>
-      {/* <View
-        style={{
-          height: 40,
-          borderWidth: 1,
-          ...(!errors
-            ? {
-              borderColor: border ? '#B3BAC1' : 'transparent'
-            }
-            : {
-              borderColor: border ? '#D52D0B' : 'transparent'
-            })
-        }}
-      > */}
       <View style={style} >
         <Controller
           name={name}
@@ -79,7 +66,6 @@ const FormItem = <T extends FieldValues, TName extends FieldPath<T>>(
           render={render}
         />
       </View>
-      {/* </View> */}
     </View>
   )
 }

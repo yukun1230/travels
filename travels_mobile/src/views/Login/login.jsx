@@ -16,24 +16,18 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 export default LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(0)  //密码框输入显隐控制
   const dispatch = useDispatch();
-  const handlelogin = () => {
-    // 跳转页面
-    navigation.navigate("注册界面")
+  const handleregister = () => navigation.navigate("注册界面");
+  const handleVisit = () => navigation.navigate("主界面");
+  const handleClear = () => {
+    setValue('username', '');
+    setValue('password', '');
   }
-
   const { control, handleSubmit, formState: { errors }, setValue } = useForm({
     defaultValues: {
       username: '',
       password: ''
     },
   });
-
-  const handleClear = () => {
-    // 清空输入框
-    setValue('username', '');
-    setValue('password', '');
-  }
-
   const onSubmit = async (data) => {
     // 提交信息验证，登录
     await axios.post(NGROK_URL + '/users/login', data).then(
@@ -55,7 +49,6 @@ export default LoginScreen = ({ navigation }) => {
             visibilityTime: 1000,
           })
         }
-
         const { _id, avatar, nickname } = res.data.user;
         // 使用 dispatch 将用户信息保存到 Redux
         dispatch(setUser({
@@ -68,9 +61,7 @@ export default LoginScreen = ({ navigation }) => {
     )
   };
 
-  const handleVisit = () => {
-    navigation.navigate("主界面")
-  }
+
 
   useEffect(() => {
     // 如果有Token，直接跳转首页
@@ -146,11 +137,9 @@ export default LoginScreen = ({ navigation }) => {
                   secureTextEntry={!showPassword}
                 />
                 <TouchableWithoutFeedback style={{ marginRight: 10, flex: 1 }} onPress={() => setShowPassword(!showPassword)}>
-                  {
-                    showPassword ?
-                      <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
-                      :
-                      <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
+                  {showPassword ?
+                    <Ionicons name="eye-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} /> :
+                    <Ionicons name="eye-off-outline" size={24} color="grey" style={{ alignSelf: 'center', marginRight: 10 }} />
                   }
                 </TouchableWithoutFeedback>
               </View>
@@ -162,7 +151,7 @@ export default LoginScreen = ({ navigation }) => {
             <Button style={styles.login_Button} textStyle={{ fontSize: 18, color: "white" }} onPress={handleClear}>重置 </Button>
           </View>
           <View style={styles.subButton}>
-            <Text style={styles.subButtonText} onPress={handlelogin}>新用户注册</Text>
+            <Text style={styles.subButtonText} onPress={handleregister}>新用户注册</Text>
             <Text style={styles.subButtonText} onPress={handleVisit}>以游客身份访问</Text>
           </View>
         </View>
