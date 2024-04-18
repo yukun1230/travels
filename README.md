@@ -4,11 +4,10 @@
 
 ”牛牛旅行日记“ 是一个综合性的游记内容发布与管理平台，主要分为移动端 App用户系统（travels_mobile）、PC 网页站点审核管理系统（travel_admin）和后端服务系统（travels_server）三大模块。项目致力于为用户提供一个记录、分享旅行见闻的平台，并通过 PC 站点内容审核管理系统确保平台内容的合规性和质量。
 
-**【备注】：想更详细地了解各个模块，可以查看各文件夹内的README.md文档**
-
-[移动端 App用户系统]: ./travels_mobile/README.md
-[PC 网页站点审核管理系统]: ./travel_admin/README.md
-[后端服务系统]: ./travels_server/README.md
+**【备注】：想更详细地了解各个模块，可以查看各文件夹内的README.md文档**\
+[移动端 App用户系统](./travels_mobile/README.md)\
+[PC 网页站点审核管理系统](./travel_admin/README.md)\
+[后端服务系统](./travels_server/README.md)
 
 ## 项目模块
 
