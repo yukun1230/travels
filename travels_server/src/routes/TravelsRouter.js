@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
     req.user = await User.findById(id, { username: 1, avatar: 1, nickname: 1 });
     next();
   } catch (e) {
-    return res.send({message:"token过期了~"});
+    return res.send({ message: "token过期了~" });
     // next();
   }
 }
@@ -29,65 +29,17 @@ TravelsRouter.get('/getDetails', travelController.getDetails);
 // mobile---由游记id,逻辑删除某条游记(需要带上用户的token)，用户只能删除自己的游记，即travelState改为3
 TravelsRouter.post('/deleteOneTravel', auth, travelController.deleteOneTravel);
 
-// mobile---由用户的token获取用户发布的游记(用于我的游记), travelState为3的不返回
+// mobile---由用户的token获取用户发布的游记(用于我的游记), travelState为3和4的不返回
 TravelsRouter.get('/getMyTravels', auth, travelController.getMyTravels);
 
 // mobile---通过token获取用户收藏的游记信息
-TravelsRouter.get('/getCollectedTravels', auth, async (req, res) => {
-  const result = [];
-  const userInfo = await User.findById(req.user._id, 'collectTravels').exec()
-  if (userInfo.collectTravels) {
-    for (let i = 0; i < userInfo.collectTravels.length; i++) {
-      result.unshift(await Travel.findById(userInfo.collectTravels[i], '_id photo title content userInfo'))
-    }
-    res.send({
-      message: "获取成功",
-      result: result
-    })
-  } else {
-    res.send({
-      message: "没有收藏的游记"
-    })
-  }
-});
+TravelsRouter.get('/getCollectedTravels', auth, travelController.getCollectedTravels);
 
 // mobile---通过token获取用户点赞的游记信息
-TravelsRouter.get('/getlikedTravels', auth, async (req, res) => {
-  const result = [];
-  const userInfo = await User.findById(req.user._id, 'likeTravels').exec()
-  if (userInfo.likeTravels) {
-    for (let i = 0; i < userInfo.likeTravels.length; i++) {
-      result.unshift(await Travel.findById(userInfo.likeTravels[i], '_id photo title content userInfo'))
-    }
-    res.send({
-      message: "获取成功",
-      result: result
-    })
-  } else {
-    res.send({
-      message: "没有点赞的游记"
-    })
-  }
-});
+TravelsRouter.get('/getlikedTravels', auth, travelController.getlikedTravels);
 
 // mobile---通过token获取用户存于草稿箱的游记信息
-TravelsRouter.get('/getDraftTravels', auth, async (req, res) => {
-  try {
-    const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $eq: 4 } }, '_id photo title content travelState location').sort({travelState: -1}).exec();
-    if (MyTravels) {
-      res.send({
-        message: "获取我的游记成功",
-        MyTravels
-      })
-    } else {
-      res.send({
-        message: "未获取到游记",
-      })
-    }
-  } catch(e) {
-    res.send(e)
-  }
-})
+TravelsRouter.get('/getDraftTravels', auth, travelController.getDraftTravels)
 
 // mobile---游记上传接口
 TravelsRouter.post('/upload', travelController.upload);
@@ -96,75 +48,19 @@ TravelsRouter.post('/upload', travelController.upload);
 TravelsRouter.post('/updateOneTravel', travelController.updateOneTravel);
 
 // mobile---首页游记搜索
-TravelsRouter.get('/search', async (req, res) => {
-  const myQuery = new RegExp(req.query.query, 'i');
-  await Travel.find({
-    $or: [
-      { "title": myQuery },
-      { "userInfo.nickname": myQuery },
-      { "location.country": myQuery },
-      { "location.province": myQuery },
-      { "location.city": myQuery }
-    ],
-    travelState: { $eq: 1 }
-  }).then((data) => {
-    res.send({
-      code: 200,
-      msg: '查询成功',
-      data
-    })
-  }).catch((e) => {
-    console.log(e)
-    res.send({
-      code: 500,
-      msg: '查询失败'
-    })
-  })
-})
+TravelsRouter.get('/search', travelController.search)
 
 // mobile---收藏
-TravelsRouter.post('/collectTravel', auth, async (req, res) => {
-  try {
-    await User.findOneAndUpdate({ _id: req.user._id }, { $push: { collectTravels: req.body.travelId } });
-    await Travel.findOneAndUpdate({ _id: req.body.travelId }, { $inc: { collectedCount: 1 } })
-    res.send({ message: "收藏成功" })
-  } catch (e) {
-    res.send({ message: "收藏失败" })
-  }
-})
+TravelsRouter.post('/collectTravel', auth, travelController.collectTravel)
 
 // moblie---取消收藏
-TravelsRouter.post('/UndoCollectTravel', auth, async (req, res) => {
-  try {
-    await User.findOneAndUpdate({ _id: req.user._id }, { $pull: { collectTravels: req.body.travelId } });
-    await Travel.findOneAndUpdate({ _id: req.body.travelId }, { $inc: { collectedCount: -1 } })
-    res.send({ message: "取消收藏成功" })
-  } catch (e) {
-    res.send({ message: "取消收藏失败" })
-  }
-})
+TravelsRouter.post('/UndoCollectTravel', auth, travelController.UndoCollectTravel)
 
 // mobile---点赞
-TravelsRouter.post('/likeTravel', auth, async (req, res) => {
-  try {
-    await User.findOneAndUpdate({ _id: req.user._id }, { $push: { likeTravels: req.body.travelId } });
-    await Travel.findOneAndUpdate({ _id: req.body.travelId }, { $inc: { likedCount: 1 } });
-    res.send({ message: "点赞成功" })
-  } catch (e) {
-    res.send({ message: "点赞失败" })
-  }
-})
+TravelsRouter.post('/likeTravel', auth, travelController.likeTravel)
 
 // moblie---取消点赞
-TravelsRouter.post('/UndoLikeTravel', auth, async (req, res) => {
-  try {
-    await User.findOneAndUpdate({ _id: req.user._id }, { $pull: { likeTravels: req.body.travelId } });
-    await Travel.findOneAndUpdate({ _id: req.body.travelId }, { $inc: { likedCount: -1 } })
-    res.send({ message: "取消点赞成功" })
-  } catch (e) {
-    res.send({ message: "取消点赞失败" })
-  }
-})
+TravelsRouter.post('/UndoLikeTravel', auth, travelController.UndoLikeTravel)
 
 // web---分页获取所有游记信息(用于PC端审核) 
 TravelsRouter.get('/web/getTravels', async (req, res) => {
@@ -175,7 +71,7 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
     const endDate = req.query.endDate;
     const title = req.query.title;
     const travelState = req.query.travelState;
-    let findCon = { travelState: { $nin: [3,4] } };
+    let findCon = { travelState: { $nin: [3, 4] } };
     if (title) {
       findCon.title = new RegExp(title, 'i');
     }
@@ -183,7 +79,7 @@ TravelsRouter.get('/web/getTravels', async (req, res) => {
       findCon.createTime = { $lte: new Date(endDate), $gte: new Date(beginDate) };
     }
     if (travelState) {
-      findCon.travelState = { $nin: [3,4], $eq: travelState };
+      findCon.travelState = { $nin: [3, 4], $eq: travelState };
     }
     // const customOrder = [2, 0, 1];// 2是待审核，0是拒绝，1是通过,3是被删除，4是草稿
     const travels = await Travel.find(findCon, '_id photo title content travelState userInfo createTime rejectedReason')

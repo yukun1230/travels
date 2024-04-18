@@ -1,6 +1,6 @@
 # 项目介绍
 
-这部分是旅游日记平台的后端服务系统模块。主要介绍采用一些技术栈以及相关的接口说明，以及项目启动方式和运行说明。
+这部分是"牛牛旅行日记"的后端服务系统模块。主要介绍采用一些技术栈以及相关的接口说明，以及项目启动方式和运行说明。
 
 # 项目技术栈
 
@@ -24,7 +24,6 @@ UsersRouter.post('/login', async (req, res) => {
   const user = await User.findOne({
     username: req.body.username
   }, { username: 1, password: 1, avatar: 1, nickname: 1 })
-  // 这里真滴搞，不加{password：1}获取的文档(document)里面居然都没有password一项，怕不是被默认不返回了？
   if (!user) {
     return res.send({
       message: "用户名不存在"

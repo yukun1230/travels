@@ -58,26 +58,33 @@ export default editTravelScreen = ({ route }) => {
     for (let i = 0; i < CardData.photo.length; i++) {
       photoUriArray.push(CardData.photo[i].uri);
     }
-    setSelectedValues([CardData.location.country, CardData.location.province, CardData.location.city]);
-    const selectedCountry = placeList.find(country => country.name === CardData.location.country);
-    if (selectedCountry) {
-      const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
-      if (selectedProvince) {
-        setFilteredCities(selectedProvince.cities);
-      } else (
-        setFilteredCities([])
-      )
-      setFilteredProvinces(selectedCountry.provinces);
+    console.log(CardData.location)
+    if (CardData.location.country !== "undefined") {
+      setSelectedValues([CardData.location.country, CardData.location.province, CardData.location.city]);
+      const selectedCountry = placeList.find(country => country.name === CardData.location.country);
+      if (selectedCountry) {
+        const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
+        if (selectedProvince) {
+          setFilteredCities(selectedProvince.cities);
+        } else (
+          setFilteredCities([])
+        )
+        setFilteredProvinces(selectedCountry.provinces);
+      } else {
+        setFilteredProvinces([]);
+      }
+      if (selectedCountry) {
+        const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
+        if (selectedProvince) {
+          setFilteredCities(selectedProvince.cities);
+        } else (
+          setFilteredCities([])
+        )
+      }
     } else {
-      setFilteredProvinces([]);
-    }
-    if (selectedCountry) {
-      const selectedProvince = selectedCountry.provinces.find(province => province.name === CardData.location.province);
-      if (selectedProvince) {
-        setFilteredCities(selectedProvince.cities);
-      } else (
-        setFilteredCities([])
-      )
+      setSelectedValues(['','',''])
+      setFilteredProvinces([])
+      setFilteredCities([])
     }
     setImage([...photoUriArray]);
     setPhoto([...CardData.photo]);  // 保存photo数组
