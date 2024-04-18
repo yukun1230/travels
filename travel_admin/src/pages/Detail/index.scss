@@ -5,10 +5,20 @@
   word-break: break-all;
   white-space: pre-wrap;
 }
+
+.info-desc{
+  color: #999;
+  margin-bottom: 16px;
+}
 .view-actions{
   display: flex;
   justify-content: flex-end;
   align-items: center;
+
+  .info-reject{
+    font-size: 14px;
+    padding: 8px;
+  }
 
   .reason{
     margin-bottom: 0;

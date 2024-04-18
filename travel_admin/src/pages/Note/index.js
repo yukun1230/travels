@@ -1,7 +1,6 @@
 import { Form, Button, Radio, DatePicker, Popover, Popconfirm } from "antd";
 import { message,Table, Tag, Space, Input, Image } from "antd";
 import { EditOutlined,DeleteOutlined,EyeOutlined } from "@ant-design/icons";
-// import locale from "antd/es/date-picker/locale/zh_CN";
 import img404 from "@/assets/error.png";
 import { useEffect, useState,useRef} from "react";
 import { useSelector } from 'react-redux';
@@ -163,13 +162,13 @@ const Note = () => {
   },[type_id])
   // 获取数据
   useEffect(() => {
-    setLoading(true)
     const initData=()=>{
-      request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
+      setLoading(true)
+      request.get('/travels/web/getTravels',{params:{page:1,pageSize:10}}).then(res=>{
         //添加序号
         let list=res.travels
         for (let index = 0; index < list.length; index++) {
-          let key=(reqData.page-1)*reqData.pageSize+index+1
+          let key=index+1
           list[index].key=key
         }
         setNoteList(list)
@@ -178,42 +177,60 @@ const Note = () => {
       })
     }
     initData()
-  }, [reqData])
+  }, [])
   // 查询操作
   const onFinish = (formValues) => {
+    console.log(formValues);
     const { title, date, travelState } = formValues;
-    setReqData({
+    let params={
       ...reqData,
       travelState: travelState,
       beginDate: date ? date[0].format("YYYY-MM-DD") : "",
       endDate: date ? date[1].format("YYYY-MM-DD") : "",
       title: title, 
       page: 1
-    });
-  };
+    }
+    
+    const throttleAction = throttle(fetchNoteList, 100)
+    throttleAction(params)
+  }
+  // 节流函数
+  function throttle(fn, delay) {
+    let timer = null;
+    return function () {
+      if (!timer) {
+        timer = setTimeout(() => {
+          fn.apply(this, arguments)
+          timer = null
+        }, delay)
+      }
+    }
+  }
   const divRef=useRef(null)
   // 触发分页
   const handleTableChange = (page) => {
-    setReqData({
+    fetchNoteList({
       ...reqData,
       page: page.current,
       pageSize:page.pageSize
-    });
+    })
     divRef.current.scrollIntoView()
   };
   //详情页返回
   const onCancel= ()=>{
     setIsShow(false)
   }
-  const fetchNoteList= ()=> {
-    // const res = await axios.get("http://localhost:3004/noteList");
-    request.get('/travels/web/getTravels',{params:reqData}).then(res=>{
+  const fetchNoteList= (params)=> {
+    setReqData(params)
+    setLoading(true)
+    request.get('/travels/web/getTravels',{params:params}).then(res=>{
       //添加序号
       let list=res.travels
       for (let index = 0; index < list.length; index++) {
-        let key=(reqData.page-1)*reqData.pageSize+index+1
+        let key=(params.page-1)*params.pageSize+index+1
         list[index].key=key
       }
+      setLoading(false)
       setNoteList(list)
       setTotalCount(res.quantity)
     })
@@ -222,12 +239,12 @@ const Note = () => {
   const onSubmit=()=>{
     setIsShow(false)
     message.success("审核完成")
-    fetchNoteList()
+    fetchNoteList(reqData)
   }
   // onConfirm 删除操作
   const onConfirm = async (data)=> {
     request.post('travels/web/deleteOneTravel',{id:data._id}).then(res=>{
-      fetchNoteList()
+      fetchNoteList(reqData)
       message.success("删除成功")
     })
   }
@@ -240,13 +257,14 @@ const Note = () => {
     <div ref={divRef}>
       <div style={{display:!isShow? 'block' : 'none'}}>
         <ConfigProvider locale={zhCN}>
-          <Form
+          <Form name="searchForm"
           initialValues={{ travelState: "" }}
           className="form-style"
           onFinish={onFinish}
+          autoComplete="off"
           >
           <Form.Item label="状态" name="travelState">
-            <Radio.Group>
+            <Radio.Group name="radiogroup" >
               <Radio value={""}>全部</Radio>
               <Radio value={0}>未通过</Radio>
               <Radio value={1}>已通过</Radio>
@@ -255,7 +273,7 @@ const Note = () => {
           </Form.Item>
   
           <Form.Item label="日期" name="date">
-             <RangePicker></RangePicker>
+             <RangePicker />
           </Form.Item>
           <Form.Item label="标题" name="title">
             <Input
