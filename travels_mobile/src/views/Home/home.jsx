@@ -3,8 +3,8 @@ import { View, Dimensions, ActivityIndicator, Text, TouchableOpacity, StyleSheet
 import React, { useState, useEffect, useRef } from 'react';
 import {  useDispatch } from 'react-redux';
 import axios from 'axios';
-import { NGROK_URL } from '../../config/ngrok'
-import { getToken } from '../../util/tokenRelated'
+import { NGROK_URL } from '../../config/ngrok';
+import { getToken } from '../../util/tokenRelated';
 import { setUser } from '../../redux/userSlice';
 import Card from './components/Card';
 import Header from './components/Header';

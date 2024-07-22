@@ -83,10 +83,10 @@ export default LoginScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <KeyboardAwareScrollView style={{ flex: 1 }} behavior="padding" showsVerticalScrollIndicator={false}>
+    <KeyboardAwareScrollView style={{ flex: 1 }} behavior="padding" showsVerticalScrollIndicator={false} scrollEnabled={false}>
       <StatusBar backgroundColor="#E7F2EF" barStyle='dark-content' />
-      <ImageBackground source={require("../../../assets/home_background_two.png")} resizeMode="contain"
-        style={{ flex: 1, height: 850 }}
+      <ImageBackground source={require("../../../assets/home_background_two.png")} resizeMode="cover"
+        style={{ flex: 1}}
       >
         <View style={styles.loginSection}>
           <Text style={styles.aboveTitle}> </Text>

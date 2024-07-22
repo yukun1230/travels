@@ -8,7 +8,7 @@ import {
   FieldPath
 } from 'react-hook-form'
 
-import { TextStyle, View, Text, ViewStyle } from 'react-native'
+import { TextStyle, View, Text, ViewStyle } from 'react-native';
 
 type FormItemProps<T extends FieldValues, TName extends FieldPath<T>> = {
   label?: string

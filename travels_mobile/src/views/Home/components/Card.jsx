@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image, Animated, Platform, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { NGROK_URL } from '../../../config/ngrok';
 import { AntDesign } from '@expo/vector-icons';
 import MyDialog from '../../../components/myDialog';
 import { setUser } from '../../../redux/userSlice';

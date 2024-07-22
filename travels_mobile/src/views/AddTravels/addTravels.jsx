@@ -57,7 +57,6 @@ export default addTravelsScreen = () => {
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-
   const handleCountryChange = (countryName, index) => {
     setSelectedValues((prevValues) => {
       const newValues = [...prevValues];

@@ -57,21 +57,6 @@ const AvatarMenu = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollToTopButton: {
-    alignItems: 'center',
-    position: 'absolute',
-    right: 12,
-    bottom: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 4,
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 12,
-  },
-});
 
 
 export default AvatarMenu;

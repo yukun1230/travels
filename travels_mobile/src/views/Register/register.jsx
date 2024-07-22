@@ -128,8 +128,8 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAwareScrollView style={{ flex: 1 }} behavior="padding" showsVerticalScrollIndicator={false}>
-      <ImageBackground source={require("../../../assets/register_background.png")} resizeMode="contain"
+    <KeyboardAwareScrollView scrollEnabled={false} style={{ flex: 1 }} behavior="padding" showsVerticalScrollIndicator={false}>
+      <ImageBackground source={require("../../../assets/register_background.png")} resizeMode="cover"
         style={{ flex: 1, height: 850 }}
       >
         <View style={styles.wrapper}>

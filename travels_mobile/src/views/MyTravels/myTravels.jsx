@@ -29,14 +29,13 @@ const AvatarMenu = () => {
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
-  useEffect(() => console.log(userInfo), [])
 
   return (
     <Menu
       visible={visible}
       onDismiss={closeMenu}
       anchor={
-        <TouchableOpacity onPress={() => { openMenu(), console.log(userInfo) }}>
+        <TouchableOpacity onPress={() => openMenu() }>
           <Image
             // 没有头像设置一个默认头像
             source={userInfo.avatar ? { uri: userInfo.avatar } : { uri: "https://5b0988e595225.cdn.sohucs.com/images/20171114/bc48840fb6904dd4bd8f6a8af8178af4.png" }}
