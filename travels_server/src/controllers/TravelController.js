@@ -144,7 +144,7 @@ class TravelController {
   }
   async getDraftTravels(req, res) {
     try {
-      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $eq: 4 } }, '_id photo title content travelState location').sort({ travelState: -1 }).exec();
+      const MyTravels = await Travel.find({ userId: req.user._id, travelState: { $eq: 4 } }, '_id photo title content travelState location').sort({ travelState: -1, _id: -1 }).exec();
       if (MyTravels) {
         res.send({
           message: "获取我的游记成功",

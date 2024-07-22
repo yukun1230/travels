@@ -39,7 +39,7 @@ TravelsRouter.get('/getCollectedTravels', auth, travelController.getCollectedTra
 TravelsRouter.get('/getlikedTravels', auth, travelController.getlikedTravels);
 
 // mobile---通过token获取用户存于草稿箱的游记信息
-TravelsRouter.get('/getDraftTravels', auth, travelController.getDraftTravels)
+TravelsRouter.get('/getDraftTravels', auth, travelController.getDraftTravels);
 
 // mobile---游记上传接口
 TravelsRouter.post('/upload', travelController.upload);
@@ -48,19 +48,19 @@ TravelsRouter.post('/upload', travelController.upload);
 TravelsRouter.post('/updateOneTravel', travelController.updateOneTravel);
 
 // mobile---首页游记搜索
-TravelsRouter.get('/search', travelController.search)
+TravelsRouter.get('/search', travelController.search);
 
 // mobile---收藏
-TravelsRouter.post('/collectTravel', auth, travelController.collectTravel)
+TravelsRouter.post('/collectTravel', auth, travelController.collectTravel);
 
 // moblie---取消收藏
-TravelsRouter.post('/UndoCollectTravel', auth, travelController.UndoCollectTravel)
+TravelsRouter.post('/UndoCollectTravel', auth, travelController.UndoCollectTravel);
 
 // mobile---点赞
-TravelsRouter.post('/likeTravel', auth, travelController.likeTravel)
+TravelsRouter.post('/likeTravel', auth, travelController.likeTravel);
 
 // moblie---取消点赞
-TravelsRouter.post('/UndoLikeTravel', auth, travelController.UndoLikeTravel)
+TravelsRouter.post('/UndoLikeTravel', auth, travelController.UndoLikeTravel);
 
 // web---分页获取所有游记信息(用于PC端审核) 
 TravelsRouter.get('/web/getTravels', async (req, res) => {
