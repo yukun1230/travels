@@ -23,6 +23,7 @@ const { Paragraph } = Typography;
 const Detail = ({ noteId, view, onSubmit, onCancel }) => {
   const [info, setInfo] = useState(null);
   const [radioValue, setRadioValue] = useState(0);
+  const [location, setLocation] = useState("");// 发布地点
   // 游记状态枚举
   const status = {
     0: <Tag color="error">未通过</Tag>,
@@ -35,7 +36,16 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
       .get("/travels/getDetails", { params: { id: noteId } })
       .then((res) => {
         setInfo(res.travelDetail);
+        let info = res.travelDetail;
+        if(info.location && info.location.city && info.location.city !== "undefined"){
+          setLocation(info.location.city);
+        }else if(info.location && info.location.province && info.location.province !== "undefined"){
+          setLocation(info.location.province);
+        }else if(info.location && info.location.country && info.location.country !== "undefined"){
+          setLocation(info.location.country);
+        }
       });
+      // 发布地点
   }, [noteId]);
   const onChangeRadioValue = (e) => {
     setRadioValue(e.target.value);
@@ -56,6 +66,7 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
       onSubmit()
     })
   }
+  
   return (
     <div>
       <Breadcrumb
@@ -101,9 +112,9 @@ const Detail = ({ noteId, view, onSubmit, onCancel }) => {
             </blockquote>
           </Paragraph>
           <Flex gap="large" justify="flex-start" className="info-desc">
-           { info.location && info.location.province !== "undefined" && <Space wrap size={8}>
+           { location && <Space wrap size={8}>
               <EnvironmentOutlined />
-              {info.location.province}
+              {location}
             </Space>}
             <Space wrap size={8}>
               <Avatar src={info.userInfo.avatar} />

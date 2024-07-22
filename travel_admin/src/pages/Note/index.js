@@ -152,10 +152,10 @@ const Note = () => {
   const [noteList, setNoteList] = useState([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(false);
-  const [isCanDel,setIsCanDel] = useState(false)
-  const [dataId,setDataId] =useState(null)
-  const [view,setView] =useState(1)
-  const [isShow,setIsShow] = useState(false)
+  const [isCanDel,setIsCanDel] = useState(false) // 是否可以删除
+  const [dataId,setDataId] =useState(null) // 详情页id
+  const [view,setView] =useState(1) // 0 编辑 1 查看
+  const [isShow,setIsShow] = useState(false) // 是否显示详情页 false显示列表页 true显示详情页
 
   useEffect(()=>{
       setIsCanDel(type_id===1 ? true:false)
@@ -214,7 +214,7 @@ const Note = () => {
       page: page.current,
       pageSize:page.pageSize
     })
-    divRef.current.scrollIntoView()
+    divRef.current.scrollIntoView() // 滚动到顶部
   };
   //详情页返回
   const onCancel= ()=>{
@@ -242,13 +242,14 @@ const Note = () => {
     fetchNoteList(reqData)
   }
   // onConfirm 删除操作
-  const onConfirm = async (data)=> {
+  const onConfirm = (data)=> {
     request.post('travels/web/deleteOneTravel',{id:data._id}).then(res=>{
       fetchNoteList(reqData)
       message.success("删除成功")
     })
   }
-  const toView=async (data,view)=>{
+  //跳转详情页
+  const toView = (data,view)=>{
     setDataId(data._id)
     setView(view)
     setIsShow(true)
